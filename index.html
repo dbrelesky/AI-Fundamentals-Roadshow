@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI, and what it actually means for us — Darren Brelesky</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-deep: #1a0a3e;
+    --bg-purple: #6c3ce0;
+    --bg-violet: #a855f7;
+    --bg-lavender: #c084fc;
+    --accent-orange: #f59e0b;
+    --accent-cyan: #22d3ee;
+    --accent-blue: #3b82f6;
+    --card-dark: #0f1729;
+    --card-light: #ffffff;
+    --text-white: #ffffff;
+    --text-muted: #c4b5fd;
+    --text-dark: #1e293b;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Presentation container ── */
+  .presentation {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── Mountain background (shared across slides) ── */
+  .mountain-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background: linear-gradient(180deg, #c084fc 0%, #a855f7 20%, #7c3aed 40%, #6c3ce0 55%, #2e1065 80%, #1a0a3e 100%);
+  }
+
+  .mountain-bg .mountain {
+    position: absolute;
+    bottom: 0;
+    border-radius: 50% 50% 0 0;
+  }
+
+  .mountain.m1 {
+    width: 120%;
+    height: 55%;
+    left: -10%;
+    background: linear-gradient(180deg, rgba(30,10,80,0.6) 0%, rgba(20,5,60,0.9) 100%);
+    z-index: 1;
+  }
+  .mountain.m2 {
+    width: 80%;
+    height: 45%;
+    left: 30%;
+    background: linear-gradient(180deg, rgba(50,20,100,0.5) 0%, rgba(25,10,70,0.8) 100%);
+    z-index: 2;
+  }
+  .mountain.m3 {
+    width: 60%;
+    height: 35%;
+    left: -5%;
+    background: linear-gradient(180deg, rgba(60,30,120,0.4) 0%, rgba(30,15,80,0.7) 100%);
+    z-index: 3;
+  }
+  .mountain.m4 {
+    width: 90%;
+    height: 25%;
+    left: 15%;
+    background: linear-gradient(180deg, rgba(20,8,55,0.8) 0%, rgba(15,5,45,0.95) 100%);
+    z-index: 4;
+  }
+
+  /* ── Slides ── */
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5vh 6vw;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    overflow-y: auto;
+  }
+
+  .slide.active {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 20;
+    animation: fadeIn 0.45s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ── Typography ── */
+  .section-label {
+    font-size: clamp(0.65rem, 1.2vw, 0.85rem);
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    margin-bottom: 1.2rem;
+  }
+
+  .slide-title {
+    font-size: clamp(1.8rem, 4.5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    max-width: 80%;
+  }
+
+  .slide-subtitle {
+    font-size: clamp(0.9rem, 1.6vw, 1.15rem);
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 2rem;
+    max-width: 70%;
+  }
+
+  .highlight-cyan { color: var(--accent-cyan); }
+  .highlight-orange { color: var(--accent-orange); }
+  .highlight-blue { color: var(--accent-blue); }
+
+  /* ── Cards ── */
+  .card-row {
+    display: flex;
+    gap: 1.5vw;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .card {
+    background: var(--card-light);
+    color: var(--text-dark);
+    border-radius: 12px;
+    padding: clamp(1rem, 2vw, 1.5rem);
+    flex: 1;
+    min-width: 220px;
+    font-size: clamp(0.75rem, 1.1vw, 0.9rem);
+    line-height: 1.55;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+
+  .card.dark {
+    background: var(--card-dark);
+    color: var(--text-white);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .card h3 {
+    font-size: clamp(0.9rem, 1.4vw, 1.15rem);
+    font-weight: 800;
+    margin-bottom: 0.3rem;
+  }
+
+  .card .meta {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 0.15rem;
+  }
+
+  .card .tagline {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+  }
+
+  .card ul {
+    padding-left: 1.1rem;
+    margin: 0.5rem 0;
+  }
+
+  .card li {
+    margin-bottom: 0.35rem;
+  }
+
+  .card-border-left {
+    border-left: 4px solid var(--accent-orange);
+  }
+
+  .card-border-top-orange {
+    border-top: 4px solid var(--accent-orange);
+  }
+
+  .card-border-top-cyan {
+    border-top: 4px solid var(--accent-cyan);
+  }
+
+  /* ── Two-column layout ── */
+  .two-col {
+    display: flex;
+    gap: 2vw;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .two-col > .col {
+    flex: 1;
+    min-width: 280px;
+  }
+
+  /* ── Table styling ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: clamp(0.7rem, 1vw, 0.85rem);
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+
+  .data-table th {
+    text-align: left;
+    padding: 0.9rem 1.2rem;
+    font-weight: 700;
+    font-size: clamp(0.75rem, 1.1vw, 0.9rem);
+  }
+
+  .data-table th:nth-child(2) {
+    background: var(--accent-blue);
+    color: white;
+  }
+
+  .data-table th:nth-child(3) {
+    background: var(--accent-orange);
+    color: white;
+  }
+
+  .data-table td {
+    padding: 0.75rem 1.2rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .data-table tr:nth-child(even) td {
+    background: rgba(255,255,255,0.03);
+  }
+
+  .data-table td:first-child {
+    font-weight: 700;
+    color: var(--text-white);
+    white-space: nowrap;
+    width: 180px;
+  }
+
+  .data-table td:nth-child(2),
+  .data-table td:nth-child(3) {
+    background: rgba(255,255,255,0.92);
+    color: var(--text-dark);
+  }
+
+  .data-table tr:nth-child(even) td:nth-child(2),
+  .data-table tr:nth-child(even) td:nth-child(3) {
+    background: rgba(255,255,255,0.97);
+  }
+
+  /* ── Maturity curve ── */
+  .curve-container {
+    display: flex;
+    gap: 0.8vw;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .curve-step {
+    flex: 1;
+    min-width: 130px;
+    background: var(--card-light);
+    color: var(--text-dark);
+    border-radius: 10px;
+    padding: clamp(0.6rem, 1.2vw, 1rem);
+    font-size: clamp(0.65rem, 0.95vw, 0.8rem);
+    line-height: 1.45;
+    position: relative;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    border-top: 3px solid var(--accent-blue);
+  }
+
+  .curve-step:last-child {
+    border-top-color: #ef4444;
+  }
+
+  .curve-step .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    color: white;
+    font-weight: 800;
+    font-size: 0.75rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .curve-step:last-child .step-num {
+    background: #ef4444;
+  }
+
+  .curve-step .step-title {
+    font-weight: 800;
+    font-size: clamp(0.75rem, 1.1vw, 0.9rem);
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+
+  .curve-step .step-tool {
+    display: inline-block;
+    margin-top: 0.4rem;
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    background: #e0e7ff;
+    color: #4338ca;
+    font-weight: 600;
+  }
+
+  /* ── Bullet points on slides ── */
+  .bullet-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+  }
+
+  .bullet-list li {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 1.2rem;
+    font-size: clamp(0.85rem, 1.3vw, 1.05rem);
+    line-height: 1.5;
+  }
+
+  .bullet-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.35em;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent-orange);
+  }
+
+  .bullet-list li .sub {
+    display: block;
+    font-size: 0.85em;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+  }
+
+  /* ── Footer note ── */
+  .footer-note {
+    position: absolute;
+    bottom: 3vh;
+    left: 6vw;
+    right: 6vw;
+    font-size: clamp(0.7rem, 1vw, 0.85rem);
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .footer-note strong {
+    color: var(--text-white);
+    font-style: normal;
+  }
+
+  /* ── Title slide special ── */
+  .title-slide .slide-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    max-width: 75%;
+  }
+
+  .title-slide .author {
+    margin-top: 1.5rem;
+    font-size: clamp(0.8rem, 1.2vw, 1rem);
+  }
+
+  .title-slide .author strong {
+    font-weight: 700;
+  }
+
+  .title-slide .author span {
+    color: var(--text-muted);
+  }
+
+  /* ── Decorative sidebar dots (title & closing slides) ── */
+  .side-dots {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    background: var(--card-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-left: 3px solid var(--accent-cyan);
+  }
+
+  .side-dots .dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+  }
+
+  .side-dots .dot:first-child {
+    background: var(--accent-orange);
+    width: 20px;
+    height: 20px;
+  }
+
+  /* ── Navigation ── */
+  .nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.8rem 2rem;
+    background: rgba(15, 5, 45, 0.85);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .nav-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .nav-btn:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.4);
+  }
+
+  .nav-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  .slide-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .slide-dots button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.25);
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0;
+  }
+
+  .slide-dots button.active {
+    background: var(--accent-orange);
+    width: 28px;
+    border-radius: 5px;
+  }
+
+  .slide-counter {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    min-width: 50px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Progress bar ── */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-orange));
+    z-index: 200;
+    transition: width 0.4s ease;
+  }
+
+  /* ── Keyboard hint ── */
+  .key-hint {
+    position: fixed;
+    bottom: 70px;
+    right: 20px;
+    z-index: 100;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.3);
+    text-align: right;
+    pointer-events: none;
+    transition: opacity 3s ease;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .slide { padding: 4vh 5vw; }
+    .slide-title { max-width: 100%; }
+    .slide-subtitle { max-width: 100%; }
+    .card-row, .two-col, .curve-container { flex-direction: column; }
+    .card { min-width: unset; }
+    .curve-step { min-width: unset; }
+    .side-dots { width: 40px; }
+    .data-table { font-size: 0.7rem; }
+    .data-table td:first-child { white-space: normal; width: auto; }
+    .nav-bar { padding: 0.6rem 1rem; gap: 0.5rem; }
+  }
+
+  /* ── Big-quote styling ── */
+  .big-quote {
+    font-size: clamp(1.6rem, 3.8vw, 3rem);
+    font-weight: 900;
+    line-height: 1.15;
+    max-width: 80%;
+    margin-bottom: 1.5rem;
+  }
+
+  .criteria-list {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+
+  .criteria-list h4 {
+    font-size: clamp(0.9rem, 1.3vw, 1.05rem);
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+
+  .criteria-list .criteria-sub {
+    font-size: clamp(0.8rem, 1.1vw, 0.95rem);
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+  }
+
+  .criteria-list ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .criteria-list li {
+    font-size: clamp(0.85rem, 1.2vw, 1rem);
+    margin-bottom: 0.3rem;
+  }
+
+  .criteria-list li::before {
+    content: '* ';
+    color: var(--accent-cyan);
+  }
+</style>
+</head>
+<body>
+<div class="presentation">
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Mountain background -->
+  <div class="mountain-bg">
+    <div class="mountain m1"></div>
+    <div class="mountain m2"></div>
+    <div class="mountain m3"></div>
+    <div class="mountain m4"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SLIDE 1 ═══ -->
+  <div class="slide title-slide active" data-slide="0">
+    <div class="section-label">A Working Point of View</div>
+    <h1 class="slide-title">AI, and what it actually means for us</h1>
+    <div class="author">
+      <strong>Darren Brelesky</strong> <span>&middot; EVP, Product / Design / Engineering, CBS Sports</span>
+    </div>
+    <div class="side-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SLIDE 2 ═══ -->
+  <div class="slide" data-slide="1">
+    <div class="section-label">If You Remember One Thing</div>
+    <div class="big-quote">
+      AI isn&rsquo;t trying to replace you&hellip;but it will shift how you work.<br>
+      <span class="highlight-cyan">It changes what a small team can get done.</span><br>
+      Creates a stronger demand for high leverage individuals.
+    </div>
+    <p class="slide-subtitle">You stay the editor, the taste, the judgment. AI takes the grunt work so you spend more time on the ideas fans actually feel.</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SLIDE 3 ═══ -->
+  <div class="slide" data-slide="2">
+    <div class="section-label">Demystify</div>
+    <h2 class="slide-title" style="font-size:clamp(1.6rem,3.5vw,2.8rem);">Think of AI as a fast, tireless junior collaborator.</h2>
+    <div class="card-row">
+      <div class="card card-border-left" style="flex:1.4;">
+        <ul>
+          <li><strong>Reads anything</strong> in seconds: a 40-page deck, a research packet, a transcript.</li>
+          <li><strong>Writes a first draft</strong> of almost anything you ask for.</li>
+          <li><strong>Makes things</strong> now: images, simple sites, edits, options at volume.</li>
+          <li><strong>Talks like a person.</strong> No code, no jargon. You just ask.</li>
+        </ul>
+      </div>
+      <div class="card dark" style="flex:1;">
+        <h3 style="letter-spacing:0.15em; font-size:0.8rem; margin-bottom:0.8rem;">IT IS NOT</h3>
+        <ul>
+          <li>a search engine</li>
+          <li>magic, or sentient</li>
+          <li>always right</li>
+        </ul>
+        <p style="margin-top:1rem; font-style:italic; color: var(--accent-cyan); font-size:0.85rem;">You manage it like a sharp intern: clear direction in, you edit what comes out.</p>
+      </div>
+    </div>
+    <div class="footer-note">CBS Sports &middot; AI for the Sixth Man team</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SLIDE 4 ═══ -->
+  <div class="slide" data-slide="3">
+    <div class="section-label">Set Expectations</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Where it shines, and where to keep your hands on the wheel</h2>
+    <div class="card-row">
+      <div class="card card-border-top-cyan">
+        <h3>GREAT AT</h3>
+        <ul>
+          <li>First drafts and starting points</li>
+          <li>Summarizing long, messy material</li>
+          <li>Options at volume (20 headlines, 10 concepts)</li>
+          <li>Rewrites, tone shifts, tightening copy</li>
+          <li>Research head-starts and brainstorming</li>
+          <li>Turning a rough idea into something you can see</li>
+        </ul>
+      </div>
+      <div class="card card-border-top-orange">
+        <h3>KEEP YOUR HANDS ON THE WHEEL</h3>
+        <ul>
+          <li>It makes things up, confidently. <strong>Verify facts, names, stats.</strong></li>
+          <li>It has no taste. <strong>Your eye is the product.</strong></li>
+          <li>Don&rsquo;t paste anything confidential into random tools.</li>
+          <li>First answer is rarely the best, push it, redirect it.</li>
+          <li>It&rsquo;s a starting line, not a finish line.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-note">CBS Sports &middot; AI for the Sixth Man team</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SLIDE 5 ═══ -->
+  <div class="slide" data-slide="4">
+    <div class="section-label">A Field Guide</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">How I think about the frontier models</h2>
+    <p class="slide-subtitle">They&rsquo;re converging, but each still has a lane. My read, not gospel.</p>
+    <div class="card-row" style="flex-wrap: nowrap;">
+      <div class="card" style="border-top:3px solid #a855f7; min-width:0;">
+        <h3>Claude</h3>
+        <div class="meta">ANTHROPIC</div>
+        <div class="tagline highlight-cyan" style="color: var(--accent-cyan);">The all-rounder</div>
+        <p>Strong across the board. Built for enterprise, SMB support, and entrepreneurs. The one we lean on.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #10b981; min-width:0;">
+        <h3>ChatGPT</h3>
+        <div class="meta">OPENAI</div>
+        <div class="tagline" style="color:#10b981;">Everyday chat</div>
+        <p>The everyday chat appliance most people start with. Especially strong at generating images.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #3b82f6; min-width:0;">
+        <h3>Gemini</h3>
+        <div class="meta">GOOGLE</div>
+        <div class="tagline" style="color:#3b82f6;">Research + Google</div>
+        <p>Deep research projects and anything Google-native. NotebookLM is remarkable at turning docs into audio and media.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #ef4444; min-width:0;">
+        <h3>Grok</h3>
+        <div class="meta">XAI</div>
+        <div class="tagline" style="color:#ef4444;">Real-time pulse</div>
+        <p>Real-time lookups and reading live sentiment, plugged into the X firehose.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #6366f1; min-width:0;">
+        <h3>Copilot / Llama</h3>
+        <div class="meta">MICROSOFT &middot; META</div>
+        <div class="tagline" style="color:#6366f1;">The blend</div>
+        <p>A general blend of the others. Copilot rides inside Microsoft tools; Llama is the open-source option.</p>
+      </div>
+    </div>
+    <div class="footer-note"><strong>Bottom line:</strong> Get fluent in one and the skills carry to the rest.</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SLIDE 6 ═══ -->
+  <div class="slide" data-slide="5">
+    <div class="section-label">My Honest Bias</div>
+    <h2 class="slide-title" style="font-size:clamp(1.6rem,3.5vw,2.8rem);">Why I lean on Claude</h2>
+    <ul class="bullet-list">
+      <li>
+        <strong>It finishes what it starts.</strong>
+        <span class="sub">The most autonomy and accountability to see a task through, and the most interactive: it asks you questions as it works instead of guessing.</span>
+      </li>
+      <li>
+        <strong>Three tools, one workbench.</strong>
+        <span class="sub">Claude chat to think and draft, Cowork to act on your files and tools, Claude Code to build. Same brain, three surfaces.</span>
+      </li>
+      <li>
+        <strong>It bends to how you work.</strong>
+        <span class="sub">The most adaptable across creative and developer workflows: web, desktop app, mobile, and command-line.</span>
+      </li>
+      <li>
+        <strong>The most capable model right now: <span class="highlight-orange">Opus 4.7</span></strong>
+        <span class="sub">Top tier at both thinking and doing. (OpenAI&rsquo;s Codex is not far behind.)</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SLIDE 7 ═══ -->
+  <div class="slide" data-slide="6">
+    <div class="section-label">The Claude Workbench</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Three tools, same brain</h2>
+    <div class="card-row">
+      <div class="card card-border-top-cyan">
+        <h3>Claude chat</h3>
+        <div class="meta">WEB &middot; DESKTOP &middot; MOBILE APP</div>
+        <div class="tagline highlight-cyan" style="color:var(--accent-cyan);">The conversational assistant. You type, it answers.</div>
+        <h4 style="font-size:0.75rem; letter-spacing:0.1em; margin:0.8rem 0 0.4rem;">WHAT IT DOES</h4>
+        <ul>
+          <li>Draft, rewrite, summarize, brainstorm</li>
+          <li>Answer questions, analyze what you paste</li>
+          <li>Make images and quick one-offs</li>
+        </ul>
+        <h4 style="font-size:0.75rem; letter-spacing:0.1em; margin:0.8rem 0 0.4rem; color:var(--accent-cyan);">WHO IT&rsquo;S FOR</h4>
+        <p>Everyone. The zero-setup front door to AI.</p>
+      </div>
+      <div class="card card-border-top-orange">
+        <h3>Cowork</h3>
+        <div class="meta">DESKTOP APP</div>
+        <div class="tagline highlight-orange" style="color:var(--accent-orange);">Chat that does the work, on your real files and tools.</div>
+        <h4 style="font-size:0.75rem; letter-spacing:0.1em; margin:0.8rem 0 0.4rem;">WHAT IT DOES</h4>
+        <ul>
+          <li>Works across your files, Slack, email, calendar, Drive</li>
+          <li>Builds decks, docs and sheets; automates busywork</li>
+          <li>Runs on a schedule and connects your apps</li>
+        </ul>
+        <h4 style="font-size:0.75rem; letter-spacing:0.1em; margin:0.8rem 0 0.4rem; color:var(--accent-orange);">WHO IT&rsquo;S FOR</h4>
+        <p>Non-developers: marketing, design, writers, strategy. (It&rsquo;s what I built this deck in.)</p>
+      </div>
+      <div class="card" style="border-top: 3px solid #a855f7;">
+        <h3>Claude Code</h3>
+        <div class="meta">COMMAND LINE / TERMINAL</div>
+        <div class="tagline" style="color:#a855f7;">An agent that builds software for you.</div>
+        <h4 style="font-size:0.75rem; letter-spacing:0.1em; margin:0.8rem 0 0.4rem;">WHAT IT DOES</h4>
+        <ul>
+          <li>Builds apps, sites, scripts and automations</li>
+          <li>Most configurable: plan-first or full autonomy</li>
+          <li>Turns &ldquo;I wish we had a tool&rdquo; into a real tool</li>
+        </ul>
+        <h4 style="font-size:0.75rem; letter-spacing:0.1em; margin:0.8rem 0 0.4rem; color:#a855f7;">WHO IT&rsquo;S FOR</h4>
+        <p>Developers and the technically curious who want to build.</p>
+      </div>
+    </div>
+    <div class="footer-note">CBS Sports &middot; AI for the Sixth Man team</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SLIDE 8 ═══ -->
+  <div class="slide" data-slide="7">
+    <div class="section-label">Where You Are, and Where You Can Go</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">The AI maturity curve</h2>
+    <p class="slide-subtitle">Nobody starts at the top, and you don&rsquo;t need to. The win is moving up one step.</p>
+    <div class="curve-container">
+      <div class="curve-step">
+        <div class="step-num">1</div>
+        <span class="step-title">Dabbler</span>
+        <p>Fixes an email&rsquo;s grammar before hitting send.</p>
+        <span class="step-tool">Claude chat</span>
+      </div>
+      <div class="curve-step">
+        <div class="step-num">2</div>
+        <span class="step-title">Daily Driver</span>
+        <p>Turns a press release into 15 tweet options. Creates app store assets from brand books.</p>
+        <span class="step-tool">Claude chat</span>
+      </div>
+      <div class="curve-step">
+        <div class="step-num">3</div>
+        <span class="step-title">Delegator</span>
+        <p>Feeds a packet + brand guide, gets an on-voice brief. Uses Claude to build presentations, do market research, strategy work.</p>
+        <span class="step-tool">Claude chat + Cowork</span>
+      </div>
+      <div class="curve-step">
+        <div class="step-num">4</div>
+        <span class="step-title">Builder</span>
+        <p>Builds sites, apps, micro apps with Claude Code.</p>
+        <span class="step-tool">Cowork + Claude Code</span>
+      </div>
+      <div class="curve-step">
+        <div class="step-num">5</div>
+        <span class="step-title">Force multiplier</span>
+        <p>Replaces SaaS apps with custom apps. Creates skills, agents and workflows others reuse.</p>
+        <span class="step-tool">Cowork + Claude Code</span>
+      </div>
+      <div class="curve-step">
+        <div class="step-num">6</div>
+        <span class="step-title">Off the charts</span>
+        <p>Runs an always-on agent stack (&ldquo;OpenClaw&rdquo;) across several businesses.</p>
+        <span class="step-tool" style="background:#fee2e2; color:#dc2626;">Autonomous agents</span>
+      </div>
+    </div>
+    <div class="footer-note"><strong>Claude chat</strong> = ask &amp; draft &nbsp; <strong>Cowork</strong> = act on your files &amp; tools &nbsp; <strong>Claude Code</strong> = build software &nbsp; <strong>beyond</strong> = autonomous agent stacks</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SLIDE 9 ═══ -->
+  <div class="slide" data-slide="8">
+    <div class="section-label">The Mindset</div>
+    <div class="big-quote">
+      The people who win with this aren&rsquo;t the most technical.<br>
+      <span class="highlight-cyan">They&rsquo;re the most curious.</span>
+    </div>
+    <div class="criteria-list">
+      <h4>Digital Product</h4>
+      <div class="criteria-sub">Hiring &amp; Performance Criteria:</div>
+      <ul>
+        <li>Judgement</li>
+        <li>Technical Aptitude</li>
+        <li>Curiosity</li>
+        <li>High Agency</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SLIDE 10 ═══ -->
+  <div class="slide title-slide" data-slide="9">
+    <h1 class="slide-title">Questions &amp; Live Examples</h1>
+    <p class="slide-subtitle" style="font-style:normal;">Or better: tell me the most annoying part of your week.<br>Let&rsquo;s point AI at it right now.</p>
+    <div class="author" style="margin-top:2rem;">Darren Brelesky</div>
+    <div class="side-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SLIDE 11 ═══ -->
+  <div class="slide" data-slide="10">
+    <div class="section-label">Industry Outlook</div>
+    <h2 class="slide-title" style="font-size:clamp(1.4rem,3vw,2.3rem);">What AI does to the categories we compete in</h2>
+    <p class="slide-subtitle">Two shifts: making content gets near-free, and the fan experience gets personalized. The moat moves from volume to rights, trust, and taste.</p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>2026 &mdash; Happening Now</th>
+          <th>~2028 &mdash; Where It Heads</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Live sports &amp; production</td>
+          <td>Near-real-time highlights and clips; auto-captions and fast localization.</td>
+          <td>Personalized feeds and camera angles; instant clips in every format, per fan.</td>
+        </tr>
+        <tr>
+          <td>Streaming &amp; on-demand</td>
+          <td>Sharper recommendations; AI dubbing and search across the catalog.</td>
+          <td>The home screen assembles itself around each viewer.</td>
+        </tr>
+        <tr>
+          <td>Content, recaps &amp; social</td>
+          <td>Recaps, social cutdowns and research drafted at volume; humans edit.</td>
+          <td>Content gets near-free; the edge is a distinct POV and trust, not volume.</td>
+        </tr>
+        <tr>
+          <td>Fantasy, betting &amp; games</td>
+          <td>Conversational stats and start/sit help; smarter personalized advice.</td>
+          <td>An always-on companion that knows your teams, bets and history.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="footer-note"><strong>Our move:</strong> use AI to deepen fan trust and personalization, not to flood feeds with cheap content.</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SLIDE 12 ═══ -->
+  <div class="slide" data-slide="11">
+    <div class="section-label">The Demand Side</div>
+    <h2 class="slide-title" style="font-size:clamp(1.4rem,3vw,2.3rem);">How AI changes what fans expect</h2>
+    <p class="slide-subtitle">Behaviors we&rsquo;re already seeing, and where they head.</p>
+    <div class="card-row">
+      <div class="card card-border-top-cyan">
+        <h3>What We&rsquo;re Seeing Now &middot; 2026</h3>
+        <ul>
+          <li>Fans ask AI instead of searching, fewer clicks to publishers</li>
+          <li>Summary-first: &ldquo;just tell me who won and why&rdquo;</li>
+          <li>Talking to assistants conversationally, second-screen all game</li>
+          <li>Rising &ldquo;is this even real?&rdquo; doubt as AI content floods feeds</li>
+        </ul>
+      </div>
+      <div class="card card-border-top-orange">
+        <h3>What May Come &middot; ~2028</h3>
+        <ul>
+          <li>A personal AI companion that knows your teams, fantasy and bets</li>
+          <li>Content comes to you, auto-shaped to your format and length</li>
+          <li>Ask, don&rsquo;t browse: conversation becomes how fans discover</li>
+          <li>Trust premium: verified sources and real talent win attention</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-note"><strong>What it means:</strong> fans will expect answers, personalization, and proof. Our edge is real access, real talent, and trust no generic bot can fake.</div>
+  </div>
+
+  <!-- ── Navigation bar ── -->
+  <nav class="nav-bar">
+    <button class="nav-btn" id="prevBtn" aria-label="Previous slide">&#8592;</button>
+    <div class="slide-dots" id="slideDots"></div>
+    <span class="slide-counter" id="slideCounter">1 / 12</span>
+    <button class="nav-btn" id="nextBtn" aria-label="Next slide">&#8594;</button>
+  </nav>
+
+  <div class="key-hint" id="keyHint">Use arrow keys or swipe to navigate</div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const dotsContainer = document.getElementById('slideDots');
+  const counter = document.getElementById('slideCounter');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progress = document.getElementById('progressBar');
+  const keyHint = document.getElementById('keyHint');
+
+  // Build dot indicators
+  for (let i = 0; i < total; i++) {
+    const btn = document.createElement('button');
+    btn.setAttribute('aria-label', `Go to slide ${i + 1}`);
+    btn.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(btn);
+  }
+
+  function update() {
+    slides.forEach(s => s.classList.remove('active'));
+    const s = slides[current];
+    void s.offsetWidth;
+    s.classList.add('active');
+
+    // Dots
+    dotsContainer.querySelectorAll('button').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+
+    counter.textContent = `${current + 1} / ${total}`;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+    progress.style.width = `${((current + 1) / total) * 100}%`;
+  }
+
+  function goTo(n) {
+    if (n < 0 || n >= total || n === current) return;
+    current = n;
+    update();
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+
+  // Keyboard nav
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+
+  // Touch / swipe
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+  });
+
+  // Hide hint after a few seconds
+  setTimeout(() => { keyHint.style.opacity = '0'; }, 5000);
+
+  update();
+})();
+</script>
+</body>
+</html>
