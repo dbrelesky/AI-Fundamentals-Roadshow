@@ -375,6 +375,27 @@
     font-weight: 600;
   }
 
+  /* ── Pull quote ── */
+  .pull-quote {
+    margin-top: 1.4rem;
+    padding: 1.2rem 1.5rem;
+    border-left: 4px solid var(--accent-cyan);
+    background: rgba(255,255,255,0.05);
+    border-radius: 0 12px 12px 0;
+    font-size: clamp(0.95rem, 1.6vw, 1.25rem);
+    line-height: 1.45;
+    max-width: 80%;
+  }
+
+  .pull-quote .attrib {
+    display: block;
+    margin-top: 0.6rem;
+    font-size: 0.8rem;
+    font-style: normal;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
   /* ── Decorative sidebar dots (title & closing slides) ── */
   .side-dots {
     position: absolute;
@@ -480,7 +501,7 @@
   /* ── Responsive ── */
   @media (max-width: 768px) {
     .slide { padding: 4vh 5vw; }
-    .slide-title, .slide-subtitle, .big-quote { max-width: 100%; }
+    .slide-title, .slide-subtitle, .big-quote, .pull-quote { max-width: 100%; }
     .card-row, .two-col, .curve-container, .stat-row { flex-direction: column; }
     .card, .curve-step, .stat { min-width: unset; }
     .side-dots { width: 40px; }
@@ -506,8 +527,8 @@
   <div class="slide title-slide active" data-slide="0">
     <div class="section-label">Paramount Finance &middot; AI Briefing</div>
     <h1 class="slide-title">The State of AI: <span class="highlight-cyan">Now &amp; Next</span> for Media</h1>
-    <p class="slide-subtitle" style="font-style:normal;">What the data actually says about where AI is, what it&rsquo;s doing to our industry, and the tools already in the hands of our workforce.</p>
-    <div class="source-chip">Framed around Benedict Evans&rsquo; &ldquo;AI Eats the World&rdquo; &middot; his annual macro &amp; strategy read on tech</div>
+    <p class="slide-subtitle" style="font-style:normal;">A calm, data-grounded read on where AI actually is, what it&rsquo;s doing to our industry, and the tools already in the hands of our workforce.</p>
+    <div class="source-chip">Drawn from Benedict Evans in conversation with Lenny Rachitsky &middot; &ldquo;AI Eats the World&rdquo;</div>
     <div class="author">
       <strong>Darren Brelesky</strong> <span>&middot; Prepared for the Paramount Finance team</span>
     </div>
@@ -520,159 +541,183 @@
   <div class="slide" data-slide="1">
     <div class="section-label">If You Remember One Thing</div>
     <div class="big-quote">
-      This is a <span class="highlight-cyan">platform shift</span>, not a feature.<br>
-      The infrastructure is being built <span class="highlight-orange">now</span> &mdash; but who captures the value is still up for grabs.
+      AI is as big a deal as the internet or mobile &mdash;<br>
+      <span class="highlight-cyan">and only as big.</span>
     </div>
-    <p class="slide-subtitle">Evans&rsquo; core point: every 10&ndash;15 years a new computing platform resets the industry. We&rsquo;re in the messy, early, over-invested phase of the fifth one. For Paramount, the question isn&rsquo;t &ldquo;is AI real&rdquo; &mdash; it&rsquo;s where our moat moves to when making content gets cheap.</p>
+    <p class="slide-subtitle">Evans&rsquo; deliberately calibrated take: this is a genuine platform shift that will touch every part of how we work &mdash; not a god, not magic, and not the end of work. For finance, that&rsquo;s the useful frame: plan for it like you&rsquo;d plan for the internet, not for science fiction.</p>
   </div>
 
-  <!-- ══════════════════════════════════ SLIDE 3 — THE SOURCE ═══ -->
+  <!-- ══════════════════════════════════ SLIDE 3 — WHO ═══ -->
   <div class="slide" data-slide="2">
     <div class="section-label">The Source</div>
     <h2 class="slide-title" style="font-size:clamp(1.6rem,3.5vw,2.8rem);">Why ground this in Benedict Evans</h2>
     <div class="two-col">
       <div class="col">
         <ul class="bullet-list">
-          <li><strong>The reference macro deck for tech.</strong><span class="sub">Former a16z partner. His &ldquo;AI Eats the World&rdquo; talk (~90 slides) is the most-cited annual read on where the industry is actually heading.</span></li>
-          <li><strong>Now published twice a year.</strong><span class="sub">The pace of change pushed him to a spring + autumn cadence &mdash; a signal in itself.</span></li>
-          <li><strong>Data over hype.</strong><span class="sub">He separates what&rsquo;s measurably happening from the narrative &mdash; which is exactly the lens a finance team needs.</span></li>
+          <li><strong>Independent analyst, ex-Andreessen Horowitz.</strong><span class="sub">Spent years as a16z&rsquo;s in-house &ldquo;thinker&rdquo; tracking the trends that matter.</span></li>
+          <li><strong>Six years of deeply researched decks.</strong><span class="sub">His &ldquo;AI Eats the World&rdquo; is the reference read for founders, investors and operators cutting through the noise.</span></li>
+          <li><strong>Signal, not hype.</strong><span class="sub">He separates what&rsquo;s measurably happening from the narrative &mdash; exactly the lens a finance team needs.</span></li>
         </ul>
       </div>
       <div class="col">
-        <div class="card dark" style="border-left:4px solid var(--accent-cyan);">
-          <h3 class="highlight-cyan">His through-line</h3>
-          <p style="margin-top:0.6rem;">&ldquo;We know this will get better &mdash; we just don&rsquo;t know how much.&rdquo;</p>
-          <p style="margin-top:0.8rem;">Unlike PCs, the web or smartphones, we can&rsquo;t see the ceiling of what next year&rsquo;s models can do. That uncertainty is the whole investment debate.</p>
+        <div class="pull-quote" style="max-width:100%;">
+          &ldquo;We know this will get better &mdash; we just don&rsquo;t know how much.&rdquo;
+          <span class="attrib">The honest uncertainty at the center of the whole debate</span>
         </div>
       </div>
     </div>
-    <div class="footer-note">Source: Benedict Evans, &ldquo;AI Eats the World,&rdquo; 2025&ndash;26 editions &middot; ben-evans.com/presentations</div>
+    <div class="footer-note">Source: Benedict Evans on Lenny&rsquo;s Podcast &middot; companion deck &ldquo;AI Eats the World&rdquo; &middot; ben-evans.com</div>
   </div>
 
-  <!-- ══════════════════════════════════ SLIDE 4 — FIFTH EPOCH ═══ -->
+  <!-- ══════════════════════════════════ SLIDE 4 — 1997 MOMENT ═══ -->
   <div class="slide" data-slide="3">
-    <div class="section-label">The Big Idea</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">The fifth great epoch of computing</h2>
-    <p class="slide-subtitle">When a real platform shift lands, &ldquo;all tech innovation, investment and company creation switches over&rdquo; to it. That&rsquo;s where we are.</p>
-    <div class="curve-container">
-      <div class="curve-step"><div class="step-num">1</div><span class="step-title">Mainframe</span><p>Computing as a scarce, centralized resource.</p></div>
-      <div class="curve-step"><div class="step-num">2</div><span class="step-title">PC</span><p>A computer on every desk.</p></div>
-      <div class="curve-step"><div class="step-num">3</div><span class="step-title">Web</span><p>Everything connects and gets distributed.</p></div>
-      <div class="curve-step"><div class="step-num">4</div><span class="step-title">Mobile / Cloud</span><p>A computer in every pocket; ~4B+ users.</p></div>
-      <div class="curve-step" style="border-top-color:var(--accent-orange);"><div class="step-num" style="background:var(--accent-orange);">5</div><span class="step-title highlight-orange" style="color:var(--accent-orange);">AI</span><p>Software that can read, write and make &mdash; in plain language.</p></div>
+    <div class="section-label">Where We Are</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">We&rsquo;re in the &ldquo;1997 moment&rdquo; of AI</h2>
+    <p class="slide-subtitle">Early, exciting, and deeply uncertain about what comes next &mdash; just like the web in 1997.</p>
+    <div class="card-row">
+      <div class="card card-border-top-cyan">
+        <h3>What we know</h3>
+        <ul>
+          <li>This is real and it&rsquo;s big &mdash; a true platform shift.</li>
+          <li>Adoption is moving fast; the tools genuinely work.</li>
+          <li>Every company will have to engage with it.</li>
+        </ul>
+      </div>
+      <div class="card card-border-top-orange">
+        <h3>What we don&rsquo;t know yet</h3>
+        <ul>
+          <li>Which companies win, and which business models stick.</li>
+          <li>Where the durable profit pools end up.</li>
+          <li>How much better the models actually get.</li>
+        </ul>
+      </div>
     </div>
-    <div class="footer-note"><strong>So what:</strong> each wave was bigger than the last, and each rewrote which companies and business models won.</div>
+    <div class="footer-note"><strong>The 1997 lesson:</strong> in 1997 we knew the web mattered but couldn&rsquo;t have named Google or Amazon as the winners. Same here &mdash; conviction on the shift, humility on the specifics.</div>
   </div>
 
-  <!-- ══════════════════════════════════ SLIDE 5 — ADOPTION REALITY ═══ -->
+  <!-- ══════════════════════════════════ SLIDE 5 — EXCEL LESSON (FINANCE) ═══ -->
   <div class="slide" data-slide="4">
-    <div class="section-label">Reality Check</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Huge awareness. Surprisingly shallow use.</h2>
-    <p class="slide-subtitle">Everyone has heard of it; far fewer have built it into how they work. The gap between trial and habit is the real opportunity.</p>
-    <div class="stat-row">
-      <div class="stat"><div class="num cyan">~800M</div><div class="label">ChatGPT weekly active users &mdash; one of the fastest adoption curves ever</div></div>
-      <div class="stat"><div class="num">~5%</div><div class="label">of users actually pay &mdash; most engagement is free and casual</div></div>
-      <div class="stat"><div class="num blue">80%</div><div class="label">sent fewer than 1,000 messages in 2025 &mdash; under 3 prompts a day</div></div>
+    <div class="section-label">A Lesson Finance Already Lived</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Remember what the spreadsheet did</h2>
+    <p class="slide-subtitle">Evans&rsquo; favorite analogy &mdash; and it&rsquo;s ours. VisiCalc and Excel automated the core of accounting. Accountants didn&rsquo;t disappear; the job grew.</p>
+    <div class="two-col">
+      <div class="col">
+        <ul class="bullet-list">
+          <li><strong>The grunt work got automated.</strong><span class="sub">Recalculating ledgers by hand vanished overnight.</span></li>
+          <li><strong>The profession got bigger, not smaller.</strong><span class="sub">Cheaper analysis meant we did far more of it &mdash; modeling, scenarios, FP&amp;A. (Jevons paradox: efficiency drives more demand.)</span></li>
+          <li><strong>The job moved up to judgment.</strong><span class="sub">Less manual calculation, more interpretation, advising and decisions.</span></li>
+        </ul>
+      </div>
+      <div class="col">
+        <div class="pull-quote" style="max-width:100%;">
+          AI is the next spreadsheet moment for knowledge work &mdash; the tool changes, the people move up the value chain.
+          <span class="attrib">The finance-team takeaway</span>
+        </div>
+      </div>
     </div>
-    <div class="footer-note"><strong>Finance read:</strong> mass curiosity, thin daily habit. The value isn&rsquo;t in &ldquo;has everyone tried it&rdquo; &mdash; it&rsquo;s in turning trial into workflow. Source: OpenAI usage data via Evans.</div>
+    <div class="footer-note">Source: Evans on VisiCalc / Excel and the Jevons paradox.</div>
   </div>
 
-  <!-- ══════════════════════════════════ SLIDE 6 — CAPEX ═══ -->
+  <!-- ══════════════════════════════════ SLIDE 6 — TASK OR JOB ═══ -->
   <div class="slide" data-slide="5">
-    <div class="section-label">Follow The Money</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">The capex surge is industrial-scale</h2>
-    <p class="slide-subtitle">Combined AI infrastructure spend by Microsoft, Alphabet, AWS and Meta:</p>
+    <div class="section-label">The Reframe That Matters Most</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Ask &ldquo;task or job?&rdquo; &mdash; not &ldquo;what % can AI do?&rdquo;</h2>
+    <p class="slide-subtitle">Evans&rsquo; sharpest point on work: AI is brilliant at <em>tasks</em>. A <em>job</em> is a bundle of tasks plus judgment, accountability and relationships.</p>
+    <div class="card-row">
+      <div class="card card-border-top-blue">
+        <h3 class="highlight-blue">A task</h3>
+        <div class="tagline">Bounded, repeatable, checkable</div>
+        <ul>
+          <li>Draft the variance commentary</li>
+          <li>Summarize the 80-page filing</li>
+          <li>Reformat the data, build the first model</li>
+        </ul>
+        <p style="margin-top:0.6rem;">AI does these brilliantly &mdash; and a person reviews.</p>
+      </div>
+      <div class="card card-border-top-orange">
+        <h3 class="highlight-orange">A job</h3>
+        <div class="tagline">Tasks + judgment + ownership</div>
+        <ul>
+          <li>Deciding what the numbers <em>mean</em></li>
+          <li>Owning the forecast in front of the board</li>
+          <li>Negotiating, advising, being accountable</li>
+        </ul>
+        <p style="margin-top:0.6rem;">AI takes tasks off the plate; the job remains human.</p>
+      </div>
+    </div>
+    <div class="footer-note"><strong>Finance read:</strong> AI won&rsquo;t replace your team &mdash; it removes tasks so they spend more time on judgment. That&rsquo;s a capacity story, not a headcount story.</div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 7 — SERVICES BOOM ═══ -->
+  <div class="slide" data-slide="6">
+    <div class="section-label">The Surprising Part</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">AI is driving a boom in consulting</h2>
+    <p class="slide-subtitle">Counterintuitive but real: the AI wave is fuelling a surge in professional services &mdash; McKinsey, Bain, Accenture, Fujitsu. Buying the model is easy; <em>deploying</em> it is hard.</p>
+    <ul class="bullet-list">
+      <li><strong>Technology &ne; adoption.</strong><span class="sub">Capability in a lab doesn&rsquo;t change a business until it&rsquo;s wired into real workflows, data and controls.</span></li>
+      <li><strong>The hard part is the last mile.</strong><span class="sub">Process redesign, change management, governance and integration &mdash; that&rsquo;s where the money and the time go.</span></li>
+      <li><strong>Budget the deployment, not just the license.</strong><span class="sub">For finance: the line item that matters isn&rsquo;t the per-seat AI subscription &mdash; it&rsquo;s the people and process work around it.</span></li>
+    </ul>
+    <div class="footer-note">Source: Evans on the professional-services boom around AI deployment.</div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 8 — VALUE / DISTRIBUTION ═══ -->
+  <div class="slide" data-slide="7">
+    <div class="section-label">Where Value Accrues</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Models commoditize. Distribution wins.</h2>
+    <p class="slide-subtitle">As software gets dramatically easier to build, the scarce thing isn&rsquo;t the model &mdash; it&rsquo;s getting to the customer.</p>
+    <div class="curve-container">
+      <div class="curve-step"><div class="step-num">1</div><span class="step-title">The model</span><p>Converging fast; increasingly a commodity. Hard to hold a durable edge.</p></div>
+      <div class="curve-step"><div class="step-num">2</div><span class="step-title">The application</span><p>Value moves up the stack &mdash; products built on top of the models.</p></div>
+      <div class="curve-step" style="border-top-color:var(--accent-orange);"><div class="step-num" style="background:var(--accent-orange);">3</div><span class="step-title highlight-orange" style="color:var(--accent-orange);">Distribution</span><p>The ultimate moat. Whoever is closest to the customer at the moment of choice wins.</p></div>
+    </div>
+    <div class="footer-note"><strong>The distribution wars:</strong> Google, Meta, Apple and OpenAI are fighting over who owns the customer relationship &mdash; not who has the cleverest model.</div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 9 — SCALE OF THE BET ═══ -->
+  <div class="slide" data-slide="8">
+    <div class="section-label">The Scale Of The Bet</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Industrial-scale capital is going in</h2>
+    <p class="slide-subtitle">From his companion &ldquo;AI Eats the World&rdquo; deck &mdash; combined AI infrastructure capex of Microsoft, Alphabet, AWS and Meta:</p>
     <div class="stat-row">
       <div class="stat"><div class="num blue">$220B</div><div class="label">2024 &mdash; actual</div></div>
       <div class="stat"><div class="num cyan">$360B</div><div class="label">2025 &mdash; actual</div></div>
       <div class="stat"><div class="num">~$700B</div><div class="label">2026 &mdash; guided</div></div>
     </div>
     <div class="card dark" style="margin-top:1.4rem; border-left:4px solid var(--accent-orange);">
-      <p>For scale, annual AI capex ambitions now rival entire capital-intensive industries &mdash; <strong>global telecoms (~$300B)</strong> and <strong>oil &amp; gas upstream (~$540B)</strong>. The binding constraint isn&rsquo;t chips from Nvidia &mdash; it&rsquo;s <strong class="highlight-orange">electricity and power buildout</strong>.</p>
+      <p>That rivals entire capital-intensive industries &mdash; global telecoms (~$300B) and oil &amp; gas upstream (~$540B). Even if the equity story corrects, the <strong class="highlight-orange">infrastructure stays</strong>: like railways and fiber, the build-out leaves behind cheap, abundant compute for everyone.</p>
     </div>
-    <div class="footer-note">Source: Benedict Evans, &ldquo;AI Eats the World&rdquo; &middot; hyperscaler capex guidance.</div>
+    <div class="footer-note">Figures from Evans&rsquo; &ldquo;AI Eats the World&rdquo; deck (hyperscaler capex guidance) &mdash; worth a sanity-check before presenting.</div>
   </div>
 
-  <!-- ══════════════════════════════════ SLIDE 7 — BUBBLE OR SHIFT ═══ -->
-  <div class="slide" data-slide="6">
-    <div class="section-label">The Question Everyone Asks</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Bubble&hellip; <span class="highlight-cyan">or</span> platform shift?</h2>
-    <p class="slide-subtitle">Evans&rsquo; answer: it can be both. The investment may overshoot &mdash; but the infrastructure outlasts the crash.</p>
+  <!-- ══════════════════════════════════ SLIDE 10 — BACKLASH ═══ -->
+  <div class="slide" data-slide="9">
+    <div class="section-label">The Counter-Current</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">The anti-AI backlash is real</h2>
+    <p class="slide-subtitle">Alongside the boom, a genuine public skepticism and fatigue is building &mdash; and it shapes how audiences receive AI-made media.</p>
     <div class="card-row">
       <div class="card card-border-top-orange">
-        <h3>The bubble risk is real</h3>
+        <h3>What&rsquo;s driving it</h3>
         <ul>
-          <li>We&rsquo;re building <strong>over-capacity</strong> in GPUs and energy ahead of revenue.</li>
-          <li>If the near-term revenue doesn&rsquo;t show up, there is a correction.</li>
-          <li>Usage today is still casual; monetization is thin (~5% pay).</li>
+          <li>Job anxiety and &ldquo;slop&rdquo; fatigue as AI content floods feeds</li>
+          <li>Distrust of authenticity &mdash; &ldquo;is this even real?&rdquo;</li>
+          <li>Emotion, not logic: you can&rsquo;t argue people out of a feeling</li>
         </ul>
       </div>
       <div class="card card-border-top-cyan">
-        <h3>&hellip;but the rails remain</h3>
+        <h3>Why it matters to media</h3>
         <ul>
-          <li>Like <strong>railways and fiber</strong>: the bubble funds the build-out, the crash wipes investors &mdash; the infrastructure stays.</li>
-          <li>What&rsquo;s left is <strong>cheap, abundant compute</strong> that fuels the next decade of products.</li>
-          <li>&ldquo;Abundant cognition&rdquo; becomes a utility you build on top of.</li>
+          <li>Trust and authenticity become competitive assets</li>
+          <li>Real talent and verified sources earn a premium</li>
+          <li>Brand reputation is exposed if AI is used carelessly</li>
         </ul>
       </div>
     </div>
-    <div class="footer-note"><strong>Finance read:</strong> separate the asset from the equity story. Even a market correction leaves cheaper AI for everyone &mdash; including us.</div>
+    <div class="footer-note"><strong>Finance read:</strong> the backlash is a risk to model and a reason our trusted IP and talent get <em>more</em> valuable, not less.</div>
   </div>
 
-  <!-- ══════════════════════════════════ SLIDE 8 — BETTER VS RIGHT ═══ -->
-  <div class="slide" data-slide="7">
-    <div class="section-label">The Trust Problem</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">&ldquo;Better&rdquo; is not the same as &ldquo;right&rdquo;</h2>
-    <p class="slide-subtitle">Evans&rsquo; sharpest point for anyone deploying AI: a lower error rate is not zero error. Design for where that matters.</p>
-    <div class="two-col">
-      <div class="col">
-        <div class="card card-border-top-blue">
-          <h3 class="highlight-blue">&ldquo;Better&rdquo;</h3>
-          <div class="tagline">Lower error rate, probabilistic</div>
-          <p>Great when a strong draft, a summary, or 20 options is the goal and a human edits. The error you can catch is cheap.</p>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card card-border-top-orange">
-          <h3 class="highlight-orange">&ldquo;Right&rdquo;</h3>
-          <div class="tagline">Deterministic, must-be-correct</div>
-          <p>There&rsquo;s a world of difference between a legal brief (or a financial statement) that <em>looks</em> right and one that <em>is</em> right. Here you keep a human in the loop.</p>
-        </div>
-      </div>
-    </div>
-    <div class="footer-note"><strong>Finance read:</strong> lean in on drafting, research and analysis acceleration; keep hands on the wheel for numbers, filings, contracts and anything auditable.</div>
-  </div>
-
-  <!-- ══════════════════════════════════ SLIDE 9 — ABSORB/INNOVATE/DISRUPT ═══ -->
-  <div class="slide" data-slide="8">
-    <div class="section-label">How The Change Arrives</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Absorb &rarr; Innovate &rarr; Disrupt</h2>
-    <p class="slide-subtitle">New tech doesn&rsquo;t land all at once. Evans&rsquo; deployment pattern &mdash; and where most of the industry sits today.</p>
-    <div class="curve-container">
-      <div class="curve-step">
-        <div class="step-num">1</div>
-        <span class="step-title">Absorb</span>
-        <p>Make it a feature. Automate known tasks inside existing tools and workflows.</p>
-        <span class="step-tool">Most companies are here</span>
-      </div>
-      <div class="curve-step">
-        <div class="step-num">2</div>
-        <span class="step-title">Innovate</span>
-        <p>New products, bundles and revenue lines that weren&rsquo;t possible before. Takes longer.</p>
-        <span class="step-tool">Starting now</span>
-      </div>
-      <div class="curve-step">
-        <div class="step-num">3</div>
-        <span class="step-title">Disrupt</span>
-        <p>Industries restructure; cost curves and competitive moats get redrawn.</p>
-        <span class="step-tool" style="background:#fef3c7; color:#b45309;">The next few years</span>
-      </div>
-    </div>
-    <div class="footer-note"><strong>Evans&rsquo; framing:</strong> the story splits into three buckets &mdash; <strong>Capital</strong> (the build-out), <strong>Deployment</strong> (getting it into work), and <strong>Change</strong> (what it does to industries).</div>
-  </div>
-
-  <!-- ══════════════════════════════════ SLIDE 10 — MEDIA NOW/NEXT ═══ -->
-  <div class="slide" data-slide="9">
+  <!-- ══════════════════════════════════ SLIDE 11 — MEDIA NOW/NEXT ═══ -->
+  <div class="slide" data-slide="10">
     <div class="section-label">Impact On Media &middot; Now &amp; Next</div>
     <h2 class="slide-title" style="font-size:clamp(1.4rem,3vw,2.3rem);">What it does to the businesses we&rsquo;re in</h2>
     <p class="slide-subtitle">The cost of making content trends toward near-zero. When supply explodes, the scarce thing &mdash; and the moat &mdash; moves.</p>
@@ -683,7 +728,7 @@
       <tbody>
         <tr>
           <td>Production &amp; post</td>
-          <td>AI dubbing, localization, captioning, rough cuts and VFX assists drafted at volume; humans finish.</td>
+          <td>AI dubbing, localization, captioning, rough cuts and VFX assists at volume; humans finish.</td>
           <td>Versioning per market and format becomes near-free; the edit and the taste are the value.</td>
         </tr>
         <tr>
@@ -694,11 +739,11 @@
         <tr>
           <td>Content &amp; marketing</td>
           <td>Recaps, social cutdowns, trailers and copy generated at volume; teams curate.</td>
-          <td>Content gets commoditized; the edge is a distinct POV, real talent, and trusted IP &mdash; not volume.</td>
+          <td>Content gets commoditized; the edge is a distinct POV, real talent and trusted IP &mdash; not volume.</td>
         </tr>
         <tr>
           <td>The moat</td>
-          <td>Library, rights and brand still scarce while tools commoditize.</td>
+          <td>Library, rights and brand stay scarce while tools commoditize.</td>
           <td>Value concentrates in <strong>rights, distribution and trust</strong> &mdash; the things AI can&rsquo;t generate.</td>
         </tr>
       </tbody>
@@ -706,29 +751,20 @@
     <div class="footer-note"><strong>Our move:</strong> use AI to lower cost and personalize &mdash; while leaning into the assets it can&rsquo;t fake: IP, talent, rights and audience trust.</div>
   </div>
 
-  <!-- ══════════════════════════════════ SLIDE 11 — COMMODITIZATION ═══ -->
-  <div class="slide" data-slide="10">
-    <div class="section-label">Where Value Lands</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Models commoditize. Distribution wins.</h2>
+  <!-- ══════════════════════════════════ SLIDE 12 — WHY PARAMOUNT WINS ═══ -->
+  <div class="slide" data-slide="11">
+    <div class="section-label">Why This Favors Us</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">AI makes our scarce assets worth more</h2>
     <ul class="bullet-list">
-      <li>
-        <strong>The models are converging.</strong>
-        <span class="sub">Evans&rsquo; view: the underlying LLMs increasingly look like commodities &mdash; the gap between them keeps narrowing.</span>
-      </li>
-      <li>
-        <strong>Brand and distribution decide winners.</strong>
-        <span class="sub">ChatGPT took the brand slot the way Google did for search. The company closest to the user at the moment of choice wins &mdash; not necessarily the best engineering.</span>
-      </li>
-      <li>
-        <strong>Why that&rsquo;s good news for Paramount.</strong>
-        <span class="sub">We already own scarce, defensible things: iconic IP, live rights, talent relationships and direct audience distribution. AI makes the commodity cheaper; it makes our scarce assets more valuable.</span>
-      </li>
+      <li><strong>When making content is cheap, owning it is the edge.</strong><span class="sub">A flood of generic content makes iconic, owned IP and franchises stand out further.</span></li>
+      <li><strong>Distribution is the moat &mdash; and we have it.</strong><span class="sub">Direct audience relationships, platforms and rights are exactly what Evans says wins as models commoditize.</span></li>
+      <li><strong>Trust and real talent earn a premium.</strong><span class="sub">In a backlash era, verified, human, premium content is the antidote to &ldquo;slop.&rdquo;</span></li>
     </ul>
-    <div class="footer-note">Source: Benedict Evans on model commoditization and distribution.</div>
+    <div class="footer-note"><strong>Bottom line:</strong> AI lowers the cost of the commodity and raises the value of what only Paramount can offer.</div>
   </div>
 
-  <!-- ══════════════════════════════════ SLIDE 12 — TOOLS ═══ -->
-  <div class="slide" data-slide="11">
+  <!-- ══════════════════════════════════ SLIDE 13 — TOOLS ═══ -->
+  <div class="slide" data-slide="12">
     <div class="section-label">Tools In Use Today</div>
     <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">What the Paramount workforce is already using</h2>
     <p class="slide-subtitle">They&rsquo;re converging, but each still has a lane. Get fluent in one and the skills carry across.</p>
@@ -762,36 +798,38 @@
     <div class="footer-note"><strong>For finance specifically:</strong> drafting memos &amp; board narratives, summarizing filings &amp; contracts, building models and reconciliations, scenario analysis &mdash; always with a human verifying the numbers.</div>
   </div>
 
-  <!-- ══════════════════════════════════ SLIDE 13 — WHAT IT MEANS ═══ -->
-  <div class="slide" data-slide="12">
+  <!-- ══════════════════════════════════ SLIDE 14 — WHAT IT MEANS ═══ -->
+  <div class="slide" data-slide="13">
     <div class="section-label">The Takeaway For Paramount</div>
     <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">What this means for us</h2>
     <div class="card-row">
       <div class="card card-border-top-cyan">
         <h3 class="highlight-cyan">Now &middot; 2026</h3>
         <ul>
-          <li>Treat AI as a cost lever: localization, recaps, marketing, back-office and analysis drafted at volume.</li>
-          <li>Move teams from <em>trial</em> to <em>habit</em> &mdash; that&rsquo;s where the productivity is.</li>
-          <li>Keep humans on anything that must be <strong>right</strong>, not just <strong>better</strong>.</li>
+          <li>Point AI at <em>tasks</em>: localization, recaps, summaries, first-draft models and memos.</li>
+          <li>Move teams from trial to habit &mdash; that&rsquo;s where the capacity gain is.</li>
+          <li>Budget for deployment and change, not just licenses.</li>
+          <li>Keep humans on anything that must be <strong>right</strong>, not just <strong>fast</strong>.</li>
         </ul>
       </div>
       <div class="card card-border-top-orange">
         <h3 class="highlight-orange">Next &middot; ~2028</h3>
         <ul>
-          <li>Content gets cheap; defend and invest in the moat: <strong>IP, rights, talent, trust, distribution.</strong></li>
+          <li>Content gets cheap; invest in the moat: <strong>IP, rights, talent, trust, distribution.</strong></li>
           <li>Plan for cheaper compute even if the market corrects &mdash; the rails stay.</li>
           <li>Watch the shift from &ldquo;browse&rdquo; to &ldquo;ask&rdquo; in how audiences discover us.</li>
+          <li>Treat the backlash as a reason to lead on trust and authenticity.</li>
         </ul>
       </div>
     </div>
-    <div class="footer-note"><strong>Bottom line:</strong> AI makes the commodity cheaper and our scarce assets more valuable. Win by deploying fast where it&rsquo;s safe &mdash; and protecting what only Paramount can offer.</div>
+    <div class="footer-note"><strong>Evans&rsquo; reassurance:</strong> things will probably be okay &mdash; if you stay curious, treat AI as a tool for tasks, and keep building judgment.</div>
   </div>
 
-  <!-- ══════════════════════════════════ SLIDE 14 — CLOSING ═══ -->
-  <div class="slide title-slide" data-slide="13">
+  <!-- ══════════════════════════════════ SLIDE 15 — CLOSING ═══ -->
+  <div class="slide title-slide" data-slide="14">
     <h1 class="slide-title">Questions &amp; Discussion</h1>
-    <p class="slide-subtitle" style="font-style:normal;">Where should Paramount Finance lean in first?<br>Let&rsquo;s pick one workflow and point AI at it.</p>
-    <div class="author" style="margin-top:2rem;">Darren Brelesky &middot; <span style="color:var(--text-muted);">Framed around Benedict Evans, &ldquo;AI Eats the World&rdquo;</span></div>
+    <p class="slide-subtitle" style="font-style:normal;">Where should Paramount Finance lean in first?<br>Let&rsquo;s pick one recurring task and point AI at it.</p>
+    <div class="author" style="margin-top:2rem;">Darren Brelesky &middot; <span style="color:var(--text-muted);">Drawn from Benedict Evans on Lenny&rsquo;s Podcast &amp; &ldquo;AI Eats the World&rdquo;</span></div>
     <div class="side-dots">
       <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
     </div>
@@ -801,7 +839,7 @@
   <nav class="nav-bar">
     <button class="nav-btn" id="prevBtn" aria-label="Previous slide">&#8592;</button>
     <div class="slide-dots" id="slideDots"></div>
-    <span class="slide-counter" id="slideCounter">1 / 14</span>
+    <span class="slide-counter" id="slideCounter">1 / 15</span>
     <button class="nav-btn" id="nextBtn" aria-label="Next slide">&#8594;</button>
   </nav>
 
