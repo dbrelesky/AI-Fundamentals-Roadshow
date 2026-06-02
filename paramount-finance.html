@@ -1,948 +1,892 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The State of AI: Now &amp; Next for Media — Paramount Finance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  :root{
+    --ink:#0b0d12;
+    --paper:#f6f3ec;
+    --paper-2:#efeadf;
+    --rule:#1a1c22;
+    --muted:#5a5f6e;
+    --accent:#d7442a;
+    --accent-2:#1d4ed8;
+    --purple:#6b46c1;
+    --teal:#0f766e;
+    --gold:#b8862b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--ink);color:var(--ink);font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --bg-deep: #1a0a3e;
-    --bg-purple: #6c3ce0;
-    --bg-violet: #a855f7;
-    --bg-lavender: #c084fc;
-    --accent-orange: #f59e0b;
-    --accent-cyan: #22d3ee;
-    --accent-blue: #3b82f6;
-    --accent-green: #10b981;
-    --accent-red: #ef4444;
-    --card-dark: #0f1729;
-    --card-light: #ffffff;
-    --text-white: #ffffff;
-    --text-muted: #c4b5fd;
-    --text-dark: #1e293b;
+  /* Deck */
+  .deck{width:100vw;height:100vh;overflow:hidden;position:relative}
+  .slide{
+    position:absolute;inset:0;
+    background:var(--paper);
+    padding:56px 88px 72px;
+    display:none;
+    overflow:hidden;
+    flex-direction:column;
+  }
+  .slide.active{display:flex;animation:fade .45s ease both}
+  .slide-inner{
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    flex:1;
+    min-height:0;
+    transform-origin:top left;
+  }
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion: reduce){
+    .slide.active{animation:none}
   }
 
-  html, body {
-    height: 100%;
-    overflow: hidden;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg-deep);
-    color: var(--text-white);
-    -webkit-font-smoothing: antialiased;
+  .deck > .mark{
+    position:absolute;top:20px;left:24px;z-index:60;
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    letter-spacing:.25em;text-transform:uppercase;
+    color:#fff;mix-blend-mode:difference;pointer-events:none;
   }
 
-  /* ── Presentation container ── */
-  .presentation {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
+  /* Chrome */
+  .chrome{
+    position:fixed;left:0;right:0;bottom:0;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;background:rgba(11,13,18,.92);
+    color:#f6f3ec;font-family:"JetBrains Mono",monospace;font-size:12px;
+    z-index:50;backdrop-filter:blur(6px);border-top:1px solid #2a2d36;
+  }
+  .chrome .title{opacity:.7;letter-spacing:.08em;text-transform:uppercase}
+  .chrome .counter{opacity:.9}
+  .chrome button{
+    background:transparent;border:1px solid #3a3e49;color:#f6f3ec;
+    padding:6px 12px;font:inherit;cursor:pointer;border-radius:2px;margin-left:6px;
+  }
+  .chrome button:hover{background:#1a1c22;border-color:#d7442a;color:#fff}
+  .chrome .icon-btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    gap:6px;padding:6px 10px;color:#f6f3ec;
+  }
+  .chrome .icon-btn svg{display:block}
+
+  /* Typographic system */
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 28px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .eyebrow::before{content:"";width:40px;height:1px;background:var(--accent)}
+  h1.display{
+    font-family:"Fraunces",serif;font-weight:800;font-size:clamp(52px,7vw,96px);
+    line-height:.92;letter-spacing:-.03em;margin:0 0 28px;
+  }
+  h2.title{
+    font-family:"Fraunces",serif;font-weight:700;font-size:clamp(36px,4.6vw,64px);
+    line-height:1.05;letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance;
+  }
+  h3.sub{
+    font-family:"Fraunces",serif;font-weight:600;font-size:28px;line-height:1.15;
+    margin:0 0 12px;
+  }
+  p.lede{font-size:clamp(18px,2vw,22px);line-height:1.4;max-width:48ch;color:#2a2d36;margin:0 0 16px}
+  p.hint{font-size:clamp(15px,1.35vw,17px);color:var(--muted);max-width:40ch;margin:0 0 12px;line-height:1.4}
+  p.body{font-size:16px;line-height:1.6;max-width:62ch;color:#3a3e49;margin:0 0 14px}
+  p.body strong{color:var(--ink);font-weight:600}
+  .rule{height:1px;background:var(--rule);margin:24px 0 32px;opacity:.18}
+  .pagenum{
+    position:absolute;right:88px;top:64px;
+    font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);
+    letter-spacing:.18em;
+  }
+  .kicker{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:8px;
   }
 
-  /* ── Mountain background (shared across slides) ── */
-  .mountain-bg {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    overflow: hidden;
-    background: linear-gradient(180deg, #c084fc 0%, #a855f7 20%, #7c3aed 40%, #6c3ce0 55%, #2e1065 80%, #1a0a3e 100%);
+  /* Cover — layout only when active (.slide.active supplies display:flex) */
+  .cover{
+    background:var(--ink);color:var(--paper);
+  }
+  .slide.cover.active{
+    flex-direction:column;justify-content:space-between;gap:32px;
+  }
+  .cover h1{
+    font-family:"Fraunces",serif;font-weight:800;
+    font-size:clamp(48px,7.6vw,116px);line-height:.9;letter-spacing:-.04em;
+    margin:0;color:var(--paper);
+  }
+  .cover h1 em{font-style:italic;color:var(--accent);font-weight:400}
+  .cover .cover-eyebrow{
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+    margin:0 0 18px;display:flex;align-items:center;gap:14px;
+  }
+  .cover .redline{display:inline-block;width:96px;height:3px;background:var(--accent);margin:0 0 18px}
+  .cover-body{
+    display:grid;grid-template-columns:1.05fr 1.4fr;gap:48px;
+    align-items:start;padding-top:36px;border-top:1px solid #2a2d36;
+  }
+  .cover-quote{
+    font-family:"Fraunces",serif;font-weight:400;font-style:italic;
+    font-size:clamp(22px,2.5vw,34px);line-height:1.2;letter-spacing:-.015em;
+    margin:0;color:var(--paper);opacity:.92;max-width:24ch;
+  }
+  .cover-quote em{color:var(--accent);font-style:italic}
+  .cover-tenets{display:grid;grid-template-columns:1fr;gap:18px}
+  .cover-tenet{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:baseline}
+  .cover-tenet h6{
+    font-family:"JetBrains Mono",monospace;font-size:10px;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+    margin:0;white-space:nowrap;
+  }
+  .cover-tenet p{font-size:13px;line-height:1.55;color:var(--paper);opacity:.8;margin:0;max-width:48ch}
+  .cover .meta{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.18em;
+    text-transform:uppercase;opacity:.75;
+  }
+  @media(max-width:900px){.cover-body{grid-template-columns:1fr;gap:24px}}
+
+  /* Section divider */
+  .slide.section-divider{background:var(--ink);color:var(--paper);justify-content:center}
+  .slide.section-divider .pagenum{color:rgba(246,243,236,.5)}
+  .slide.section-divider .section-divider-inner{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
+  .section-divider .redline{display:inline-block;width:96px;height:3px;background:var(--accent);margin-bottom:20px}
+  .slide.section-divider h1{
+    font-family:"Fraunces",serif;font-weight:800;
+    font-size:clamp(40px,6vw,96px);line-height:1;letter-spacing:-.035em;
+    margin:0;max-width:22ch;color:var(--paper);
+  }
+  .slide.section-divider .lede{color:rgba(246,243,236,.82)}
+
+  /* Two-layer diagram / comparison cards */
+  .layerwrap{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:32px}
+  .layer{border:1px solid var(--rule);padding:28px;background:var(--paper-2);position:relative}
+  .layer.accent{border-color:var(--accent)}
+  .layer.teal{border-color:var(--teal)}
+  .layer.blue{border-color:var(--accent-2)}
+  .layer .tag{
+    position:absolute;top:-11px;left:18px;background:var(--paper);
+    padding:0 10px;font-family:"JetBrains Mono",monospace;font-size:10px;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+  }
+  .layer.teal .tag{color:var(--teal)}
+  .layer.blue .tag{color:var(--accent-2)}
+  .layer h4{font-family:"Fraunces",serif;font-size:30px;margin:0 0 10px;font-weight:700;letter-spacing:-.01em}
+  .layer .tagline{font-family:"Fraunces",serif;font-size:15px;font-style:italic;color:var(--muted);margin:0 0 12px}
+  .layer p{font-size:15px;line-height:1.55;color:#2a2d36;margin:0 0 12px}
+  .layer ul{margin:10px 0 0;padding-left:18px;font-size:14px;line-height:1.6;color:#3a3e49}
+  .layer ul li{margin-bottom:5px}
+
+  /* Functions / tool grid */
+  .funcs{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:28px}
+  .func{border-top:3px solid var(--ink);padding:18px 0 0}
+  .func h5{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;margin:0 0 8px;color:var(--muted);
+  }
+  .func h6{font-family:"Fraunces",serif;font-size:22px;margin:0 0 6px;font-weight:700}
+  .func .tagline{font-family:"Fraunces",serif;font-size:14px;font-style:italic;color:var(--accent);margin:0 0 8px}
+  .func p{font-size:13px;line-height:1.55;color:#3a3e49;margin:0}
+
+  /* Three waves */
+  .waves{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:28px}
+  .wave{border-top:3px solid var(--accent);padding:18px 0 0}
+  .wave.w2{border-color:var(--teal)}
+  .wave.w3{border-color:var(--accent-2)}
+  .wave h5{
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;margin:0 0 8px;color:var(--accent);
+  }
+  .wave.w2 h5{color:var(--teal)}
+  .wave.w3 h5{color:var(--accent-2)}
+  .wave h6{font-family:"Fraunces",serif;font-size:22px;margin:0 0 8px;font-weight:700;line-height:1.15}
+  .wave p{font-size:14px;line-height:1.55;color:#3a3e49;margin:0}
+  @media(max-width:900px){.waves{grid-template-columns:1fr}}
+
+  /* Now / Next table */
+  .gaptbl{width:100%;border-collapse:collapse;margin-top:24px;font-size:14px;table-layout:fixed}
+  .gaptbl th,.gaptbl td{text-align:left;padding:14px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+  .gaptbl th{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--muted);font-weight:600;border-bottom:2px solid var(--ink);
+  }
+  .gaptbl th.next{color:var(--accent)}
+  .gaptbl td.gap{font-family:"Fraunces",serif;font-size:18px;font-weight:700;width:22%;color:var(--ink)}
+  .gaptbl td.now{color:#3a3e49;width:39%}
+  .gaptbl td.next{color:#0f5132;width:39%}
+  .gaptbl tr:last-child td{border-bottom:none}
+
+  /* Pull quote */
+  blockquote.pull{
+    font-family:"Fraunces",serif;font-size:30px;line-height:1.2;font-weight:400;
+    font-style:italic;border-left:3px solid var(--accent);padding:4px 0 4px 22px;
+    margin:0;max-width:30ch;color:#1a1c22;
+  }
+  blockquote.pull.lg{font-size:clamp(28px,3.4vw,44px);max-width:24ch}
+  blockquote.pull .attrib{
+    display:block;font-family:"JetBrains Mono",monospace;font-size:11px;font-style:normal;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:16px;
   }
 
-  .mountain-bg .mountain {
-    position: absolute;
-    bottom: 0;
-    border-radius: 50% 50% 0 0;
+  /* Screenshot figure */
+  .shot{
+    margin:8px 0 4px;border:1px solid rgba(26,28,34,.16);border-radius:6px;
+    overflow:hidden;background:#fff;max-width:660px;
+    box-shadow:0 10px 30px rgba(11,13,18,.10);
+  }
+  .shot img{display:block;width:100%;height:auto}
+  .shot figcaption{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);padding:10px 14px;border-top:1px solid rgba(26,28,34,.1);
   }
 
-  .mountain.m1 { width: 120%; height: 55%; left: -10%; background: linear-gradient(180deg, rgba(30,10,80,0.6) 0%, rgba(20,5,60,0.9) 100%); z-index: 1; }
-  .mountain.m2 { width: 80%; height: 45%; left: 30%; background: linear-gradient(180deg, rgba(50,20,100,0.5) 0%, rgba(25,10,70,0.8) 100%); z-index: 2; }
-  .mountain.m3 { width: 60%; height: 35%; left: -5%; background: linear-gradient(180deg, rgba(60,30,120,0.4) 0%, rgba(30,15,80,0.7) 100%); z-index: 3; }
-  .mountain.m4 { width: 90%; height: 25%; left: 15%; background: linear-gradient(180deg, rgba(20,8,55,0.8) 0%, rgba(15,5,45,0.95) 100%); z-index: 4; }
+  /* Stage layouts (sparse, non-boxy) */
+  .beats{display:flex;flex-direction:column;margin-top:4px}
+  .beat{
+    display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;
+    padding:20px 0;border-bottom:1px solid rgba(26,28,34,.1);
+  }
+  .beat:last-child{border-bottom:none}
+  .beat .num{
+    font-family:"Fraunces",serif;font-size:clamp(44px,4.5vw,64px);font-weight:400;font-style:italic;
+    line-height:1;color:var(--accent);letter-spacing:-.03em;
+  }
+  .beat.teal .num{color:var(--teal)}
+  .beat.blue .num{color:var(--accent-2)}
+  .beat h4{font-family:"Fraunces",serif;font-size:clamp(22px,2.3vw,30px);font-weight:700;margin:0;letter-spacing:-.01em;line-height:1.15}
+  .beat p{font-size:clamp(16px,1.5vw,19px);line-height:1.35;color:#3a3e49;margin:6px 0 0;max-width:48ch}
 
-  /* ── Slides ── */
-  .slide {
-    position: absolute;
-    inset: 0;
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    padding: 5vh 6vw;
-    z-index: 10;
-    opacity: 0;
-    pointer-events: none;
-    overflow-y: auto;
+  .rails{display:grid;grid-template-columns:1fr 1fr;gap:52px;margin-top:20px}
+  .rail h4{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+    margin:0 0 14px;padding-bottom:10px;border-bottom:2px solid var(--accent);color:var(--accent);
+  }
+  .rail.teal h4{border-color:var(--teal);color:var(--teal)}
+  .rail.blue h4{border-color:var(--accent-2);color:var(--accent-2)}
+  .rail ul{list-style:none;margin:0;padding:0}
+  .rail li{
+    font-family:"Fraunces",serif;font-size:clamp(19px,2vw,26px);font-weight:600;line-height:1.2;
+    letter-spacing:-.01em;margin:0 0 12px;color:var(--ink);
   }
 
-  .slide.active {
-    display: flex;
-    opacity: 1;
-    pointer-events: auto;
-    z-index: 20;
-    animation: fadeIn 0.45s ease forwards;
+  .flow{
+    display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:32px;margin-top:28px;
+    padding-top:28px;border-top:2px solid var(--ink);
+  }
+  .flow-step .step-label{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 8px;
+  }
+  .flow-step h4{
+    font-family:"Fraunces",serif;font-size:clamp(22px,2.6vw,36px);font-weight:700;margin:0 0 6px;letter-spacing:-.02em;
+  }
+  .flow-step.accent h4{color:var(--accent);font-size:clamp(26px,3vw,42px)}
+  .flow-step p{font-size:14px;line-height:1.4;color:#3a3e49;margin:0}
+
+  .stage-foot{
+    margin-top:auto;padding-top:18px;
+    font-family:"Fraunces",serif;font-size:clamp(17px,1.8vw,22px);font-weight:600;font-style:italic;
+    line-height:1.25;color:var(--ink);max-width:58ch;
+  }
+  .stage-foot strong{font-style:normal;color:var(--accent)}
+
+  .hero-stat{
+    font-family:"Fraunces",serif;font-size:clamp(64px,10vw,120px);font-weight:800;
+    line-height:.88;letter-spacing:-.04em;color:var(--accent);margin:12px 0 4px;
+  }
+  .hero-stat span{
+    display:block;font-size:clamp(18px,2vw,24px);font-weight:600;color:var(--ink);letter-spacing:-.01em;margin-top:10px;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateX(40px); }
-    to { opacity: 1; transform: translateX(0); }
+  .moat-rows{margin-top:12px}
+  .moat-row{
+    display:grid;grid-template-columns:minmax(130px,20%) 1fr 1fr;gap:16px 28px;
+    padding:16px 0;border-bottom:1px solid rgba(26,28,34,.08);align-items:baseline;
+  }
+  .moat-row:last-child{border-bottom:none}
+  .moat-row .area{font-family:"Fraunces",serif;font-size:19px;font-weight:700}
+  .moat-row .now,.moat-row .next{font-size:14px;line-height:1.35;color:#3a3e49}
+  .moat-row .next{color:#0f5132;font-weight:500}
+  .moat-head{
+    display:grid;grid-template-columns:minmax(130px,20%) 1fr 1fr;gap:16px 28px;
+    padding-bottom:8px;margin-bottom:4px;
+    font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+  }
+  .moat-head .next{color:var(--accent)}
+
+  .tool-line{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 36px;margin-top:28px}
+  .tool-line .tool h4{
+    font-family:"Fraunces",serif;font-size:clamp(26px,3vw,40px);font-weight:700;margin:0;line-height:1;letter-spacing:-.02em;
+  }
+  .tool-line .tool span{
+    font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:4px;display:block;
+  }
+  .tool-line .sep{font-size:20px;color:rgba(26,28,34,.25);padding-bottom:6px}
+
+  .signal-row{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:20px;padding-top:20px;border-top:1px solid rgba(26,28,34,.1)}
+  .signal-row .sig h5{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;margin:0 0 6px}
+  .signal-row .sig.real h5{color:var(--accent)}
+  .signal-row .sig h6{font-family:"Fraunces",serif;font-size:20px;font-weight:700;margin:0 0 4px}
+  .signal-row .sig p{font-size:13px;line-height:1.4;color:#3a3e49;margin:0}
+
+  blockquote.pull.stage{
+    border-left:none;padding:0;font-size:clamp(28px,3.5vw,48px);max-width:22ch;margin-top:8px;
   }
 
-  /* ── Typography ── */
-  .section-label {
-    font-size: clamp(0.65rem, 1.2vw, 0.85rem);
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent-cyan);
-    margin-bottom: 1.2rem;
+  .slide.content-slide.active{flex-direction:column}
+  .slide.content-slide.active .slide-inner{display:flex;flex-direction:column;flex:1;min-height:0}
+
+  /* Utilities */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+  @media(max-width:900px){
+    .two,.rails,.flow,.moat-row,.moat-head{grid-template-columns:1fr}
+    .signal-row{grid-template-columns:1fr}
   }
 
-  .slide-title {
-    font-size: clamp(1.8rem, 4.5vw, 3.5rem);
-    font-weight: 900;
-    line-height: 1.1;
-    margin-bottom: 1rem;
-    max-width: 85%;
+  /* Closing */
+  .close{background:var(--ink);color:var(--paper);justify-content:center}
+  .close .eyebrow{color:var(--accent)}
+  .close .big-quote{
+    font-family:"Fraunces",serif;font-size:clamp(40px,5vw,76px);font-weight:400;
+    font-style:italic;line-height:1.05;letter-spacing:-.02em;margin:0 0 20px;max-width:22ch;
   }
+  .close .big-quote em{color:var(--accent);font-style:italic}
+  .close .lede{color:rgba(246,243,236,.85)}
+  .close .tenets{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;padding-top:32px;border-top:1px solid #2a2d36}
+  .close .tenet h6{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+  .close .tenet p{font-size:14px;line-height:1.55;opacity:.85;margin:0;max-width:32ch}
 
-  .slide-subtitle {
-    font-size: clamp(0.9rem, 1.6vw, 1.15rem);
-    color: var(--text-muted);
-    font-style: italic;
-    margin-bottom: 2rem;
-    max-width: 78%;
+  /* Overview overlay (slide grid) */
+  .overview{position:fixed;inset:0;z-index:100;background:rgba(11,13,18,.97);display:none;flex-direction:column;color:var(--paper)}
+  .overview.open{display:flex}
+  .overview-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 28px;border-bottom:1px solid #2a2d36;
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;
   }
-
-  .highlight-cyan { color: var(--accent-cyan); }
-  .highlight-orange { color: var(--accent-orange); }
-  .highlight-blue { color: var(--accent-blue); }
-  .highlight-green { color: var(--accent-green); }
-
-  /* ── Cards ── */
-  .card-row {
-    display: flex;
-    gap: 1.5vw;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
+  .overview-title{opacity:.7}
+  .overview .icon-btn{
+    background:transparent;border:1px solid #3a3e49;color:#f6f3ec;
+    padding:6px 12px;font:inherit;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;border-radius:2px;
   }
-
-  .card {
-    background: var(--card-light);
-    color: var(--text-dark);
-    border-radius: 12px;
-    padding: clamp(1rem, 2vw, 1.5rem);
-    flex: 1;
-    min-width: 220px;
-    font-size: clamp(0.75rem, 1.1vw, 0.9rem);
-    line-height: 1.55;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  .overview .icon-btn:hover{background:#1a1c22;border-color:var(--accent)}
+  .overview-grid{
+    flex:1;overflow:auto;padding:28px 28px 48px;display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;align-content:start;
   }
-
-  .card.dark {
-    background: var(--card-dark);
-    color: var(--text-white);
-    border: 1px solid rgba(255,255,255,0.08);
+  .ov-tile{
+    position:relative;background:var(--ink);color:var(--paper);border-radius:4px;overflow:hidden;cursor:pointer;
+    border:2px solid transparent;transition:transform .12s ease, border-color .12s ease;
+    display:flex;flex-direction:column;padding:0 0 0 4px;text-align:left;font:inherit;
   }
-
-  .card h3 {
-    font-size: clamp(0.9rem, 1.4vw, 1.15rem);
-    font-weight: 800;
-    margin-bottom: 0.3rem;
+  .ov-tile:hover{transform:translateY(-2px);border-color:rgba(215,68,42,.7)}
+  .ov-tile.active{border-color:var(--accent)}
+  .ov-tile-strip{position:absolute;left:0;top:0;bottom:0;width:4px;z-index:5;background:var(--accent)}
+  .ov-tile-thumb{position:relative;width:100%;flex:0 0 auto;overflow:hidden;background:var(--paper);border-bottom:1px solid #2a2d36;min-height:120px}
+  .ov-tile-stage{position:absolute;top:0;left:0;transform-origin:top left;pointer-events:none}
+  .ov-tile-stage > .slide{position:relative !important;inset:auto !important;display:flex !important;margin:0 !important;animation:none !important}
+  .ov-tile-foot{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:12px;padding:10px 14px 12px}
+  .ov-tile-num{font-family:"Fraunces",serif;font-weight:700;font-style:italic;font-size:22px;line-height:1;letter-spacing:-.02em;color:var(--accent)}
+  .ov-tile-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .ov-tile-title{
+    font-family:"Fraunces",serif;font-weight:600;font-size:14px;line-height:1.15;letter-spacing:-.01em;
+    color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
+  .ov-tile-meta{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(246,243,236,.55)}
+  @media(max-width:600px){.overview-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;padding:18px 14px 32px}}
 
-  .card .meta {
-    font-size: 0.7rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #94a3b8;
-    margin-bottom: 0.15rem;
-  }
-
-  .card .tagline {
-    font-size: 0.8rem;
-    font-weight: 600;
-    margin-bottom: 0.8rem;
-  }
-
-  .card ul { padding-left: 1.1rem; margin: 0.5rem 0; }
-  .card li { margin-bottom: 0.35rem; }
-
-  .card-border-left { border-left: 4px solid var(--accent-orange); }
-  .card-border-top-orange { border-top: 4px solid var(--accent-orange); }
-  .card-border-top-cyan { border-top: 4px solid var(--accent-cyan); }
-  .card-border-top-green { border-top: 4px solid var(--accent-green); }
-  .card-border-top-blue { border-top: 4px solid var(--accent-blue); }
-
-  /* ── Two-column layout ── */
-  .two-col { display: flex; gap: 2vw; margin-top: 1.5rem; flex-wrap: wrap; }
-  .two-col > .col { flex: 1; min-width: 280px; }
-
-  /* ── Stat row ── */
-  .stat-row {
-    display: flex;
-    gap: 1.5vw;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  .stat {
-    flex: 1;
-    min-width: 180px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    padding: clamp(1rem, 2vw, 1.6rem);
-    text-align: center;
-  }
-
-  .stat .num {
-    font-size: clamp(1.8rem, 4vw, 3rem);
-    font-weight: 900;
-    line-height: 1;
-    color: var(--accent-orange);
-  }
-
-  .stat .num.cyan { color: var(--accent-cyan); }
-  .stat .num.blue { color: var(--accent-blue); }
-  .stat .num.green { color: var(--accent-green); }
-
-  .stat .label {
-    margin-top: 0.6rem;
-    font-size: clamp(0.7rem, 1vw, 0.85rem);
-    color: var(--text-muted);
-    line-height: 1.4;
-  }
-
-  /* ── Table styling ── */
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-    font-size: clamp(0.7rem, 1vw, 0.85rem);
-    background: rgba(255,255,255,0.05);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-  }
-
-  .data-table th {
-    text-align: left;
-    padding: 0.9rem 1.2rem;
-    font-weight: 700;
-    font-size: clamp(0.75rem, 1.1vw, 0.9rem);
-  }
-
-  .data-table th:nth-child(2) { background: var(--accent-blue); color: white; }
-  .data-table th:nth-child(3) { background: var(--accent-orange); color: white; }
-
-  .data-table td { padding: 0.75rem 1.2rem; border-top: 1px solid rgba(255,255,255,0.08); }
-  .data-table tr:nth-child(even) td { background: rgba(255,255,255,0.03); }
-
-  .data-table td:first-child {
-    font-weight: 700;
-    color: var(--text-white);
-    white-space: nowrap;
-    width: 180px;
-  }
-
-  .data-table td:nth-child(2),
-  .data-table td:nth-child(3) {
-    background: rgba(255,255,255,0.92);
-    color: var(--text-dark);
-  }
-
-  .data-table tr:nth-child(even) td:nth-child(2),
-  .data-table tr:nth-child(even) td:nth-child(3) {
-    background: rgba(255,255,255,0.97);
-  }
-
-  /* ── Maturity / phase curve ── */
-  .curve-container { display: flex; gap: 0.8vw; margin-top: 1.5rem; flex-wrap: wrap; }
-
-  .curve-step {
-    flex: 1;
-    min-width: 130px;
-    background: var(--card-light);
-    color: var(--text-dark);
-    border-radius: 10px;
-    padding: clamp(0.6rem, 1.2vw, 1rem);
-    font-size: clamp(0.65rem, 0.95vw, 0.8rem);
-    line-height: 1.45;
-    position: relative;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-    border-top: 3px solid var(--accent-blue);
-  }
-
-  .curve-step:nth-child(2) { border-top-color: var(--accent-cyan); }
-  .curve-step:last-child { border-top-color: var(--accent-orange); }
-
-  .curve-step .step-num {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: var(--accent-blue);
-    color: white;
-    font-weight: 800;
-    font-size: 0.75rem;
-    margin-bottom: 0.4rem;
-  }
-
-  .curve-step:nth-child(2) .step-num { background: var(--accent-cyan); color: #0f1729; }
-  .curve-step:last-child .step-num { background: var(--accent-orange); }
-
-  .curve-step .step-title {
-    font-weight: 800;
-    font-size: clamp(0.75rem, 1.1vw, 0.9rem);
-    margin-bottom: 0.3rem;
-    display: block;
-  }
-
-  .curve-step .step-tool {
-    display: inline-block;
-    margin-top: 0.4rem;
-    font-size: 0.65rem;
-    padding: 0.15rem 0.5rem;
-    border-radius: 4px;
-    background: #e0e7ff;
-    color: #4338ca;
-    font-weight: 600;
-  }
-
-  /* ── Bullet points on slides ── */
-  .bullet-list { list-style: none; padding: 0; margin: 1rem 0; }
-
-  .bullet-list li {
-    position: relative;
-    padding-left: 2rem;
-    margin-bottom: 1.2rem;
-    font-size: clamp(0.85rem, 1.3vw, 1.05rem);
-    line-height: 1.5;
-  }
-
-  .bullet-list li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.35em;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--accent-orange);
-  }
-
-  .bullet-list li .sub {
-    display: block;
-    font-size: 0.85em;
-    color: var(--text-muted);
-    margin-top: 0.2rem;
-  }
-
-  /* ── Footer note ── */
-  .footer-note {
-    position: absolute;
-    bottom: 3vh;
-    left: 6vw;
-    right: 6vw;
-    font-size: clamp(0.7rem, 1vw, 0.85rem);
-    color: var(--text-muted);
-    font-style: italic;
-  }
-
-  .footer-note strong { color: var(--text-white); font-style: normal; }
-
-  /* ── Title slide special ── */
-  .title-slide .slide-title { font-size: clamp(2.3rem, 5.5vw, 4.2rem); max-width: 82%; }
-  .title-slide .author { margin-top: 1.5rem; font-size: clamp(0.8rem, 1.2vw, 1rem); }
-  .title-slide .author strong { font-weight: 700; }
-  .title-slide .author span { color: var(--text-muted); }
-
-  /* ── Source attribution chip ── */
-  .source-chip {
-    display: inline-block;
-    margin-top: 1.6rem;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    background: rgba(34, 211, 238, 0.12);
-    border: 1px solid rgba(34, 211, 238, 0.35);
-    color: var(--accent-cyan);
-    font-size: clamp(0.7rem, 1vw, 0.85rem);
-    font-weight: 600;
-  }
-
-  /* ── Pull quote ── */
-  .pull-quote {
-    margin-top: 1.4rem;
-    padding: 1.2rem 1.5rem;
-    border-left: 4px solid var(--accent-cyan);
-    background: rgba(255,255,255,0.05);
-    border-radius: 0 12px 12px 0;
-    font-size: clamp(0.95rem, 1.6vw, 1.25rem);
-    line-height: 1.45;
-    max-width: 80%;
-  }
-
-  .pull-quote .attrib {
-    display: block;
-    margin-top: 0.6rem;
-    font-size: 0.8rem;
-    font-style: normal;
-    color: var(--text-muted);
-    letter-spacing: 0.05em;
-  }
-
-  /* ── Decorative sidebar dots (title & closing slides) ── */
-  .side-dots {
-    position: absolute;
-    right: 0; top: 0; bottom: 0;
-    width: 60px;
-    background: var(--card-dark);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    border-left: 3px solid var(--accent-cyan);
-  }
-
-  .side-dots .dot { width: 16px; height: 16px; border-radius: 50%; background: var(--accent-blue); }
-  .side-dots .dot:first-child { background: var(--accent-orange); width: 20px; height: 20px; }
-
-  /* ── Navigation ── */
-  .nav-bar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    padding: 0.8rem 2rem;
-    background: rgba(15, 5, 45, 0.85);
-    backdrop-filter: blur(12px);
-    border-top: 1px solid rgba(255,255,255,0.08);
-  }
-
-  .nav-btn {
-    background: none;
-    border: 1px solid rgba(255,255,255,0.2);
-    color: white;
-    width: 40px; height: 40px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    transition: background 0.2s, border-color 0.2s;
-  }
-
-  .nav-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); }
-  .nav-btn:disabled { opacity: 0.3; cursor: default; }
-
-  .slide-dots { display: flex; gap: 6px; align-items: center; }
-
-  .slide-dots button {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255,255,255,0.25);
-    cursor: pointer;
-    transition: all 0.3s;
-    padding: 0;
-  }
-
-  .slide-dots button.active { background: var(--accent-orange); width: 28px; border-radius: 5px; }
-
-  .slide-counter {
-    font-size: 0.8rem;
-    color: rgba(255,255,255,0.5);
-    min-width: 50px;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* ── Progress bar ── */
-  .progress-bar {
-    position: fixed;
-    top: 0; left: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-orange));
-    z-index: 200;
-    transition: width 0.4s ease;
-  }
-
-  /* ── Keyboard hint ── */
-  .key-hint {
-    position: fixed;
-    bottom: 70px; right: 20px;
-    z-index: 100;
-    font-size: 0.7rem;
-    color: rgba(255,255,255,0.3);
-    text-align: right;
-    pointer-events: none;
-    transition: opacity 3s ease;
-  }
-
-  /* ── Big-quote styling ── */
-  .big-quote {
-    font-size: clamp(1.6rem, 3.8vw, 3rem);
-    font-weight: 900;
-    line-height: 1.15;
-    max-width: 85%;
-    margin-bottom: 1.5rem;
-  }
-
-  /* ── Responsive ── */
-  @media (max-width: 768px) {
-    .slide { padding: 4vh 5vw; }
-    .slide-title, .slide-subtitle, .big-quote, .pull-quote { max-width: 100%; }
-    .card-row, .two-col, .curve-container, .stat-row { flex-direction: column; }
-    .card, .curve-step, .stat { min-width: unset; }
-    .side-dots { width: 40px; }
-    .data-table { font-size: 0.7rem; }
-    .data-table td:first-child { white-space: normal; width: auto; }
-    .nav-bar { padding: 0.6rem 1rem; gap: 0.5rem; }
+  @media print{
+    html,body{height:auto;overflow:visible;background:var(--paper)}
+    .chrome{display:none !important}
+    .deck{position:static;width:100%;height:auto;min-height:0;overflow:visible}
+    .slide{position:relative !important;inset:auto !important;display:block !important;width:100%;min-height:100vh;height:auto;page-break-after:always;page-break-inside:avoid;overflow:visible}
+    .slide:last-child{page-break-after:auto}
   }
 </style>
 </head>
 <body>
-<div class="presentation">
-  <div class="progress-bar" id="progressBar"></div>
 
-  <!-- Mountain background -->
-  <div class="mountain-bg">
-    <div class="mountain m1"></div>
-    <div class="mountain m2"></div>
-    <div class="mountain m3"></div>
-    <div class="mountain m4"></div>
-  </div>
+<div class="deck" id="deck">
 
-  <!-- ══════════════════════════════════ SLIDE 1 — TITLE ═══ -->
-  <div class="slide title-slide active" data-slide="0">
-    <div class="section-label">Paramount Finance &middot; AI Briefing</div>
-    <h1 class="slide-title">The State of AI: <span class="highlight-cyan">Now &amp; Next</span> for Media</h1>
-    <p class="slide-subtitle" style="font-style:normal;">A calm, data-grounded read on where AI actually is, what it&rsquo;s doing to our industry, and the tools already in the hands of our workforce.</p>
-    <div class="source-chip">Drawn from Benedict Evans in conversation with Lenny Rachitsky &middot; &ldquo;AI Eats the World&rdquo;</div>
-    <div class="author">
-      <strong>Darren Brelesky</strong> <span>&middot; Prepared for the Paramount Finance team</span>
+  <div class="mark">Paramount Finance · 2026</div>
+
+  <!-- 1. COVER -->
+  <section class="slide cover active" data-title="Cover">
+    <div>
+      <span class="redline"></span>
+      <h1>The State of AI:<br><em>Now &amp; Next</em> for Media.</h1>
     </div>
-    <div class="side-dots">
-      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════ SLIDE 2 — ONE THING ═══ -->
-  <div class="slide" data-slide="1">
-    <div class="section-label">If You Remember One Thing</div>
-    <div class="big-quote">
-      AI is as big a deal as the internet or mobile &mdash;<br>
-      <span class="highlight-cyan">and only as big.</span>
-    </div>
-    <p class="slide-subtitle">Evans&rsquo; deliberately calibrated take: this is a genuine platform shift that will touch every part of how we work &mdash; not a god, not magic, and not the end of work. For finance, that&rsquo;s the useful frame: plan for it like you&rsquo;d plan for the internet, not for science fiction.</p>
-  </div>
-
-  <!-- ══════════════════════════════════ SLIDE 3 — WHO ═══ -->
-  <div class="slide" data-slide="2">
-    <div class="section-label">The Source</div>
-    <h2 class="slide-title" style="font-size:clamp(1.6rem,3.5vw,2.8rem);">Why ground this in Benedict Evans</h2>
-    <div class="two-col">
-      <div class="col">
-        <ul class="bullet-list">
-          <li><strong>Independent analyst, ex-Andreessen Horowitz.</strong><span class="sub">Spent years as a16z&rsquo;s in-house &ldquo;thinker&rdquo; tracking the trends that matter.</span></li>
-          <li><strong>Six years of deeply researched decks.</strong><span class="sub">His &ldquo;AI Eats the World&rdquo; is the reference read for founders, investors and operators cutting through the noise.</span></li>
-          <li><strong>Signal, not hype.</strong><span class="sub">He separates what&rsquo;s measurably happening from the narrative &mdash; exactly the lens a finance team needs.</span></li>
-        </ul>
-      </div>
-      <div class="col">
-        <div class="pull-quote" style="max-width:100%;">
-          &ldquo;We know this will get better &mdash; we just don&rsquo;t know how much.&rdquo;
-          <span class="attrib">The honest uncertainty at the center of the whole debate</span>
+    <div class="cover-body">
+      <p class="cover-quote">Where AI is today. What it means for media. The tools <em>already</em> in our hands.</p>
+      <div class="cover-tenets">
+        <div class="cover-tenet">
+          <h6>Prepared by</h6>
+          <p>Darren Brelesky</p>
         </div>
       </div>
     </div>
-    <div class="footer-note">Source: Benedict Evans on Lenny&rsquo;s Podcast &middot; companion deck &ldquo;AI Eats the World&rdquo; &middot; ben-evans.com</div>
-  </div>
+  </section>
 
-  <!-- ══════════════════════════════════ SLIDE 4 — 1997 MOMENT ═══ -->
-  <div class="slide" data-slide="3">
-    <div class="section-label">Where We Are</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">We&rsquo;re in the &ldquo;1997 moment&rdquo; of AI</h2>
-    <p class="slide-subtitle">&ldquo;Most stuff kind of doesn&rsquo;t work yet, most of what people will build hasn&rsquo;t been built, and it&rsquo;s not clear how any of it will work when it does.&rdquo;</p>
-    <div class="card-row">
-      <div class="card card-border-top-cyan">
-        <h3>What we know</h3>
+  <!-- 2. ONE THING -->
+  <section class="slide section-divider" data-title="One Thing">
+    <span class="pagenum"></span>
+    <div class="section-divider-inner">
+      <span class="redline"></span>
+      <h1>AI is as big a deal as the internet or mobile &mdash;<br>and <span style="color:var(--accent)">only as big.</span></h1>
+      <p class="lede" style="max-width:42ch;margin-top:28px">Plan for it like the internet. Not like science fiction.</p>
+    </div>
+  </section>
+
+  <!-- 3. 1997 MOMENT -->
+  <section class="slide content-slide" data-title="1997 Moment">
+    <span class="pagenum"></span>
+    <h2 class="title">We&rsquo;re in the <em style="font-style:italic;color:var(--accent)">&ldquo;1997 moment&rdquo;</em> of AI.</h2>
+    <p class="hint">Most of it doesn&rsquo;t work yet. Most of what matters hasn&rsquo;t been built.</p>
+    <div class="rails">
+      <div class="rail teal">
+        <h4>We know</h4>
         <ul>
-          <li>This is transformative &mdash; a true platform shift.</li>
-          <li>The tools genuinely work; every company must engage.</li>
-          <li>It&rsquo;s still <em>early</em>: even among 13&ndash;18-year-olds, only ~15&ndash;20% are daily users.</li>
+          <li>Platform shift. Real.</li>
+          <li>Tools work. Engage now.</li>
+          <li>Still early. ~20% daily use (teens).</li>
         </ul>
       </div>
-      <div class="card card-border-top-orange">
-        <h3>What we don&rsquo;t know yet</h3>
+      <div class="rail">
+        <h4>We don&rsquo;t</h4>
         <ul>
-          <li>The companies that win may not exist yet.</li>
-          <li>The use cases that matter most are probably invisible today.</li>
-          <li>How the business models &mdash; and how much better the models get.</li>
+          <li>Who wins.</li>
+          <li>Which use cases.</li>
+          <li>How good models get.</li>
         </ul>
       </div>
     </div>
-    <div class="footer-note"><strong>The 1997 lesson:</strong> we knew the web mattered but couldn&rsquo;t have named Google or Amazon. We can see this is transformative &mdash; we&rsquo;re just terrible at predicting the specifics.</div>
-  </div>
+    <p class="stage-foot"><strong>1997 lesson:</strong> We knew the web mattered. We couldn&rsquo;t name Google.</p>
+  </section>
 
-  <!-- ══════════════════════════════════ SLIDE 5 — EXCEL LESSON (FINANCE) ═══ -->
-  <div class="slide" data-slide="4">
-    <div class="section-label">A Lesson Finance Already Lived</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Remember what the spreadsheet did</h2>
-    <p class="slide-subtitle">Evans&rsquo; favorite case study is literally ours: a century of automating accounting &mdash; and the number of accountants keeps going <em>up</em>.</p>
-    <div class="two-col">
-      <div class="col">
-        <ul class="bullet-list">
-          <li><strong>Wave after wave of automation.</strong><span class="sub">Adding machines, punch cards, mainframes, databases, ERP, cloud, spreadsheets, PCs &mdash; each one automated the core of the work.</span></li>
-          <li><strong>Yet employment rose, not fell.</strong><span class="sub">The Jevons paradox: when something gets cheaper, you don&rsquo;t do the same work for less &mdash; the ROI changes and you do <em>vastly more</em> of it.</span></li>
-          <li><strong>The job moved up to judgment.</strong><span class="sub">Excel didn&rsquo;t end finance careers &mdash; it let one analyst do what took a team, then we asked for more analysis, not less.</span></li>
-        </ul>
-      </div>
-      <div class="col">
-        <div class="pull-quote" style="max-width:100%;">
-          AI is the next spreadsheet moment for knowledge work &mdash; the tool changes, the people move up the value chain.
-          <span class="attrib">The finance-team takeaway</span>
+  <!-- 4. EXCEL LESSON -->
+  <section class="slide content-slide" data-title="The Spreadsheet">
+    <span class="pagenum"></span>
+    <h2 class="title">Remember what the <em style="font-style:italic;color:var(--accent)">spreadsheet</em> did.</h2>
+    <p class="hero-stat">↑<span>Accountant headcount, century of automation</span></p>
+    <div class="beats">
+      <div class="beat teal"><span class="num">1</span><div><h4>Automate the work</h4><p>Every wave did. ERP, cloud, Excel.</p></div></div>
+      <div class="beat"><span class="num">2</span><div><h4>Do more of it</h4><p>Cheaper work means more analysis, not less.</p></div></div>
+      <div class="beat blue"><span class="num">3</span><div><h4>Judgment moves up</h4><p>One analyst replaces a team. Bar rises.</p></div></div>
+    </div>
+    <p class="stage-foot"><strong>Finance takeaway:</strong> AI is the next spreadsheet. People move up the chain.</p>
+  </section>
+
+  <!-- 5. THE IRONY -->
+  <section class="slide content-slide" data-title="The Irony">
+    <span class="pagenum"></span>
+    <h2 class="title">&ldquo;Imagine how much free time<br>LLMs will create.&rdquo;</h2>
+    <div class="two" style="margin-top:12px;align-items:start">
+      <div class="rails" style="grid-template-columns:1fr;gap:28px;margin-top:0">
+        <div class="rail teal">
+          <h4>The promise</h4>
+          <ul><li>Faster work. More time off.</li></ul>
+        </div>
+        <div class="rail">
+          <h4>The history</h4>
+          <ul><li>Excel didn&rsquo;t shorten the week. It raised the bar.</li></ul>
         </div>
       </div>
+      <figure class="shot" style="max-width:100%;margin:0">
+        <img src="images/evans-linkedin-free-time.png" alt="LinkedIn post by Benedict Evans on free time, spreadsheets, and LLMs">
+        <figcaption>Benedict Evans on LinkedIn &mdash; tongue firmly in cheek</figcaption>
+      </figure>
     </div>
-    <div class="footer-note">Source: Evans on VisiCalc / Excel and the Jevons paradox &mdash; automation has grown the accounting profession, not shrunk it.</div>
-  </div>
+    <p class="stage-foot"><strong>Forecast:</strong> More output. Higher bar. Not more leisure.</p>
+  </section>
 
-  <!-- ══════════════════════════════════ SLIDE 6 — THE IRONY ═══ -->
-  <div class="slide" data-slide="5">
-    <div class="section-label">Read The Irony</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">&ldquo;Imagine how much free time LLMs will create&rdquo;</h2>
-    <div class="pull-quote">
-      &ldquo;Younger people may not believe this, but before spreadsheets, investment bankers worked really long hours. It&rsquo;s thanks to Excel that Goldman&rsquo;s associates can leave work at lunchtime on Fridays.<br><br>Now imagine how much more free time will be created by LLMs!&rdquo;
-      <span class="attrib">&mdash; Benedict Evans, on LinkedIn (with tongue firmly in cheek)</span>
-    </div>
-    <div class="card-row">
-      <div class="card card-border-top-cyan">
-        <h3 class="highlight-cyan">The promise</h3>
-        <p>Every productivity leap is sold the same way: finish the work faster, get your time back, go home earlier.</p>
-      </div>
-      <div class="card card-border-top-orange">
-        <h3 class="highlight-orange">The history</h3>
-        <p>Bankers don&rsquo;t leave at lunchtime on Fridays. Excel didn&rsquo;t shrink the hours &mdash; it raised the bar. The work expanded to fill the new capability.</p>
-      </div>
-    </div>
-    <div class="footer-note"><strong>The honest forecast:</strong> LLMs won&rsquo;t hand us a shorter week &mdash; they&rsquo;ll raise expectations and create new work. Plan for more output and higher standards, not more leisure.</div>
-  </div>
-
-  <!-- ══════════════════════════════════ SLIDE 7 — TASK OR JOB ═══ -->
-  <div class="slide" data-slide="6">
-    <div class="section-label">The Reframe That Matters Most</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Ask &ldquo;task or job?&rdquo; &mdash; not &ldquo;what % can AI do?&rdquo;</h2>
-    <p class="slide-subtitle">Evans&rsquo; sharpest point on work: AI is brilliant at <em>tasks</em>. The real question is whether the task <em>is</em> the job. When it is, the job goes (the elevator attendant). In most professions, it isn&rsquo;t.</p>
-    <div class="card-row">
-      <div class="card card-border-top-blue">
-        <h3 class="highlight-blue">A task</h3>
-        <div class="tagline">Bounded, repeatable, checkable</div>
+  <!-- 6. TASK OR JOB -->
+  <section class="slide content-slide" data-title="Task or Job">
+    <span class="pagenum"></span>
+    <h2 class="title">Ask <em style="font-style:italic;color:var(--accent)">&ldquo;task or job?&rdquo;</em></h2>
+    <p class="hint">Not &ldquo;what % can AI do?&rdquo;</p>
+    <div class="rails">
+      <div class="rail blue">
+        <h4>Task</h4>
         <ul>
-          <li>Draft the variance commentary</li>
-          <li>Summarize the 80-page filing</li>
-          <li>Reformat the data, build the first model</li>
-        </ul>
-        <p style="margin-top:0.6rem;">AI does these brilliantly &mdash; and a person reviews.</p>
-      </div>
-      <div class="card card-border-top-orange">
-        <h3 class="highlight-orange">A job</h3>
-        <div class="tagline">Tasks + judgment + ownership</div>
-        <ul>
-          <li>Deciding what the numbers <em>mean</em></li>
-          <li>Owning the forecast in front of the board</li>
-          <li>Negotiating, advising, being accountable</li>
-        </ul>
-        <p style="margin-top:0.6rem;">AI takes tasks off the plate; the job remains human.</p>
-      </div>
-    </div>
-    <div class="footer-note"><strong>Evans&rsquo; example:</strong> McKinsey isn&rsquo;t hired to make a 75-slide deck &mdash; the deck is just the artifact. They&rsquo;re hired to learn the business, read the politics, and figure out what to do. <strong>Finance read:</strong> AI takes the artifact off the plate; the judgment is the job.</div>
-  </div>
-
-  <!-- ══════════════════════════════════ SLIDE 8 — SERVICES BOOM ═══ -->
-  <div class="slide" data-slide="7">
-    <div class="section-label">The Surprising Part</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">AI is driving a boom in consulting</h2>
-    <p class="slide-subtitle">The tell: OpenAI and Anthropic are partnering with consultancies and PE firms &mdash; McKinsey, Bain, Accenture. The companies that should need consultants <em>least</em> are leaning on them. Why?</p>
-    <ul class="bullet-list">
-      <li><strong>The technology is only half the battle.</strong><span class="sub">Capability in a lab doesn&rsquo;t change a business until it&rsquo;s wired into real workflows, data and controls.</span></li>
-      <li><strong>Nobody has people sitting idle to reinvent the company.</strong><span class="sub">Reimagining workflows is a 5&ndash;10-person project over months &mdash; then actually implementing it across every vertical and horizontal system.</span></li>
-      <li><strong>Budget the deployment, not just the license.</strong><span class="sub">For finance: the line item that matters isn&rsquo;t the per-seat subscription &mdash; it&rsquo;s the people and process work around it.</span></li>
-    </ul>
-    <div class="footer-note">Source: Evans on the professional-services boom around AI deployment.</div>
-  </div>
-
-  <!-- ══════════════════════════════════ SLIDE 9 — VALUE / DISTRIBUTION ═══ -->
-  <div class="slide" data-slide="8">
-    <div class="section-label">Where Value Accrues</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Models commoditize. Distribution wins.</h2>
-    <p class="slide-subtitle">As software gets dramatically easier to build, the scarce thing isn&rsquo;t the model &mdash; it&rsquo;s getting to the customer.</p>
-    <div class="curve-container">
-      <div class="curve-step"><div class="step-num">1</div><span class="step-title">The model</span><p>Converging fast; increasingly a commodity. Hard to hold a durable edge.</p></div>
-      <div class="curve-step"><div class="step-num">2</div><span class="step-title">The application</span><p>Value moves up the stack &mdash; products built on top of the models.</p></div>
-      <div class="curve-step" style="border-top-color:var(--accent-orange);"><div class="step-num" style="background:var(--accent-orange);">3</div><span class="step-title highlight-orange" style="color:var(--accent-orange);">Distribution</span><p>The ultimate moat. Whoever is closest to the customer at the moment of choice wins.</p></div>
-    </div>
-    <div class="footer-note"><strong>And it favors incumbents:</strong> as AI makes software cheap to build, the market gets noisier &mdash; more products, more competition for attention &mdash; so reaching customers matters more, not less.</div>
-  </div>
-
-  <!-- ══════════════════════════════════ SLIDE 10 — SCALE OF THE BET ═══ -->
-  <div class="slide" data-slide="9">
-    <div class="section-label">Where The Margin Lands</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">More like AWS than like Windows</h2>
-    <p class="slide-subtitle">Evans&rsquo; provocative call: the foundation-model makers may not hold lasting pricing power. The value accrues up the stack.</p>
-    <div class="card-row">
-      <div class="card card-border-top-blue">
-        <h3 class="highlight-blue">Why no winner-take-all</h3>
-        <ul>
-          <li>The models show <strong>no network effects</strong> &mdash; nothing locks users in.</li>
-          <li>3&ndash;6 providers compete indefinitely, and look like commodities to users.</li>
-          <li>Undifferentiated commodity + real competition = <strong>no pricing power.</strong></li>
+          <li>Draft variance commentary</li>
+          <li>Summarize the filing</li>
+          <li>First-pass model</li>
         </ul>
       </div>
-      <div class="card card-border-top-orange">
-        <h3 class="highlight-orange">Today&rsquo;s economics are temporary</h3>
+      <div class="rail">
+        <h4>Job</h4>
         <ul>
-          <li>Eye-watering bills (a startup spending <strong>$1.5M/month</strong> on inference) are disequilibrium.</li>
-          <li>Like a $50,000 mobile-data bill in 2010 &mdash; the steady state looks nothing like it.</li>
-          <li>Expect compute to get cheap; value moves to apps and distribution.</li>
+          <li>What the numbers mean</li>
+          <li>Own the board forecast</li>
+          <li>Accountability</li>
         </ul>
       </div>
     </div>
-    <div class="footer-note"><strong>Finance read:</strong> don&rsquo;t extrapolate today&rsquo;s AI unit costs &mdash; or today&rsquo;s model-maker valuations. Plan for cheaper inference and value capture higher up the stack.</div>
-  </div>
+    <p class="stage-foot"><strong>McKinsey isn&rsquo;t hired for the deck.</strong> They&rsquo;re hired for judgment.</p>
+  </section>
 
-  <!-- ══════════════════════════════════ SLIDE 11 — BACKLASH ═══ -->
-  <div class="slide" data-slide="10">
-    <div class="section-label">The Counter-Current</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">The anti-AI backlash is real</h2>
-    <p class="slide-subtitle">Like the social-media backlash, it&rsquo;s a fuzzy mass of concerns &mdash; some real, some not &mdash; that creates political pressure even when the facts are contested.</p>
-    <div class="card-row">
-      <div class="card card-border-top-orange">
-        <h3>Separating signal from noise</h3>
-        <ul>
-          <li><strong>Real:</strong> deepfakes/exploitation, &ldquo;AI slop&rdquo; culture war, local power-bill spikes (a few places).</li>
-          <li><strong>Overstated:</strong> the water scare &mdash; data centers are ~0.017% of U.S. water use.</li>
-          <li><strong>Unresolved:</strong> jobs &mdash; economists can&rsquo;t yet find a clear signal in the data.</li>
-        </ul>
+  <!-- 7. SERVICES BOOM -->
+  <section class="slide content-slide" data-title="Services Boom">
+    <span class="pagenum"></span>
+    <h2 class="title">AI is driving a boom<br>in <em style="font-style:italic;color:var(--accent)">consulting</em>.</h2>
+    <p class="hint">OpenAI and Anthropic are partnering with McKinsey, Bain, Accenture.</p>
+    <div class="beats">
+      <div class="beat"><span class="num">½</span><div><h4>Tech is half the battle</h4><p>Lab capability &ne; changed workflows.</p></div></div>
+      <div class="beat teal"><span class="num">→</span><div><h4>Nobody sits idle</h4><p>Reinvention is a months-long team sport.</p></div></div>
+      <div class="beat blue"><span class="num">$</span><div><h4>Budget deployment</h4><p>Not just the license line item.</p></div></div>
+    </div>
+  </section>
+
+  <!-- 8. VALUE / DISTRIBUTION -->
+  <section class="slide content-slide" data-title="Where Value Accrues">
+    <span class="pagenum"></span>
+    <h2 class="title">Models commoditize.<br><em style="font-style:italic;color:var(--accent)">Distribution</em> wins.</h2>
+    <div class="flow">
+      <div class="flow-step">
+        <p class="step-label">01</p>
+        <h4>The model</h4>
+        <p>Commodity. No durable edge.</p>
       </div>
-      <div class="card card-border-top-cyan">
-        <h3>Why it matters to media</h3>
-        <ul>
-          <li>Trust and authenticity become competitive assets</li>
-          <li>Real talent and verified sources earn a premium</li>
-          <li>Brand reputation is exposed if AI is used carelessly</li>
-        </ul>
+      <div class="flow-step">
+        <p class="step-label">02</p>
+        <h4>The application</h4>
+        <p>Value moves up the stack.</p>
+      </div>
+      <div class="flow-step accent">
+        <p class="step-label">03</p>
+        <h4>Distribution</h4>
+        <p>Closest to the customer wins.</p>
       </div>
     </div>
-    <div class="footer-note"><strong>Evans&rsquo; stance:</strong> every wave brings new ways to harm people &mdash; build safeguards and accountability, but aim for <em>thoughtful deployment, not paralysis.</em></div>
-  </div>
+    <p class="stage-foot"><strong>Incumbents win:</strong> cheaper software means noisier markets. Reach matters more.</p>
+  </section>
 
-  <!-- ══════════════════════════════════ SLIDE 12 — MEDIA NOW/NEXT ═══ -->
-  <div class="slide" data-slide="11">
-    <div class="section-label">Impact On Media &middot; Now &amp; Next</div>
-    <h2 class="slide-title" style="font-size:clamp(1.4rem,3vw,2.3rem);">What it does to the businesses we&rsquo;re in</h2>
-    <p class="slide-subtitle">The cost of making content trends toward near-zero. When supply explodes, the scarce thing &mdash; and the moat &mdash; moves.</p>
-    <table class="data-table">
-      <thead>
-        <tr><th></th><th>2026 &mdash; Happening Now</th><th>~2028 &mdash; Where It Heads</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Production &amp; post</td>
-          <td>AI dubbing, localization, captioning, rough cuts and VFX assists at volume; humans finish.</td>
-          <td>Versioning per market and format becomes near-free; the edit and the taste are the value.</td>
-        </tr>
-        <tr>
-          <td>Streaming &amp; discovery</td>
-          <td>Sharper recommendations and catalog search; AI-assisted metadata and promos.</td>
-          <td>The home screen assembles itself per viewer; &ldquo;ask, don&rsquo;t browse&rdquo; becomes how people find content.</td>
-        </tr>
-        <tr>
-          <td>Content &amp; marketing</td>
-          <td>Recaps, social cutdowns, trailers and copy generated at volume; teams curate.</td>
-          <td>Content gets commoditized; the edge is a distinct POV, real talent and trusted IP &mdash; not volume.</td>
-        </tr>
-        <tr>
-          <td>The moat</td>
-          <td>Library, rights and brand stay scarce while tools commoditize.</td>
-          <td>Value concentrates in <strong>rights, distribution and trust</strong> &mdash; the things AI can&rsquo;t generate.</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="footer-note"><strong>Our move:</strong> use AI to lower cost and personalize &mdash; while leaning into the assets it can&rsquo;t fake: IP, talent, rights and audience trust.</div>
-  </div>
-
-  <!-- ══════════════════════════════════ SLIDE 13 — WHY PARAMOUNT WINS ═══ -->
-  <div class="slide" data-slide="12">
-    <div class="section-label">Why This Favors Us</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">AI makes our scarce assets worth more</h2>
-    <ul class="bullet-list">
-      <li><strong>When making content is cheap, owning it is the edge.</strong><span class="sub">A flood of generic content makes iconic, owned IP and franchises stand out further.</span></li>
-      <li><strong>Distribution is the moat &mdash; and we have it.</strong><span class="sub">Direct audience relationships, platforms and rights are exactly what Evans says wins as models commoditize.</span></li>
-      <li><strong>Trust and real talent earn a premium.</strong><span class="sub">In a backlash era, verified, human, premium content is the antidote to &ldquo;slop.&rdquo;</span></li>
-    </ul>
-    <div class="footer-note"><strong>Bottom line:</strong> AI lowers the cost of the commodity and raises the value of what only Paramount can offer.</div>
-  </div>
-
-  <!-- ══════════════════════════════════ SLIDE 14 — TOOLS ═══ -->
-  <div class="slide" data-slide="13">
-    <div class="section-label">Tools In Use Today</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">What the Paramount workforce is already using</h2>
-    <p class="slide-subtitle">They&rsquo;re converging, but each still has a lane. Get fluent in one and the skills carry across.</p>
-    <div class="card-row" style="flex-wrap: nowrap;">
-      <div class="card" style="border-top:3px solid #a855f7; min-width:0;">
-        <h3>Claude</h3><div class="meta">ANTHROPIC</div>
-        <div class="tagline highlight-cyan" style="color:var(--accent-cyan);">The all-rounder</div>
-        <p>Strong reasoning, long documents, drafting and analysis. The one we lean on; built this deck.</p>
-      </div>
-      <div class="card" style="border-top:3px solid #10b981; min-width:0;">
-        <h3>ChatGPT</h3><div class="meta">OPENAI</div>
-        <div class="tagline" style="color:#10b981;">Everyday chat</div>
-        <p>The front door most people start with. Strong at images and quick everyday tasks.</p>
-      </div>
-      <div class="card" style="border-top:3px solid #3b82f6; min-width:0;">
-        <h3>Gemini</h3><div class="meta">GOOGLE</div>
-        <div class="tagline" style="color:#3b82f6;">Research + Google</div>
-        <p>Deep research and anything Google-native. NotebookLM turns docs into audio briefings.</p>
-      </div>
-      <div class="card" style="border-top:3px solid #6366f1; min-width:0;">
-        <h3>Copilot</h3><div class="meta">MICROSOFT</div>
-        <div class="tagline" style="color:#6366f1;">In your workflow</div>
-        <p>Rides inside Excel, Outlook and Teams &mdash; where finance already lives.</p>
-      </div>
-      <div class="card" style="border-top:3px solid #ef4444; min-width:0;">
-        <h3>Grok</h3><div class="meta">XAI</div>
-        <div class="tagline" style="color:#ef4444;">Real-time pulse</div>
-        <p>Live lookups and reading real-time sentiment via the X firehose.</p>
-      </div>
-    </div>
-    <div class="footer-note"><strong>For finance specifically:</strong> drafting memos &amp; board narratives, summarizing filings &amp; contracts, building models and reconciliations, scenario analysis &mdash; always with a human verifying the numbers.</div>
-  </div>
-
-  <!-- ══════════════════════════════════ SLIDE 15 — WHAT IT MEANS ═══ -->
-  <div class="slide" data-slide="14">
-    <div class="section-label">The Takeaway For Paramount</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">What this means for us</h2>
-    <div class="card-row">
-      <div class="card card-border-top-cyan">
-        <h3 class="highlight-cyan">Now &middot; 2026</h3>
+  <!-- 9. SCALE OF THE BET -->
+  <section class="slide content-slide" data-title="AWS not Windows">
+    <span class="pagenum"></span>
+    <h2 class="title">More like <em style="font-style:italic;color:var(--accent)">AWS</em><br>than like Windows.</h2>
+    <div class="rails">
+      <div class="rail blue">
+        <h4>No winner-take-all</h4>
         <ul>
-          <li>Point AI at <em>tasks</em>: localization, recaps, summaries, first-draft models and memos.</li>
-          <li>Move teams from trial to habit &mdash; that&rsquo;s where the capacity gain is.</li>
-          <li>Budget for deployment and change, not just licenses.</li>
-          <li>Keep humans on anything that must be <strong>right</strong>, not just <strong>fast</strong>.</li>
+          <li>No network effects</li>
+          <li>3&ndash;6 commodity providers</li>
+          <li>No pricing power</li>
         </ul>
       </div>
-      <div class="card card-border-top-orange">
-        <h3 class="highlight-orange">Next &middot; ~2028</h3>
+      <div class="rail">
+        <h4>Today&rsquo;s bills won&rsquo;t last</h4>
         <ul>
-          <li>Content gets cheap; invest in the moat: <strong>IP, rights, talent, trust, distribution.</strong></li>
-          <li>Plan for cheaper compute even if the market corrects &mdash; the rails stay.</li>
-          <li>Watch the shift from &ldquo;browse&rdquo; to &ldquo;ask&rdquo; in how audiences discover us.</li>
-          <li>Treat the backlash as a reason to lead on trust and authenticity.</li>
+          <li>$1.5M/mo inference is disequilibrium</li>
+          <li>Like $50K mobile data in 2010</li>
+          <li>Value moves up-stack</li>
         </ul>
       </div>
     </div>
-    <div class="footer-note"><strong>Evans&rsquo; advice:</strong> things will probably be okay &mdash; but &ldquo;on average&rdquo; hides real individual pain. The worst move is to declare AI evil and look away. Submerge yourself in the tools, learn what they change, and be a great hire in the new environment.</div>
-  </div>
+    <p class="stage-foot"><strong>Finance read:</strong> Don&rsquo;t extrapolate today&rsquo;s unit costs or model-maker valuations.</p>
+  </section>
 
-  <!-- ══════════════════════════════════ SLIDE 16 — CLOSING ═══ -->
-  <div class="slide title-slide" data-slide="15">
-    <h1 class="slide-title">Questions &amp; Discussion</h1>
-    <p class="slide-subtitle" style="font-style:normal;">Where should Paramount Finance lean in first?<br>Let&rsquo;s pick one recurring task and point AI at it.</p>
-    <div class="author" style="margin-top:2rem;">Darren Brelesky &middot; <span style="color:var(--text-muted);">Drawn from Benedict Evans on Lenny&rsquo;s Podcast &amp; &ldquo;AI Eats the World&rdquo;</span></div>
-    <div class="side-dots">
-      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  <!-- 10. BACKLASH -->
+  <section class="slide content-slide" data-title="The Backlash">
+    <span class="pagenum"></span>
+    <h2 class="title">The anti-AI backlash<br>is <em style="font-style:italic;color:var(--accent)">real</em>.</h2>
+    <div class="signal-row">
+      <div class="sig real"><h5>Real</h5><h6>Deepfakes, slop, power bills</h6></div>
+      <div class="sig"><h5>Overstated</h5><h6>Water use ~0.017%</h6></div>
+      <div class="sig"><h5>Unresolved</h5><h6>Jobs data unclear</h6></div>
     </div>
-  </div>
+    <div class="beats" style="margin-top:8px">
+      <div class="beat teal"><span class="num">→</span><div><h4>Trust is the asset</h4><p>Real talent. Verified sources. Careful brands.</p></div></div>
+    </div>
+    <p class="stage-foot"><strong>Deploy thoughtfully.</strong> Don&rsquo;t freeze.</p>
+  </section>
 
-  <!-- ── Navigation bar ── -->
-  <nav class="nav-bar">
-    <button class="nav-btn" id="prevBtn" aria-label="Previous slide">&#8592;</button>
-    <div class="slide-dots" id="slideDots"></div>
-    <span class="slide-counter" id="slideCounter">1 / 16</span>
-    <button class="nav-btn" id="nextBtn" aria-label="Next slide">&#8594;</button>
-  </nav>
+  <!-- 11. MEDIA NOW / NEXT -->
+  <section class="slide content-slide" data-title="Impact on Media">
+    <span class="pagenum"></span>
+    <h2 class="title">What it does to the<br>businesses we&rsquo;re in.</h2>
+    <p class="hint">Content gets cheap. The moat moves.</p>
+    <div class="moat-head"><span>Area</span><span>2026 · Now</span><span class="next">~2028 · Next</span></div>
+    <div class="moat-rows">
+      <div class="moat-row"><span class="area">Production</span><span class="now">Dubbing, cuts, VFX at volume</span><span class="next">Versioning near-free; taste wins</span></div>
+      <div class="moat-row"><span class="area">Discovery</span><span class="now">Smarter recs, metadata, promos</span><span class="next">Ask, don&rsquo;t browse</span></div>
+      <div class="moat-row"><span class="area">Marketing</span><span class="now">Recaps, trailers at volume</span><span class="next">POV and talent, not volume</span></div>
+      <div class="moat-row"><span class="area">The moat</span><span class="now">Library, rights, brand</span><span class="next">Rights, distribution, trust</span></div>
+    </div>
+  </section>
 
-  <div class="key-hint" id="keyHint">Use arrow keys or swipe to navigate</div>
+  <!-- 12. WHY PARAMOUNT WINS -->
+  <section class="slide content-slide" data-title="Why This Favors Us">
+    <span class="pagenum"></span>
+    <h2 class="title">AI makes our scarce<br>assets <em style="font-style:italic;color:var(--accent)">worth more</em>.</h2>
+    <div class="beats">
+      <div class="beat"><span class="num">IP</span><div><h4>Own the commodity flood</h4><p>Iconic franchises stand out further.</p></div></div>
+      <div class="beat teal"><span class="num">→</span><div><h4>We have distribution</h4><p>Audience, platforms, rights.</p></div></div>
+      <div class="beat blue"><span class="num">✓</span><div><h4>Trust earns a premium</h4><p>Human, verified, premium beats slop.</p></div></div>
+    </div>
+    <p class="stage-foot"><strong>Bottom line:</strong> Cheaper commodity. Pricier moat.</p>
+  </section>
+
+  <!-- 13. TOOLS -->
+  <section class="slide content-slide" data-title="Tools in Use">
+    <span class="pagenum"></span>
+    <h2 class="title">What the workforce<br>is already using.</h2>
+    <p class="hint">Pick one. Skills carry across.</p>
+    <div class="tool-line">
+      <div class="tool"><h4>Claude</h4><span>All-rounder</span></div>
+      <span class="sep" aria-hidden="true">·</span>
+      <div class="tool"><h4>ChatGPT</h4><span>Everyday</span></div>
+      <span class="sep" aria-hidden="true">·</span>
+      <div class="tool"><h4>Gemini</h4><span>Research</span></div>
+      <span class="sep" aria-hidden="true">·</span>
+      <div class="tool"><h4>Copilot</h4><span>Excel / Teams</span></div>
+      <span class="sep" aria-hidden="true">·</span>
+      <div class="tool"><h4>Grok</h4><span>Live pulse</span></div>
+    </div>
+    <p class="stage-foot"><strong>Finance:</strong> Memos, filings, models. Human verifies the numbers.</p>
+  </section>
+
+  <!-- 14. WHAT IT MEANS -->
+  <section class="slide content-slide" data-title="What This Means">
+    <span class="pagenum"></span>
+    <h2 class="title">What this means<br>for <em style="font-style:italic;color:var(--accent)">us</em>.</h2>
+    <div class="rails">
+      <div class="rail teal">
+        <h4>Now · 2026</h4>
+        <ul>
+          <li>AI on tasks</li>
+          <li>Trial → habit</li>
+          <li>Budget deployment</li>
+          <li>Humans on what must be right</li>
+        </ul>
+      </div>
+      <div class="rail">
+        <h4>Next · ~2028</h4>
+        <ul>
+          <li>Invest in the moat</li>
+          <li>Cheaper compute stays</li>
+          <li>Browse → ask</li>
+          <li>Lead on trust</li>
+        </ul>
+      </div>
+    </div>
+    <p class="stage-foot"><strong>Get fluent.</strong> Be a great hire in the new environment.</p>
+  </section>
+
+  <!-- 15. CLOSING -->
+  <section class="slide close" data-title="Discussion">
+    <span class="pagenum"></span>
+    <blockquote class="big-quote">Where should Paramount Finance <em>lean in</em> first?</blockquote>
+    <p class="lede" style="margin-top:24px">Pick one recurring task. Point AI at it this quarter.</p>
+  </section>
+
 </div>
 
+<nav class="chrome">
+  <span class="title" id="slideTitle">Cover</span>
+  <span class="counter" id="counter">01 / 15</span>
+  <span>
+    <button id="overviewBtn" class="icon-btn" title="Overview (G)" aria-label="Show all slides">
+      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+        <rect x="1" y="1" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <rect x="9" y="1" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <rect x="1" y="9" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <rect x="9" y="9" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      </svg>
+    </button>
+    <button id="prev">← Prev</button>
+    <button id="next">Next →</button>
+  </span>
+</nav>
+
+<aside id="overview" class="overview" aria-hidden="true" role="dialog" aria-label="All slides">
+  <header class="overview-bar">
+    <span class="overview-title">All slides</span>
+    <button id="overviewClose" class="icon-btn" aria-label="Close overview">Close ✕</button>
+  </header>
+  <div id="overviewGrid" class="overview-grid"></div>
+</aside>
+
 <script>
-(function() {
-  const slides = document.querySelectorAll('.slide');
-  const total = slides.length;
-  let current = 0;
+  const slides = [...document.querySelectorAll('.slide')];
+  const pad = n => String(n).padStart(2,'0');
+  slides.forEach((s, idx) => {
+    s.id = 'deck-slide-' + idx;
+    const pn = s.querySelector('.pagenum');
+    if(pn) pn.textContent = `${pad(idx+1)} / ${pad(slides.length)}`;
+  });
 
-  const dotsContainer = document.getElementById('slideDots');
-  const counter = document.getElementById('slideCounter');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const progress = document.getElementById('progressBar');
-  const keyHint = document.getElementById('keyHint');
-
-  for (let i = 0; i < total; i++) {
-    const btn = document.createElement('button');
-    btn.setAttribute('aria-label', `Go to slide ${i + 1}`);
-    btn.addEventListener('click', () => goTo(i));
-    dotsContainer.appendChild(btn);
-  }
-
-  function update() {
-    slides.forEach(s => s.classList.remove('active'));
-    const s = slides[current];
-    void s.offsetWidth;
-    s.classList.add('active');
-
-    dotsContainer.querySelectorAll('button').forEach((d, i) => {
-      d.classList.toggle('active', i === current);
+  /* Wrap each slide's content in a .slide-inner so we can auto-scale on overflow.
+     Skip cover/divider/close slides — they have special centered layouts. */
+  slides.forEach(s => {
+    if(s.classList.contains('cover')) return;
+    if(s.classList.contains('section-divider')) return;
+    if(s.classList.contains('close')) return;
+    if(s.querySelector(':scope > .slide-inner')) return;
+    const pagenum = s.querySelector(':scope > .pagenum');
+    const inner = document.createElement('div');
+    inner.className = 'slide-inner';
+    Array.from(s.children).forEach(child => {
+      if(child === pagenum) return;
+      inner.appendChild(child);
     });
-
-    counter.textContent = `${current + 1} / ${total}`;
-    prevBtn.disabled = current === 0;
-    nextBtn.disabled = current === total - 1;
-    progress.style.width = `${((current + 1) / total) * 100}%`;
-  }
-
-  function goTo(n) {
-    if (n < 0 || n >= total || n === current) return;
-    current = n;
-    update();
-  }
-
-  function next() { goTo(current + 1); }
-  function prev() { goTo(current - 1); }
-
-  prevBtn.addEventListener('click', prev);
-  nextBtn.addEventListener('click', next);
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
-    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
-    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
-    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+    s.appendChild(inner);
   });
 
-  let touchStartX = 0;
-  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
-  document.addEventListener('touchend', (e) => {
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+  function fitSlide(s){
+    if(!s) return;
+    const inner = s.querySelector(':scope > .slide-inner');
+    if(!inner) return;
+    inner.style.transform = '';
+    inner.style.width = '';
+    void inner.offsetHeight;
+    const cs = getComputedStyle(s);
+    const availH = s.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const innerH = inner.scrollHeight;
+    if(availH > 0 && innerH > availH){
+      const scale = Math.max(0.55, availH / innerH);
+      inner.style.transform = `scale(${scale})`;
+      inner.style.width = (100 / scale) + '%';
+    }
+  }
+
+  /* Re-fit when any slide image finishes loading (covers late-loading assets). */
+  document.querySelectorAll('.slide img').forEach(img => {
+    if(img.complete) return;
+    img.addEventListener('load', () => fitSlide(slides[i]), {once:true});
   });
 
-  setTimeout(() => { keyHint.style.opacity = '0'; }, 5000);
+  let i = 0;
+  const counter = document.getElementById('counter');
+  const titleEl = document.getElementById('slideTitle');
+  function slideIndexFromHash(){
+    const m = /^#deck-slide-(\d+)$/.exec(location.hash);
+    if(!m) return null;
+    const idx = parseInt(m[1], 10);
+    return (idx >= 0 && idx < slides.length) ? idx : null;
+  }
+  function go(n){
+    i = (n + slides.length) % slides.length;
+    slides.forEach((s,idx)=>s.classList.toggle('active', idx===i));
+    counter.textContent = `${pad(i+1)} / ${pad(slides.length)}`;
+    titleEl.textContent = slides[i].dataset.title || '';
+    if(slides[i].id) history.replaceState(null, '', '#' + slides[i].id);
+    requestAnimationFrame(() => fitSlide(slides[i]));
+    if(typeof refreshActiveTile === 'function' && isOverviewOpen()) refreshActiveTile();
+  }
+  window.addEventListener('hashchange', () => {
+    const h = slideIndexFromHash();
+    if(h !== null && h !== i) go(h);
+  });
+  document.getElementById('prev').onclick = ()=>go(i-1);
+  document.getElementById('next').onclick = ()=>go(i+1);
 
-  update();
-})();
+  /* ----- Overview (slide grid) ----- */
+  const overview = document.getElementById('overview');
+  const overviewGrid = document.getElementById('overviewGrid');
+  const overviewBtn = document.getElementById('overviewBtn');
+  const overviewClose = document.getElementById('overviewClose');
+
+  function classifySection(idx){
+    const cuts = [{at: 6, label: 'industry'}, {at: 11, label: 'forus'}];
+    let section = 'frame';
+    for(const c of cuts){ if(idx >= c.at) section = c.label; }
+    return section;
+  }
+  function sectionLabel(name){
+    return ({frame:'The Frame', industry:'The Industry', forus:'For Paramount'})[name] || '';
+  }
+  function buildOverview(){
+    overviewGrid.innerHTML = '';
+    slides.forEach((s, idx) => {
+      const tile = document.createElement('button');
+      tile.className = 'ov-tile';
+      tile.type = 'button';
+      tile.dataset.idx = idx;
+      tile.dataset.section = classifySection(idx);
+      const title = s.dataset.title || `Slide ${idx+1}`;
+      tile.innerHTML = `
+        <span class="ov-tile-strip"></span>
+        <div class="ov-tile-thumb"><div class="ov-tile-stage"></div></div>
+        <div class="ov-tile-foot">
+          <span class="ov-tile-num">${pad(idx+1)}</span>
+          <div class="ov-tile-text">
+            <span class="ov-tile-title">${title}</span>
+            <span class="ov-tile-meta">${sectionLabel(classifySection(idx))}</span>
+          </div>
+        </div>
+      `;
+      const stage = tile.querySelector('.ov-tile-stage');
+      const clone = s.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.classList.remove('active');
+      clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+      clone.querySelectorAll('a, button').forEach(el => { el.tabIndex = -1; });
+      clone.querySelectorAll('.slide-inner').forEach(el => { el.style.transform = ''; el.style.width = ''; });
+      stage.appendChild(clone);
+      tile.addEventListener('click', () => { go(idx); closeOverview(); });
+      overviewGrid.appendChild(tile);
+    });
+  }
+  function setStageSizes(){
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    overviewGrid.querySelectorAll('.ov-tile-thumb').forEach(thumb => {
+      const tileW = thumb.clientWidth || thumb.getBoundingClientRect().width;
+      if(!tileW) return;
+      thumb.style.height = (tileW * h / w) + 'px';
+      const stage = thumb.querySelector('.ov-tile-stage');
+      if(!stage) return;
+      stage.style.width = w + 'px';
+      stage.style.height = h + 'px';
+      stage.style.transform = `scale(${tileW / w})`;
+    });
+  }
+  function refreshActiveTile(){
+    overviewGrid.querySelectorAll('.ov-tile').forEach(t => {
+      t.classList.toggle('active', parseInt(t.dataset.idx,10) === i);
+    });
+  }
+  function openOverview(){
+    if(!overviewGrid.children.length) buildOverview();
+    overview.classList.add('open');
+    overview.setAttribute('aria-hidden','false');
+    requestAnimationFrame(() => { setStageSizes(); refreshActiveTile(); });
+  }
+  function closeOverview(){
+    overview.classList.remove('open');
+    overview.setAttribute('aria-hidden','true');
+  }
+  function isOverviewOpen(){ return overview.classList.contains('open'); }
+  overviewBtn.onclick = () => isOverviewOpen() ? closeOverview() : openOverview();
+  overviewClose.onclick = closeOverview;
+  overview.addEventListener('click', e => { if(e.target === overview) closeOverview(); });
+  window.addEventListener('resize', () => {
+    fitSlide(slides[i]);
+    if(isOverviewOpen()) setStageSizes();
+  });
+
+  document.addEventListener('keydown', e=>{
+    if(isOverviewOpen()){
+      if(e.key==='Escape' || e.key==='g' || e.key==='G') closeOverview();
+      return;
+    }
+    if(e.key==='g'||e.key==='G'){ openOverview(); return; }
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown') go(i+1);
+    if(e.key==='ArrowLeft'||e.key==='PageUp') go(i-1);
+    if(e.key==='Home') go(0);
+    if(e.key==='End') go(slides.length-1);
+  });
+
+  const first = slideIndexFromHash();
+  go(first !== null ? first : 0);
 </script>
 </body>
 </html>
