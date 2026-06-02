@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The State of AI: Now &amp; Next for Media — Paramount Finance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0b0d12;
+    --paper:#f6f3ec;
+    --paper-2:#efeadf;
+    --rule:#1a1c22;
+    --muted:#5a5f6e;
+    --accent:#d7442a;
+    --accent-2:#1d4ed8;
+    --purple:#6b46c1;
+    --teal:#0f766e;
+    --gold:#b8862b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--ink);color:var(--ink);font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+  /* Deck */
+  .deck{width:100vw;height:100vh;overflow:hidden;position:relative}
+  .slide{
+    position:absolute;inset:0;
+    background:var(--paper);
+    padding:56px 88px 72px;
+    display:none;
+    overflow:hidden;
+    flex-direction:column;
+  }
+  .slide.active{display:flex;animation:fade .45s ease both}
+  .slide-inner{
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    flex:1;
+    min-height:0;
+    transform-origin:top left;
+  }
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion: reduce){
+    .slide.active{animation:none}
+  }
+
+  .deck > .mark{
+    position:absolute;top:20px;left:24px;z-index:60;
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    letter-spacing:.25em;text-transform:uppercase;
+    color:#fff;mix-blend-mode:difference;pointer-events:none;
+  }
+
+  /* Chrome */
+  .chrome{
+    position:fixed;left:0;right:0;bottom:0;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;background:rgba(11,13,18,.92);
+    color:#f6f3ec;font-family:"JetBrains Mono",monospace;font-size:12px;
+    z-index:50;backdrop-filter:blur(6px);border-top:1px solid #2a2d36;
+  }
+  .chrome .title{opacity:.7;letter-spacing:.08em;text-transform:uppercase}
+  .chrome .counter{opacity:.9}
+  .chrome button{
+    background:transparent;border:1px solid #3a3e49;color:#f6f3ec;
+    padding:6px 12px;font:inherit;cursor:pointer;border-radius:2px;margin-left:6px;
+  }
+  .chrome button:hover{background:#1a1c22;border-color:#d7442a;color:#fff}
+  .chrome .icon-btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    gap:6px;padding:6px 10px;color:#f6f3ec;
+  }
+  .chrome .icon-btn svg{display:block}
+
+  /* Typographic system */
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 28px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .eyebrow::before{content:"";width:40px;height:1px;background:var(--accent)}
+  h1.display{
+    font-family:"Fraunces",serif;font-weight:800;font-size:clamp(52px,7vw,96px);
+    line-height:.92;letter-spacing:-.03em;margin:0 0 28px;
+  }
+  h2.title{
+    font-family:"Fraunces",serif;font-weight:700;font-size:clamp(36px,4.6vw,64px);
+    line-height:1.05;letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance;
+  }
+  h3.sub{
+    font-family:"Fraunces",serif;font-weight:600;font-size:28px;line-height:1.15;
+    margin:0 0 12px;
+  }
+  p.lede{font-size:clamp(18px,2vw,22px);line-height:1.4;max-width:48ch;color:#2a2d36;margin:0 0 16px}
+  p.hint{font-size:clamp(15px,1.35vw,17px);color:var(--muted);max-width:40ch;margin:0 0 12px;line-height:1.4}
+  p.body{font-size:16px;line-height:1.6;max-width:62ch;color:#3a3e49;margin:0 0 14px}
+  p.body strong{color:var(--ink);font-weight:600}
+  .rule{height:1px;background:var(--rule);margin:24px 0 32px;opacity:.18}
+  .pagenum{
+    position:absolute;right:88px;top:64px;
+    font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);
+    letter-spacing:.18em;
+  }
+  .kicker{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:8px;
+  }
+
+  /* Cover — layout only when active (.slide.active supplies display:flex) */
+  .cover{
+    background:var(--ink);color:var(--paper);
+  }
+  .slide.cover.active{
+    flex-direction:column;justify-content:space-between;gap:32px;
+  }
+  .cover h1{
+    font-family:"Fraunces",serif;font-weight:800;
+    font-size:clamp(48px,7.6vw,116px);line-height:.9;letter-spacing:-.04em;
+    margin:0;color:var(--paper);
+  }
+  .cover h1 em{font-style:italic;color:var(--accent);font-weight:400}
+  .cover .cover-eyebrow{
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+    margin:0 0 18px;display:flex;align-items:center;gap:14px;
+  }
+  .cover .redline{display:inline-block;width:96px;height:3px;background:var(--accent);margin:0 0 18px}
+  .cover-body{
+    display:grid;grid-template-columns:1.05fr 1.4fr;gap:48px;
+    align-items:start;padding-top:36px;border-top:1px solid #2a2d36;
+  }
+  .cover-quote{
+    font-family:"Fraunces",serif;font-weight:400;font-style:italic;
+    font-size:clamp(22px,2.5vw,34px);line-height:1.2;letter-spacing:-.015em;
+    margin:0;color:var(--paper);opacity:.92;max-width:24ch;
+  }
+  .cover-quote em{color:var(--accent);font-style:italic}
+  .cover-tenets{display:grid;grid-template-columns:1fr;gap:18px}
+  .cover-tenet{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:baseline}
+  .cover-tenet h6{
+    font-family:"JetBrains Mono",monospace;font-size:10px;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+    margin:0;white-space:nowrap;
+  }
+  .cover-tenet p{font-size:13px;line-height:1.55;color:var(--paper);opacity:.8;margin:0;max-width:48ch}
+  .cover .meta{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.18em;
+    text-transform:uppercase;opacity:.75;
+  }
+  @media(max-width:900px){.cover-body{grid-template-columns:1fr;gap:24px}}
+
+  /* Section divider */
+  .slide.section-divider{background:var(--ink);color:var(--paper);justify-content:center}
+  .slide.section-divider .pagenum{color:rgba(246,243,236,.5)}
+  .slide.section-divider .section-divider-inner{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
+  .section-divider .redline{display:inline-block;width:96px;height:3px;background:var(--accent);margin-bottom:20px}
+  .slide.section-divider h1{
+    font-family:"Fraunces",serif;font-weight:800;
+    font-size:clamp(40px,6vw,96px);line-height:1;letter-spacing:-.035em;
+    margin:0;max-width:22ch;color:var(--paper);
+  }
+  .slide.section-divider .lede{color:rgba(246,243,236,.82)}
+
+  /* Two-layer diagram / comparison cards */
+  .layerwrap{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:32px}
+  .layer{border:1px solid var(--rule);padding:28px;background:var(--paper-2);position:relative}
+  .layer.accent{border-color:var(--accent)}
+  .layer.teal{border-color:var(--teal)}
+  .layer.blue{border-color:var(--accent-2)}
+  .layer .tag{
+    position:absolute;top:-11px;left:18px;background:var(--paper);
+    padding:0 10px;font-family:"JetBrains Mono",monospace;font-size:10px;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+  }
+  .layer.teal .tag{color:var(--teal)}
+  .layer.blue .tag{color:var(--accent-2)}
+  .layer h4{font-family:"Fraunces",serif;font-size:30px;margin:0 0 10px;font-weight:700;letter-spacing:-.01em}
+  .layer .tagline{font-family:"Fraunces",serif;font-size:15px;font-style:italic;color:var(--muted);margin:0 0 12px}
+  .layer p{font-size:15px;line-height:1.55;color:#2a2d36;margin:0 0 12px}
+  .layer ul{margin:10px 0 0;padding-left:18px;font-size:14px;line-height:1.6;color:#3a3e49}
+  .layer ul li{margin-bottom:5px}
+
+  /* Functions / tool grid */
+  .funcs{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:28px}
+  .func{border-top:3px solid var(--ink);padding:18px 0 0}
+  .func h5{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;margin:0 0 8px;color:var(--muted);
+  }
+  .func h6{font-family:"Fraunces",serif;font-size:22px;margin:0 0 6px;font-weight:700}
+  .func .tagline{font-family:"Fraunces",serif;font-size:14px;font-style:italic;color:var(--accent);margin:0 0 8px}
+  .func p{font-size:13px;line-height:1.55;color:#3a3e49;margin:0}
+
+  /* Three waves */
+  .waves{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:28px}
+  .wave{border-top:3px solid var(--accent);padding:18px 0 0}
+  .wave.w2{border-color:var(--teal)}
+  .wave.w3{border-color:var(--accent-2)}
+  .wave h5{
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;margin:0 0 8px;color:var(--accent);
+  }
+  .wave.w2 h5{color:var(--teal)}
+  .wave.w3 h5{color:var(--accent-2)}
+  .wave h6{font-family:"Fraunces",serif;font-size:22px;margin:0 0 8px;font-weight:700;line-height:1.15}
+  .wave p{font-size:14px;line-height:1.55;color:#3a3e49;margin:0}
+  @media(max-width:900px){.waves{grid-template-columns:1fr}}
+
+  /* Now / Next table */
+  .gaptbl{width:100%;border-collapse:collapse;margin-top:24px;font-size:14px;table-layout:fixed}
+  .gaptbl th,.gaptbl td{text-align:left;padding:14px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+  .gaptbl th{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--muted);font-weight:600;border-bottom:2px solid var(--ink);
+  }
+  .gaptbl th.next{color:var(--accent)}
+  .gaptbl td.gap{font-family:"Fraunces",serif;font-size:18px;font-weight:700;width:22%;color:var(--ink)}
+  .gaptbl td.now{color:#3a3e49;width:39%}
+  .gaptbl td.next{color:#0f5132;width:39%}
+  .gaptbl tr:last-child td{border-bottom:none}
+
+  /* Pull quote */
+  blockquote.pull{
+    font-family:"Fraunces",serif;font-size:30px;line-height:1.2;font-weight:400;
+    font-style:italic;border-left:3px solid var(--accent);padding:4px 0 4px 22px;
+    margin:0;max-width:30ch;color:#1a1c22;
+  }
+  blockquote.pull.lg{font-size:clamp(28px,3.4vw,44px);max-width:24ch}
+  blockquote.pull .attrib{
+    display:block;font-family:"JetBrains Mono",monospace;font-size:11px;font-style:normal;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:16px;
+  }
+
+  /* Screenshot figure */
+  .shot{
+    margin:8px 0 4px;border:1px solid rgba(26,28,34,.16);border-radius:6px;
+    overflow:hidden;background:#fff;max-width:660px;
+    box-shadow:0 10px 30px rgba(11,13,18,.10);
+  }
+  .shot img{display:block;width:100%;height:auto}
+  .shot figcaption{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);padding:10px 14px;border-top:1px solid rgba(26,28,34,.1);
+  }
+
+  /* Stage layouts (sparse, non-boxy) */
+  .beats{display:flex;flex-direction:column;margin-top:4px}
+  .beat{
+    display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;
+    padding:20px 0;border-bottom:1px solid rgba(26,28,34,.1);
+  }
+  .beat:last-child{border-bottom:none}
+  .beat .num{
+    font-family:"Fraunces",serif;font-size:clamp(44px,4.5vw,64px);font-weight:400;font-style:italic;
+    line-height:1;color:var(--accent);letter-spacing:-.03em;
+  }
+  .beat.teal .num{color:var(--teal)}
+  .beat.blue .num{color:var(--accent-2)}
+  .beat h4{font-family:"Fraunces",serif;font-size:clamp(22px,2.3vw,30px);font-weight:700;margin:0;letter-spacing:-.01em;line-height:1.15}
+  .beat p{font-size:clamp(16px,1.5vw,19px);line-height:1.35;color:#3a3e49;margin:6px 0 0;max-width:48ch}
+
+  .rails{display:grid;grid-template-columns:1fr 1fr;gap:52px;margin-top:20px}
+  .rail h4{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+    margin:0 0 14px;padding-bottom:10px;border-bottom:2px solid var(--accent);color:var(--accent);
+  }
+  .rail.teal h4{border-color:var(--teal);color:var(--teal)}
+  .rail.blue h4{border-color:var(--accent-2);color:var(--accent-2)}
+  .rail ul{list-style:none;margin:0;padding:0}
+  .rail li{
+    font-family:"Fraunces",serif;font-size:clamp(19px,2vw,26px);font-weight:600;line-height:1.2;
+    letter-spacing:-.01em;margin:0 0 12px;color:var(--ink);
+  }
+
+  .flow{
+    display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:32px;margin-top:28px;
+    padding-top:28px;border-top:2px solid var(--ink);
+  }
+  .flow-step .step-label{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 8px;
+  }
+  .flow-step h4{
+    font-family:"Fraunces",serif;font-size:clamp(22px,2.6vw,36px);font-weight:700;margin:0 0 6px;letter-spacing:-.02em;
+  }
+  .flow-step.accent h4{color:var(--accent);font-size:clamp(26px,3vw,42px)}
+  .flow-step p{font-size:14px;line-height:1.4;color:#3a3e49;margin:0}
+
+  .stage-foot{
+    margin-top:auto;padding-top:18px;
+    font-family:"Fraunces",serif;font-size:clamp(17px,1.8vw,22px);font-weight:600;font-style:italic;
+    line-height:1.25;color:var(--ink);max-width:58ch;
+  }
+  .stage-foot strong{font-style:normal;color:var(--accent)}
+
+  .hero-stat{
+    font-family:"Fraunces",serif;font-size:clamp(64px,10vw,120px);font-weight:800;
+    line-height:.88;letter-spacing:-.04em;color:var(--accent);margin:12px 0 4px;
+  }
+  .hero-stat span{
+    display:block;font-size:clamp(18px,2vw,24px);font-weight:600;color:var(--ink);letter-spacing:-.01em;margin-top:10px;
+  }
+
+  .moat-rows{margin-top:12px}
+  .moat-row{
+    display:grid;grid-template-columns:minmax(130px,20%) 1fr 1fr;gap:16px 28px;
+    padding:16px 0;border-bottom:1px solid rgba(26,28,34,.08);align-items:baseline;
+  }
+  .moat-row:last-child{border-bottom:none}
+  .moat-row .area{font-family:"Fraunces",serif;font-size:19px;font-weight:700}
+  .moat-row .now,.moat-row .next{font-size:14px;line-height:1.35;color:#3a3e49}
+  .moat-row .next{color:#0f5132;font-weight:500}
+  .moat-head{
+    display:grid;grid-template-columns:minmax(130px,20%) 1fr 1fr;gap:16px 28px;
+    padding-bottom:8px;margin-bottom:4px;
+    font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+  }
+  .moat-head .next{color:var(--accent)}
+
+  .tool-line{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 36px;margin-top:28px}
+  .tool-line .tool h4{
+    font-family:"Fraunces",serif;font-size:clamp(26px,3vw,40px);font-weight:700;margin:0;line-height:1;letter-spacing:-.02em;
+  }
+  .tool-line .tool span{
+    font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:4px;display:block;
+  }
+  .tool-line .sep{font-size:20px;color:rgba(26,28,34,.25);padding-bottom:6px}
+
+  .signal-row{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:20px;padding-top:20px;border-top:1px solid rgba(26,28,34,.1)}
+  .signal-row .sig h5{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;margin:0 0 6px}
+  .signal-row .sig.real h5{color:var(--accent)}
+  .signal-row .sig h6{font-family:"Fraunces",serif;font-size:20px;font-weight:700;margin:0 0 4px}
+  .signal-row .sig p{font-size:13px;line-height:1.4;color:#3a3e49;margin:0}
+
+  blockquote.pull.stage{
+    border-left:none;padding:0;font-size:clamp(28px,3.5vw,48px);max-width:22ch;margin-top:8px;
+  }
+
+  .slide.content-slide.active{flex-direction:column}
+  .slide.content-slide.active .slide-inner{display:flex;flex-direction:column;flex:1;min-height:0}
+
+  /* Utilities */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+  @media(max-width:900px){
+    .two,.rails,.flow,.moat-row,.moat-head{grid-template-columns:1fr}
+    .signal-row{grid-template-columns:1fr}
+  }
+
+  /* Closing */
+  .close{background:var(--ink);color:var(--paper);justify-content:center}
+  .close .eyebrow{color:var(--accent)}
+  .close .big-quote{
+    font-family:"Fraunces",serif;font-size:clamp(40px,5vw,76px);font-weight:400;
+    font-style:italic;line-height:1.05;letter-spacing:-.02em;margin:0 0 20px;max-width:22ch;
+  }
+  .close .big-quote em{color:var(--accent);font-style:italic}
+  .close .lede{color:rgba(246,243,236,.85)}
+  .close .tenets{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;padding-top:32px;border-top:1px solid #2a2d36}
+  .close .tenet h6{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+  .close .tenet p{font-size:14px;line-height:1.55;opacity:.85;margin:0;max-width:32ch}
+
+  /* Overview overlay (slide grid) */
+  .overview{position:fixed;inset:0;z-index:100;background:rgba(11,13,18,.97);display:none;flex-direction:column;color:var(--paper)}
+  .overview.open{display:flex}
+  .overview-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 28px;border-bottom:1px solid #2a2d36;
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  }
+  .overview-title{opacity:.7}
+  .overview .icon-btn{
+    background:transparent;border:1px solid #3a3e49;color:#f6f3ec;
+    padding:6px 12px;font:inherit;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;border-radius:2px;
+  }
+  .overview .icon-btn:hover{background:#1a1c22;border-color:var(--accent)}
+  .overview-grid{
+    flex:1;overflow:auto;padding:28px 28px 48px;display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;align-content:start;
+  }
+  .ov-tile{
+    position:relative;background:var(--ink);color:var(--paper);border-radius:4px;overflow:hidden;cursor:pointer;
+    border:2px solid transparent;transition:transform .12s ease, border-color .12s ease;
+    display:flex;flex-direction:column;padding:0 0 0 4px;text-align:left;font:inherit;
+  }
+  .ov-tile:hover{transform:translateY(-2px);border-color:rgba(215,68,42,.7)}
+  .ov-tile.active{border-color:var(--accent)}
+  .ov-tile-strip{position:absolute;left:0;top:0;bottom:0;width:4px;z-index:5;background:var(--accent)}
+  .ov-tile-thumb{position:relative;width:100%;flex:0 0 auto;overflow:hidden;background:var(--paper);border-bottom:1px solid #2a2d36;min-height:120px}
+  .ov-tile-stage{position:absolute;top:0;left:0;transform-origin:top left;pointer-events:none}
+  .ov-tile-stage > .slide{position:relative !important;inset:auto !important;display:flex !important;margin:0 !important;animation:none !important}
+  .ov-tile-foot{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:12px;padding:10px 14px 12px}
+  .ov-tile-num{font-family:"Fraunces",serif;font-weight:700;font-style:italic;font-size:22px;line-height:1;letter-spacing:-.02em;color:var(--accent)}
+  .ov-tile-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .ov-tile-title{
+    font-family:"Fraunces",serif;font-weight:600;font-size:14px;line-height:1.15;letter-spacing:-.01em;
+    color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .ov-tile-meta{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(246,243,236,.55)}
+  @media(max-width:600px){.overview-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;padding:18px 14px 32px}}
+
+  @media print{
+    html,body{height:auto;overflow:visible;background:var(--paper)}
+    .chrome{display:none !important}
+    .deck{position:static;width:100%;height:auto;min-height:0;overflow:visible}
+    .slide{position:relative !important;inset:auto !important;display:block !important;width:100%;min-height:100vh;height:auto;page-break-after:always;page-break-inside:avoid;overflow:visible}
+    .slide:last-child{page-break-after:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <div class="mark">Paramount Finance · 2026</div>
+
+  <!-- 1. COVER -->
+  <section class="slide cover active" data-title="Cover">
+    <div>
+      <span class="redline"></span>
+      <h1>The State of AI:<br><em>Now &amp; Next</em> for Media.</h1>
+    </div>
+    <div class="cover-body">
+      <p class="cover-quote">Where AI is today. What it means for media. The tools <em>already</em> in our hands.</p>
+      <div class="cover-tenets">
+        <div class="cover-tenet">
+          <h6>Prepared by</h6>
+          <p>Darren Brelesky</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. ONE THING -->
+  <section class="slide section-divider" data-title="One Thing">
+    <span class="pagenum"></span>
+    <div class="section-divider-inner">
+      <span class="redline"></span>
+      <h1>AI is as big a deal as the internet or mobile &mdash;<br>and <span style="color:var(--accent)">only as big.</span></h1>
+      <p class="lede" style="max-width:42ch;margin-top:28px">Plan for it like the internet. Not like science fiction.</p>
+    </div>
+  </section>
+
+  <!-- 3. 1997 MOMENT -->
+  <section class="slide content-slide" data-title="1997 Moment">
+    <span class="pagenum"></span>
+    <h2 class="title">We&rsquo;re in the <em style="font-style:italic;color:var(--accent)">&ldquo;1997 moment&rdquo;</em> of AI.</h2>
+    <p class="hint">Most of it doesn&rsquo;t work yet. Most of what matters hasn&rsquo;t been built.</p>
+    <div class="rails">
+      <div class="rail teal">
+        <h4>We know</h4>
+        <ul>
+          <li>Platform shift. Real.</li>
+          <li>Tools work. Engage now.</li>
+          <li>Still early. ~20% daily use (teens).</li>
+        </ul>
+      </div>
+      <div class="rail">
+        <h4>We don&rsquo;t</h4>
+        <ul>
+          <li>Who wins.</li>
+          <li>Which use cases.</li>
+          <li>How good models get.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="stage-foot"><strong>1997 lesson:</strong> We knew the web mattered. We couldn&rsquo;t name Google.</p>
+  </section>
+
+  <!-- 4. EXCEL LESSON -->
+  <section class="slide content-slide" data-title="The Spreadsheet">
+    <span class="pagenum"></span>
+    <h2 class="title">Remember what the <em style="font-style:italic;color:var(--accent)">spreadsheet</em> did.</h2>
+    <p class="hero-stat">↑<span>Accountant headcount, century of automation</span></p>
+    <div class="beats">
+      <div class="beat teal"><span class="num">1</span><div><h4>Automate the work</h4><p>Every wave did. ERP, cloud, Excel.</p></div></div>
+      <div class="beat"><span class="num">2</span><div><h4>Do more of it</h4><p>Cheaper work means more analysis, not less.</p></div></div>
+      <div class="beat blue"><span class="num">3</span><div><h4>Judgment moves up</h4><p>One analyst replaces a team. Bar rises.</p></div></div>
+    </div>
+    <p class="stage-foot"><strong>Finance takeaway:</strong> AI is the next spreadsheet. People move up the chain.</p>
+  </section>
+
+  <!-- 5. THE IRONY -->
+  <section class="slide content-slide" data-title="The Irony">
+    <span class="pagenum"></span>
+    <h2 class="title">&ldquo;Imagine how much free time<br>LLMs will create.&rdquo;</h2>
+    <div class="two" style="margin-top:12px;align-items:start">
+      <div class="rails" style="grid-template-columns:1fr;gap:28px;margin-top:0">
+        <div class="rail teal">
+          <h4>The promise</h4>
+          <ul><li>Faster work. More time off.</li></ul>
+        </div>
+        <div class="rail">
+          <h4>The history</h4>
+          <ul><li>Excel didn&rsquo;t shorten the week. It raised the bar.</li></ul>
+        </div>
+      </div>
+      <figure class="shot" style="max-width:100%;margin:0">
+        <img src="images/evans-linkedin-free-time.png" alt="LinkedIn post by Benedict Evans on free time, spreadsheets, and LLMs">
+        <figcaption>Benedict Evans on LinkedIn &mdash; tongue firmly in cheek</figcaption>
+      </figure>
+    </div>
+    <p class="stage-foot"><strong>Forecast:</strong> More output. Higher bar. Not more leisure.</p>
+  </section>
+
+  <!-- 6. TASK OR JOB -->
+  <section class="slide content-slide" data-title="Task or Job">
+    <span class="pagenum"></span>
+    <h2 class="title">Ask <em style="font-style:italic;color:var(--accent)">&ldquo;task or job?&rdquo;</em></h2>
+    <p class="hint">Not &ldquo;what % can AI do?&rdquo;</p>
+    <div class="rails">
+      <div class="rail blue">
+        <h4>Task</h4>
+        <ul>
+          <li>Draft variance commentary</li>
+          <li>Summarize the filing</li>
+          <li>First-pass model</li>
+        </ul>
+      </div>
+      <div class="rail">
+        <h4>Job</h4>
+        <ul>
+          <li>What the numbers mean</li>
+          <li>Own the board forecast</li>
+          <li>Accountability</li>
+        </ul>
+      </div>
+    </div>
+    <p class="stage-foot"><strong>McKinsey isn&rsquo;t hired for the deck.</strong> They&rsquo;re hired for judgment.</p>
+  </section>
+
+  <!-- 7. SERVICES BOOM -->
+  <section class="slide content-slide" data-title="Services Boom">
+    <span class="pagenum"></span>
+    <h2 class="title">AI is driving a boom<br>in <em style="font-style:italic;color:var(--accent)">consulting</em>.</h2>
+    <p class="hint">OpenAI and Anthropic are partnering with McKinsey, Bain, Accenture.</p>
+    <div class="beats">
+      <div class="beat"><span class="num">½</span><div><h4>Tech is half the battle</h4><p>Lab capability &ne; changed workflows.</p></div></div>
+      <div class="beat teal"><span class="num">→</span><div><h4>Nobody sits idle</h4><p>Reinvention is a months-long team sport.</p></div></div>
+      <div class="beat blue"><span class="num">$</span><div><h4>Budget deployment</h4><p>Not just the license line item.</p></div></div>
+    </div>
+  </section>
+
+  <!-- 8. VALUE / DISTRIBUTION -->
+  <section class="slide content-slide" data-title="Where Value Accrues">
+    <span class="pagenum"></span>
+    <h2 class="title">Models commoditize.<br><em style="font-style:italic;color:var(--accent)">Distribution</em> wins.</h2>
+    <div class="flow">
+      <div class="flow-step">
+        <p class="step-label">01</p>
+        <h4>The model</h4>
+        <p>Commodity. No durable edge.</p>
+      </div>
+      <div class="flow-step">
+        <p class="step-label">02</p>
+        <h4>The application</h4>
+        <p>Value moves up the stack.</p>
+      </div>
+      <div class="flow-step accent">
+        <p class="step-label">03</p>
+        <h4>Distribution</h4>
+        <p>Closest to the customer wins.</p>
+      </div>
+    </div>
+    <p class="stage-foot"><strong>Incumbents win:</strong> cheaper software means noisier markets. Reach matters more.</p>
+  </section>
+
+  <!-- 9. SCALE OF THE BET -->
+  <section class="slide content-slide" data-title="AWS not Windows">
+    <span class="pagenum"></span>
+    <h2 class="title">More like <em style="font-style:italic;color:var(--accent)">AWS</em><br>than like Windows.</h2>
+    <div class="rails">
+      <div class="rail blue">
+        <h4>No winner-take-all</h4>
+        <ul>
+          <li>No network effects</li>
+          <li>3&ndash;6 commodity providers</li>
+          <li>No pricing power</li>
+        </ul>
+      </div>
+      <div class="rail">
+        <h4>Today&rsquo;s bills won&rsquo;t last</h4>
+        <ul>
+          <li>$1.5M/mo inference is disequilibrium</li>
+          <li>Like $50K mobile data in 2010</li>
+          <li>Value moves up-stack</li>
+        </ul>
+      </div>
+    </div>
+    <p class="stage-foot"><strong>Finance read:</strong> Don&rsquo;t extrapolate today&rsquo;s unit costs or model-maker valuations.</p>
+  </section>
+
+  <!-- 10. BACKLASH -->
+  <section class="slide content-slide" data-title="The Backlash">
+    <span class="pagenum"></span>
+    <h2 class="title">The anti-AI backlash<br>is <em style="font-style:italic;color:var(--accent)">real</em>.</h2>
+    <div class="signal-row">
+      <div class="sig real"><h5>Real</h5><h6>Deepfakes, slop, power bills</h6></div>
+      <div class="sig"><h5>Overstated</h5><h6>Water use ~0.017%</h6></div>
+      <div class="sig"><h5>Unresolved</h5><h6>Jobs data unclear</h6></div>
+    </div>
+    <div class="beats" style="margin-top:8px">
+      <div class="beat teal"><span class="num">→</span><div><h4>Trust is the asset</h4><p>Real talent. Verified sources. Careful brands.</p></div></div>
+    </div>
+    <p class="stage-foot"><strong>Deploy thoughtfully.</strong> Don&rsquo;t freeze.</p>
+  </section>
+
+  <!-- 11. MEDIA NOW / NEXT -->
+  <section class="slide content-slide" data-title="Impact on Media">
+    <span class="pagenum"></span>
+    <h2 class="title">What it does to the<br>businesses we&rsquo;re in.</h2>
+    <p class="hint">Content gets cheap. The moat moves.</p>
+    <div class="moat-head"><span>Area</span><span>2026 · Now</span><span class="next">~2028 · Next</span></div>
+    <div class="moat-rows">
+      <div class="moat-row"><span class="area">Production</span><span class="now">Dubbing, cuts, VFX at volume</span><span class="next">Versioning near-free; taste wins</span></div>
+      <div class="moat-row"><span class="area">Discovery</span><span class="now">Smarter recs, metadata, promos</span><span class="next">Ask, don&rsquo;t browse</span></div>
+      <div class="moat-row"><span class="area">Marketing</span><span class="now">Recaps, trailers at volume</span><span class="next">POV and talent, not volume</span></div>
+      <div class="moat-row"><span class="area">The moat</span><span class="now">Library, rights, brand</span><span class="next">Rights, distribution, trust</span></div>
+    </div>
+  </section>
+
+  <!-- 12. WHY PARAMOUNT WINS -->
+  <section class="slide content-slide" data-title="Why This Favors Us">
+    <span class="pagenum"></span>
+    <h2 class="title">AI makes our scarce<br>assets <em style="font-style:italic;color:var(--accent)">worth more</em>.</h2>
+    <div class="beats">
+      <div class="beat"><span class="num">IP</span><div><h4>Own the commodity flood</h4><p>Iconic franchises stand out further.</p></div></div>
+      <div class="beat teal"><span class="num">→</span><div><h4>We have distribution</h4><p>Audience, platforms, rights.</p></div></div>
+      <div class="beat blue"><span class="num">✓</span><div><h4>Trust earns a premium</h4><p>Human, verified, premium beats slop.</p></div></div>
+    </div>
+    <p class="stage-foot"><strong>Bottom line:</strong> Cheaper commodity. Pricier moat.</p>
+  </section>
+
+  <!-- 13. TOOLS -->
+  <section class="slide content-slide" data-title="Tools in Use">
+    <span class="pagenum"></span>
+    <h2 class="title">What the workforce<br>is already using.</h2>
+    <p class="hint">Pick one. Skills carry across.</p>
+    <div class="tool-line">
+      <div class="tool"><h4>Claude</h4><span>All-rounder</span></div>
+      <span class="sep" aria-hidden="true">·</span>
+      <div class="tool"><h4>ChatGPT</h4><span>Everyday</span></div>
+      <span class="sep" aria-hidden="true">·</span>
+      <div class="tool"><h4>Gemini</h4><span>Research</span></div>
+      <span class="sep" aria-hidden="true">·</span>
+      <div class="tool"><h4>Copilot</h4><span>Excel / Teams</span></div>
+      <span class="sep" aria-hidden="true">·</span>
+      <div class="tool"><h4>Grok</h4><span>Live pulse</span></div>
+    </div>
+    <p class="stage-foot"><strong>Finance:</strong> Memos, filings, models. Human verifies the numbers.</p>
+  </section>
+
+  <!-- 14. WHAT IT MEANS -->
+  <section class="slide content-slide" data-title="What This Means">
+    <span class="pagenum"></span>
+    <h2 class="title">What this means<br>for <em style="font-style:italic;color:var(--accent)">us</em>.</h2>
+    <div class="rails">
+      <div class="rail teal">
+        <h4>Now · 2026</h4>
+        <ul>
+          <li>AI on tasks</li>
+          <li>Trial → habit</li>
+          <li>Budget deployment</li>
+          <li>Humans on what must be right</li>
+        </ul>
+      </div>
+      <div class="rail">
+        <h4>Next · ~2028</h4>
+        <ul>
+          <li>Invest in the moat</li>
+          <li>Cheaper compute stays</li>
+          <li>Browse → ask</li>
+          <li>Lead on trust</li>
+        </ul>
+      </div>
+    </div>
+    <p class="stage-foot"><strong>Get fluent.</strong> Be a great hire in the new environment.</p>
+  </section>
+
+  <!-- 15. CLOSING -->
+  <section class="slide close" data-title="Discussion">
+    <span class="pagenum"></span>
+    <blockquote class="big-quote">Where should Paramount Finance <em>lean in</em> first?</blockquote>
+    <p class="lede" style="margin-top:24px">Pick one recurring task. Point AI at it this quarter.</p>
+  </section>
+
+</div>
+
+<nav class="chrome">
+  <span class="title" id="slideTitle">Cover</span>
+  <span class="counter" id="counter">01 / 15</span>
+  <span>
+    <button id="overviewBtn" class="icon-btn" title="Overview (G)" aria-label="Show all slides">
+      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+        <rect x="1" y="1" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <rect x="9" y="1" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <rect x="1" y="9" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <rect x="9" y="9" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      </svg>
+    </button>
+    <button id="prev">← Prev</button>
+    <button id="next">Next →</button>
+  </span>
+</nav>
+
+<aside id="overview" class="overview" aria-hidden="true" role="dialog" aria-label="All slides">
+  <header class="overview-bar">
+    <span class="overview-title">All slides</span>
+    <button id="overviewClose" class="icon-btn" aria-label="Close overview">Close ✕</button>
+  </header>
+  <div id="overviewGrid" class="overview-grid"></div>
+</aside>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const pad = n => String(n).padStart(2,'0');
+  slides.forEach((s, idx) => {
+    s.id = 'deck-slide-' + idx;
+    const pn = s.querySelector('.pagenum');
+    if(pn) pn.textContent = `${pad(idx+1)} / ${pad(slides.length)}`;
+  });
+
+  /* Wrap each slide's content in a .slide-inner so we can auto-scale on overflow.
+     Skip cover/divider/close slides — they have special centered layouts. */
+  slides.forEach(s => {
+    if(s.classList.contains('cover')) return;
+    if(s.classList.contains('section-divider')) return;
+    if(s.classList.contains('close')) return;
+    if(s.querySelector(':scope > .slide-inner')) return;
+    const pagenum = s.querySelector(':scope > .pagenum');
+    const inner = document.createElement('div');
+    inner.className = 'slide-inner';
+    Array.from(s.children).forEach(child => {
+      if(child === pagenum) return;
+      inner.appendChild(child);
+    });
+    s.appendChild(inner);
+  });
+
+  function fitSlide(s){
+    if(!s) return;
+    const inner = s.querySelector(':scope > .slide-inner');
+    if(!inner) return;
+    inner.style.transform = '';
+    inner.style.width = '';
+    void inner.offsetHeight;
+    const cs = getComputedStyle(s);
+    const availH = s.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const innerH = inner.scrollHeight;
+    if(availH > 0 && innerH > availH){
+      const scale = Math.max(0.55, availH / innerH);
+      inner.style.transform = `scale(${scale})`;
+      inner.style.width = (100 / scale) + '%';
+    }
+  }
+
+  /* Re-fit when any slide image finishes loading (covers late-loading assets). */
+  document.querySelectorAll('.slide img').forEach(img => {
+    if(img.complete) return;
+    img.addEventListener('load', () => fitSlide(slides[i]), {once:true});
+  });
+
+  let i = 0;
+  const counter = document.getElementById('counter');
+  const titleEl = document.getElementById('slideTitle');
+  function slideIndexFromHash(){
+    const m = /^#deck-slide-(\d+)$/.exec(location.hash);
+    if(!m) return null;
+    const idx = parseInt(m[1], 10);
+    return (idx >= 0 && idx < slides.length) ? idx : null;
+  }
+  function go(n){
+    i = (n + slides.length) % slides.length;
+    slides.forEach((s,idx)=>s.classList.toggle('active', idx===i));
+    counter.textContent = `${pad(i+1)} / ${pad(slides.length)}`;
+    titleEl.textContent = slides[i].dataset.title || '';
+    if(slides[i].id) history.replaceState(null, '', '#' + slides[i].id);
+    requestAnimationFrame(() => fitSlide(slides[i]));
+    if(typeof refreshActiveTile === 'function' && isOverviewOpen()) refreshActiveTile();
+  }
+  window.addEventListener('hashchange', () => {
+    const h = slideIndexFromHash();
+    if(h !== null && h !== i) go(h);
+  });
+  document.getElementById('prev').onclick = ()=>go(i-1);
+  document.getElementById('next').onclick = ()=>go(i+1);
+
+  /* ----- Overview (slide grid) ----- */
+  const overview = document.getElementById('overview');
+  const overviewGrid = document.getElementById('overviewGrid');
+  const overviewBtn = document.getElementById('overviewBtn');
+  const overviewClose = document.getElementById('overviewClose');
+
+  function classifySection(idx){
+    const cuts = [{at: 6, label: 'industry'}, {at: 11, label: 'forus'}];
+    let section = 'frame';
+    for(const c of cuts){ if(idx >= c.at) section = c.label; }
+    return section;
+  }
+  function sectionLabel(name){
+    return ({frame:'The Frame', industry:'The Industry', forus:'For Paramount'})[name] || '';
+  }
+  function buildOverview(){
+    overviewGrid.innerHTML = '';
+    slides.forEach((s, idx) => {
+      const tile = document.createElement('button');
+      tile.className = 'ov-tile';
+      tile.type = 'button';
+      tile.dataset.idx = idx;
+      tile.dataset.section = classifySection(idx);
+      const title = s.dataset.title || `Slide ${idx+1}`;
+      tile.innerHTML = `
+        <span class="ov-tile-strip"></span>
+        <div class="ov-tile-thumb"><div class="ov-tile-stage"></div></div>
+        <div class="ov-tile-foot">
+          <span class="ov-tile-num">${pad(idx+1)}</span>
+          <div class="ov-tile-text">
+            <span class="ov-tile-title">${title}</span>
+            <span class="ov-tile-meta">${sectionLabel(classifySection(idx))}</span>
+          </div>
+        </div>
+      `;
+      const stage = tile.querySelector('.ov-tile-stage');
+      const clone = s.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.classList.remove('active');
+      clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+      clone.querySelectorAll('a, button').forEach(el => { el.tabIndex = -1; });
+      clone.querySelectorAll('.slide-inner').forEach(el => { el.style.transform = ''; el.style.width = ''; });
+      stage.appendChild(clone);
+      tile.addEventListener('click', () => { go(idx); closeOverview(); });
+      overviewGrid.appendChild(tile);
+    });
+  }
+  function setStageSizes(){
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    overviewGrid.querySelectorAll('.ov-tile-thumb').forEach(thumb => {
+      const tileW = thumb.clientWidth || thumb.getBoundingClientRect().width;
+      if(!tileW) return;
+      thumb.style.height = (tileW * h / w) + 'px';
+      const stage = thumb.querySelector('.ov-tile-stage');
+      if(!stage) return;
+      stage.style.width = w + 'px';
+      stage.style.height = h + 'px';
+      stage.style.transform = `scale(${tileW / w})`;
+    });
+  }
+  function refreshActiveTile(){
+    overviewGrid.querySelectorAll('.ov-tile').forEach(t => {
+      t.classList.toggle('active', parseInt(t.dataset.idx,10) === i);
+    });
+  }
+  function openOverview(){
+    if(!overviewGrid.children.length) buildOverview();
+    overview.classList.add('open');
+    overview.setAttribute('aria-hidden','false');
+    requestAnimationFrame(() => { setStageSizes(); refreshActiveTile(); });
+  }
+  function closeOverview(){
+    overview.classList.remove('open');
+    overview.setAttribute('aria-hidden','true');
+  }
+  function isOverviewOpen(){ return overview.classList.contains('open'); }
+  overviewBtn.onclick = () => isOverviewOpen() ? closeOverview() : openOverview();
+  overviewClose.onclick = closeOverview;
+  overview.addEventListener('click', e => { if(e.target === overview) closeOverview(); });
+  window.addEventListener('resize', () => {
+    fitSlide(slides[i]);
+    if(isOverviewOpen()) setStageSizes();
+  });
+
+  document.addEventListener('keydown', e=>{
+    if(isOverviewOpen()){
+      if(e.key==='Escape' || e.key==='g' || e.key==='G') closeOverview();
+      return;
+    }
+    if(e.key==='g'||e.key==='G'){ openOverview(); return; }
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown') go(i+1);
+    if(e.key==='ArrowLeft'||e.key==='PageUp') go(i-1);
+    if(e.key==='Home') go(0);
+    if(e.key==='End') go(slides.length-1);
+  });
+
+  const first = slideIndexFromHash();
+  go(first !== null ? first : 0);
+</script>
+</body>
+</html>
