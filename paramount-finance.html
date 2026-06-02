@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The State of AI: Now &amp; Next for Media — Paramount Finance</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-deep: #1a0a3e;
+    --bg-purple: #6c3ce0;
+    --bg-violet: #a855f7;
+    --bg-lavender: #c084fc;
+    --accent-orange: #f59e0b;
+    --accent-cyan: #22d3ee;
+    --accent-blue: #3b82f6;
+    --accent-green: #10b981;
+    --accent-red: #ef4444;
+    --card-dark: #0f1729;
+    --card-light: #ffffff;
+    --text-white: #ffffff;
+    --text-muted: #c4b5fd;
+    --text-dark: #1e293b;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Presentation container ── */
+  .presentation {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── Mountain background (shared across slides) ── */
+  .mountain-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background: linear-gradient(180deg, #c084fc 0%, #a855f7 20%, #7c3aed 40%, #6c3ce0 55%, #2e1065 80%, #1a0a3e 100%);
+  }
+
+  .mountain-bg .mountain {
+    position: absolute;
+    bottom: 0;
+    border-radius: 50% 50% 0 0;
+  }
+
+  .mountain.m1 { width: 120%; height: 55%; left: -10%; background: linear-gradient(180deg, rgba(30,10,80,0.6) 0%, rgba(20,5,60,0.9) 100%); z-index: 1; }
+  .mountain.m2 { width: 80%; height: 45%; left: 30%; background: linear-gradient(180deg, rgba(50,20,100,0.5) 0%, rgba(25,10,70,0.8) 100%); z-index: 2; }
+  .mountain.m3 { width: 60%; height: 35%; left: -5%; background: linear-gradient(180deg, rgba(60,30,120,0.4) 0%, rgba(30,15,80,0.7) 100%); z-index: 3; }
+  .mountain.m4 { width: 90%; height: 25%; left: 15%; background: linear-gradient(180deg, rgba(20,8,55,0.8) 0%, rgba(15,5,45,0.95) 100%); z-index: 4; }
+
+  /* ── Slides ── */
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5vh 6vw;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    overflow-y: auto;
+  }
+
+  .slide.active {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 20;
+    animation: fadeIn 0.45s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ── Typography ── */
+  .section-label {
+    font-size: clamp(0.65rem, 1.2vw, 0.85rem);
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    margin-bottom: 1.2rem;
+  }
+
+  .slide-title {
+    font-size: clamp(1.8rem, 4.5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    max-width: 85%;
+  }
+
+  .slide-subtitle {
+    font-size: clamp(0.9rem, 1.6vw, 1.15rem);
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 2rem;
+    max-width: 78%;
+  }
+
+  .highlight-cyan { color: var(--accent-cyan); }
+  .highlight-orange { color: var(--accent-orange); }
+  .highlight-blue { color: var(--accent-blue); }
+  .highlight-green { color: var(--accent-green); }
+
+  /* ── Cards ── */
+  .card-row {
+    display: flex;
+    gap: 1.5vw;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .card {
+    background: var(--card-light);
+    color: var(--text-dark);
+    border-radius: 12px;
+    padding: clamp(1rem, 2vw, 1.5rem);
+    flex: 1;
+    min-width: 220px;
+    font-size: clamp(0.75rem, 1.1vw, 0.9rem);
+    line-height: 1.55;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+
+  .card.dark {
+    background: var(--card-dark);
+    color: var(--text-white);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .card h3 {
+    font-size: clamp(0.9rem, 1.4vw, 1.15rem);
+    font-weight: 800;
+    margin-bottom: 0.3rem;
+  }
+
+  .card .meta {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 0.15rem;
+  }
+
+  .card .tagline {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+  }
+
+  .card ul { padding-left: 1.1rem; margin: 0.5rem 0; }
+  .card li { margin-bottom: 0.35rem; }
+
+  .card-border-left { border-left: 4px solid var(--accent-orange); }
+  .card-border-top-orange { border-top: 4px solid var(--accent-orange); }
+  .card-border-top-cyan { border-top: 4px solid var(--accent-cyan); }
+  .card-border-top-green { border-top: 4px solid var(--accent-green); }
+  .card-border-top-blue { border-top: 4px solid var(--accent-blue); }
+
+  /* ── Two-column layout ── */
+  .two-col { display: flex; gap: 2vw; margin-top: 1.5rem; flex-wrap: wrap; }
+  .two-col > .col { flex: 1; min-width: 280px; }
+
+  /* ── Stat row ── */
+  .stat-row {
+    display: flex;
+    gap: 1.5vw;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    flex: 1;
+    min-width: 180px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: clamp(1rem, 2vw, 1.6rem);
+    text-align: center;
+  }
+
+  .stat .num {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--accent-orange);
+  }
+
+  .stat .num.cyan { color: var(--accent-cyan); }
+  .stat .num.blue { color: var(--accent-blue); }
+  .stat .num.green { color: var(--accent-green); }
+
+  .stat .label {
+    margin-top: 0.6rem;
+    font-size: clamp(0.7rem, 1vw, 0.85rem);
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  /* ── Table styling ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: clamp(0.7rem, 1vw, 0.85rem);
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+
+  .data-table th {
+    text-align: left;
+    padding: 0.9rem 1.2rem;
+    font-weight: 700;
+    font-size: clamp(0.75rem, 1.1vw, 0.9rem);
+  }
+
+  .data-table th:nth-child(2) { background: var(--accent-blue); color: white; }
+  .data-table th:nth-child(3) { background: var(--accent-orange); color: white; }
+
+  .data-table td { padding: 0.75rem 1.2rem; border-top: 1px solid rgba(255,255,255,0.08); }
+  .data-table tr:nth-child(even) td { background: rgba(255,255,255,0.03); }
+
+  .data-table td:first-child {
+    font-weight: 700;
+    color: var(--text-white);
+    white-space: nowrap;
+    width: 180px;
+  }
+
+  .data-table td:nth-child(2),
+  .data-table td:nth-child(3) {
+    background: rgba(255,255,255,0.92);
+    color: var(--text-dark);
+  }
+
+  .data-table tr:nth-child(even) td:nth-child(2),
+  .data-table tr:nth-child(even) td:nth-child(3) {
+    background: rgba(255,255,255,0.97);
+  }
+
+  /* ── Maturity / phase curve ── */
+  .curve-container { display: flex; gap: 0.8vw; margin-top: 1.5rem; flex-wrap: wrap; }
+
+  .curve-step {
+    flex: 1;
+    min-width: 130px;
+    background: var(--card-light);
+    color: var(--text-dark);
+    border-radius: 10px;
+    padding: clamp(0.6rem, 1.2vw, 1rem);
+    font-size: clamp(0.65rem, 0.95vw, 0.8rem);
+    line-height: 1.45;
+    position: relative;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    border-top: 3px solid var(--accent-blue);
+  }
+
+  .curve-step:nth-child(2) { border-top-color: var(--accent-cyan); }
+  .curve-step:last-child { border-top-color: var(--accent-orange); }
+
+  .curve-step .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    color: white;
+    font-weight: 800;
+    font-size: 0.75rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .curve-step:nth-child(2) .step-num { background: var(--accent-cyan); color: #0f1729; }
+  .curve-step:last-child .step-num { background: var(--accent-orange); }
+
+  .curve-step .step-title {
+    font-weight: 800;
+    font-size: clamp(0.75rem, 1.1vw, 0.9rem);
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+
+  .curve-step .step-tool {
+    display: inline-block;
+    margin-top: 0.4rem;
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    background: #e0e7ff;
+    color: #4338ca;
+    font-weight: 600;
+  }
+
+  /* ── Bullet points on slides ── */
+  .bullet-list { list-style: none; padding: 0; margin: 1rem 0; }
+
+  .bullet-list li {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 1.2rem;
+    font-size: clamp(0.85rem, 1.3vw, 1.05rem);
+    line-height: 1.5;
+  }
+
+  .bullet-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.35em;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent-orange);
+  }
+
+  .bullet-list li .sub {
+    display: block;
+    font-size: 0.85em;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+  }
+
+  /* ── Footer note ── */
+  .footer-note {
+    position: absolute;
+    bottom: 3vh;
+    left: 6vw;
+    right: 6vw;
+    font-size: clamp(0.7rem, 1vw, 0.85rem);
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .footer-note strong { color: var(--text-white); font-style: normal; }
+
+  /* ── Title slide special ── */
+  .title-slide .slide-title { font-size: clamp(2.3rem, 5.5vw, 4.2rem); max-width: 82%; }
+  .title-slide .author { margin-top: 1.5rem; font-size: clamp(0.8rem, 1.2vw, 1rem); }
+  .title-slide .author strong { font-weight: 700; }
+  .title-slide .author span { color: var(--text-muted); }
+
+  /* ── Source attribution chip ── */
+  .source-chip {
+    display: inline-block;
+    margin-top: 1.6rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background: rgba(34, 211, 238, 0.12);
+    border: 1px solid rgba(34, 211, 238, 0.35);
+    color: var(--accent-cyan);
+    font-size: clamp(0.7rem, 1vw, 0.85rem);
+    font-weight: 600;
+  }
+
+  /* ── Decorative sidebar dots (title & closing slides) ── */
+  .side-dots {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 60px;
+    background: var(--card-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-left: 3px solid var(--accent-cyan);
+  }
+
+  .side-dots .dot { width: 16px; height: 16px; border-radius: 50%; background: var(--accent-blue); }
+  .side-dots .dot:first-child { background: var(--accent-orange); width: 20px; height: 20px; }
+
+  /* ── Navigation ── */
+  .nav-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.8rem 2rem;
+    background: rgba(15, 5, 45, 0.85);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .nav-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .nav-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+  .slide-dots { display: flex; gap: 6px; align-items: center; }
+
+  .slide-dots button {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.25);
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0;
+  }
+
+  .slide-dots button.active { background: var(--accent-orange); width: 28px; border-radius: 5px; }
+
+  .slide-counter {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    min-width: 50px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Progress bar ── */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-orange));
+    z-index: 200;
+    transition: width 0.4s ease;
+  }
+
+  /* ── Keyboard hint ── */
+  .key-hint {
+    position: fixed;
+    bottom: 70px; right: 20px;
+    z-index: 100;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.3);
+    text-align: right;
+    pointer-events: none;
+    transition: opacity 3s ease;
+  }
+
+  /* ── Big-quote styling ── */
+  .big-quote {
+    font-size: clamp(1.6rem, 3.8vw, 3rem);
+    font-weight: 900;
+    line-height: 1.15;
+    max-width: 85%;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .slide { padding: 4vh 5vw; }
+    .slide-title, .slide-subtitle, .big-quote { max-width: 100%; }
+    .card-row, .two-col, .curve-container, .stat-row { flex-direction: column; }
+    .card, .curve-step, .stat { min-width: unset; }
+    .side-dots { width: 40px; }
+    .data-table { font-size: 0.7rem; }
+    .data-table td:first-child { white-space: normal; width: auto; }
+    .nav-bar { padding: 0.6rem 1rem; gap: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+<div class="presentation">
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Mountain background -->
+  <div class="mountain-bg">
+    <div class="mountain m1"></div>
+    <div class="mountain m2"></div>
+    <div class="mountain m3"></div>
+    <div class="mountain m4"></div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 1 — TITLE ═══ -->
+  <div class="slide title-slide active" data-slide="0">
+    <div class="section-label">Paramount Finance &middot; AI Briefing</div>
+    <h1 class="slide-title">The State of AI: <span class="highlight-cyan">Now &amp; Next</span> for Media</h1>
+    <p class="slide-subtitle" style="font-style:normal;">What the data actually says about where AI is, what it&rsquo;s doing to our industry, and the tools already in the hands of our workforce.</p>
+    <div class="source-chip">Framed around Benedict Evans&rsquo; &ldquo;AI Eats the World&rdquo; &middot; his annual macro &amp; strategy read on tech</div>
+    <div class="author">
+      <strong>Darren Brelesky</strong> <span>&middot; Prepared for the Paramount Finance team</span>
+    </div>
+    <div class="side-dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 2 — ONE THING ═══ -->
+  <div class="slide" data-slide="1">
+    <div class="section-label">If You Remember One Thing</div>
+    <div class="big-quote">
+      This is a <span class="highlight-cyan">platform shift</span>, not a feature.<br>
+      The infrastructure is being built <span class="highlight-orange">now</span> &mdash; but who captures the value is still up for grabs.
+    </div>
+    <p class="slide-subtitle">Evans&rsquo; core point: every 10&ndash;15 years a new computing platform resets the industry. We&rsquo;re in the messy, early, over-invested phase of the fifth one. For Paramount, the question isn&rsquo;t &ldquo;is AI real&rdquo; &mdash; it&rsquo;s where our moat moves to when making content gets cheap.</p>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 3 — THE SOURCE ═══ -->
+  <div class="slide" data-slide="2">
+    <div class="section-label">The Source</div>
+    <h2 class="slide-title" style="font-size:clamp(1.6rem,3.5vw,2.8rem);">Why ground this in Benedict Evans</h2>
+    <div class="two-col">
+      <div class="col">
+        <ul class="bullet-list">
+          <li><strong>The reference macro deck for tech.</strong><span class="sub">Former a16z partner. His &ldquo;AI Eats the World&rdquo; talk (~90 slides) is the most-cited annual read on where the industry is actually heading.</span></li>
+          <li><strong>Now published twice a year.</strong><span class="sub">The pace of change pushed him to a spring + autumn cadence &mdash; a signal in itself.</span></li>
+          <li><strong>Data over hype.</strong><span class="sub">He separates what&rsquo;s measurably happening from the narrative &mdash; which is exactly the lens a finance team needs.</span></li>
+        </ul>
+      </div>
+      <div class="col">
+        <div class="card dark" style="border-left:4px solid var(--accent-cyan);">
+          <h3 class="highlight-cyan">His through-line</h3>
+          <p style="margin-top:0.6rem;">&ldquo;We know this will get better &mdash; we just don&rsquo;t know how much.&rdquo;</p>
+          <p style="margin-top:0.8rem;">Unlike PCs, the web or smartphones, we can&rsquo;t see the ceiling of what next year&rsquo;s models can do. That uncertainty is the whole investment debate.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-note">Source: Benedict Evans, &ldquo;AI Eats the World,&rdquo; 2025&ndash;26 editions &middot; ben-evans.com/presentations</div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 4 — FIFTH EPOCH ═══ -->
+  <div class="slide" data-slide="3">
+    <div class="section-label">The Big Idea</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">The fifth great epoch of computing</h2>
+    <p class="slide-subtitle">When a real platform shift lands, &ldquo;all tech innovation, investment and company creation switches over&rdquo; to it. That&rsquo;s where we are.</p>
+    <div class="curve-container">
+      <div class="curve-step"><div class="step-num">1</div><span class="step-title">Mainframe</span><p>Computing as a scarce, centralized resource.</p></div>
+      <div class="curve-step"><div class="step-num">2</div><span class="step-title">PC</span><p>A computer on every desk.</p></div>
+      <div class="curve-step"><div class="step-num">3</div><span class="step-title">Web</span><p>Everything connects and gets distributed.</p></div>
+      <div class="curve-step"><div class="step-num">4</div><span class="step-title">Mobile / Cloud</span><p>A computer in every pocket; ~4B+ users.</p></div>
+      <div class="curve-step" style="border-top-color:var(--accent-orange);"><div class="step-num" style="background:var(--accent-orange);">5</div><span class="step-title highlight-orange" style="color:var(--accent-orange);">AI</span><p>Software that can read, write and make &mdash; in plain language.</p></div>
+    </div>
+    <div class="footer-note"><strong>So what:</strong> each wave was bigger than the last, and each rewrote which companies and business models won.</div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 5 — ADOPTION REALITY ═══ -->
+  <div class="slide" data-slide="4">
+    <div class="section-label">Reality Check</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Huge awareness. Surprisingly shallow use.</h2>
+    <p class="slide-subtitle">Everyone has heard of it; far fewer have built it into how they work. The gap between trial and habit is the real opportunity.</p>
+    <div class="stat-row">
+      <div class="stat"><div class="num cyan">~800M</div><div class="label">ChatGPT weekly active users &mdash; one of the fastest adoption curves ever</div></div>
+      <div class="stat"><div class="num">~5%</div><div class="label">of users actually pay &mdash; most engagement is free and casual</div></div>
+      <div class="stat"><div class="num blue">80%</div><div class="label">sent fewer than 1,000 messages in 2025 &mdash; under 3 prompts a day</div></div>
+    </div>
+    <div class="footer-note"><strong>Finance read:</strong> mass curiosity, thin daily habit. The value isn&rsquo;t in &ldquo;has everyone tried it&rdquo; &mdash; it&rsquo;s in turning trial into workflow. Source: OpenAI usage data via Evans.</div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 6 — CAPEX ═══ -->
+  <div class="slide" data-slide="5">
+    <div class="section-label">Follow The Money</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">The capex surge is industrial-scale</h2>
+    <p class="slide-subtitle">Combined AI infrastructure spend by Microsoft, Alphabet, AWS and Meta:</p>
+    <div class="stat-row">
+      <div class="stat"><div class="num blue">$220B</div><div class="label">2024 &mdash; actual</div></div>
+      <div class="stat"><div class="num cyan">$360B</div><div class="label">2025 &mdash; actual</div></div>
+      <div class="stat"><div class="num">~$700B</div><div class="label">2026 &mdash; guided</div></div>
+    </div>
+    <div class="card dark" style="margin-top:1.4rem; border-left:4px solid var(--accent-orange);">
+      <p>For scale, annual AI capex ambitions now rival entire capital-intensive industries &mdash; <strong>global telecoms (~$300B)</strong> and <strong>oil &amp; gas upstream (~$540B)</strong>. The binding constraint isn&rsquo;t chips from Nvidia &mdash; it&rsquo;s <strong class="highlight-orange">electricity and power buildout</strong>.</p>
+    </div>
+    <div class="footer-note">Source: Benedict Evans, &ldquo;AI Eats the World&rdquo; &middot; hyperscaler capex guidance.</div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 7 — BUBBLE OR SHIFT ═══ -->
+  <div class="slide" data-slide="6">
+    <div class="section-label">The Question Everyone Asks</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Bubble&hellip; <span class="highlight-cyan">or</span> platform shift?</h2>
+    <p class="slide-subtitle">Evans&rsquo; answer: it can be both. The investment may overshoot &mdash; but the infrastructure outlasts the crash.</p>
+    <div class="card-row">
+      <div class="card card-border-top-orange">
+        <h3>The bubble risk is real</h3>
+        <ul>
+          <li>We&rsquo;re building <strong>over-capacity</strong> in GPUs and energy ahead of revenue.</li>
+          <li>If the near-term revenue doesn&rsquo;t show up, there is a correction.</li>
+          <li>Usage today is still casual; monetization is thin (~5% pay).</li>
+        </ul>
+      </div>
+      <div class="card card-border-top-cyan">
+        <h3>&hellip;but the rails remain</h3>
+        <ul>
+          <li>Like <strong>railways and fiber</strong>: the bubble funds the build-out, the crash wipes investors &mdash; the infrastructure stays.</li>
+          <li>What&rsquo;s left is <strong>cheap, abundant compute</strong> that fuels the next decade of products.</li>
+          <li>&ldquo;Abundant cognition&rdquo; becomes a utility you build on top of.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-note"><strong>Finance read:</strong> separate the asset from the equity story. Even a market correction leaves cheaper AI for everyone &mdash; including us.</div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 8 — BETTER VS RIGHT ═══ -->
+  <div class="slide" data-slide="7">
+    <div class="section-label">The Trust Problem</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">&ldquo;Better&rdquo; is not the same as &ldquo;right&rdquo;</h2>
+    <p class="slide-subtitle">Evans&rsquo; sharpest point for anyone deploying AI: a lower error rate is not zero error. Design for where that matters.</p>
+    <div class="two-col">
+      <div class="col">
+        <div class="card card-border-top-blue">
+          <h3 class="highlight-blue">&ldquo;Better&rdquo;</h3>
+          <div class="tagline">Lower error rate, probabilistic</div>
+          <p>Great when a strong draft, a summary, or 20 options is the goal and a human edits. The error you can catch is cheap.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card card-border-top-orange">
+          <h3 class="highlight-orange">&ldquo;Right&rdquo;</h3>
+          <div class="tagline">Deterministic, must-be-correct</div>
+          <p>There&rsquo;s a world of difference between a legal brief (or a financial statement) that <em>looks</em> right and one that <em>is</em> right. Here you keep a human in the loop.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-note"><strong>Finance read:</strong> lean in on drafting, research and analysis acceleration; keep hands on the wheel for numbers, filings, contracts and anything auditable.</div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 9 — ABSORB/INNOVATE/DISRUPT ═══ -->
+  <div class="slide" data-slide="8">
+    <div class="section-label">How The Change Arrives</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Absorb &rarr; Innovate &rarr; Disrupt</h2>
+    <p class="slide-subtitle">New tech doesn&rsquo;t land all at once. Evans&rsquo; deployment pattern &mdash; and where most of the industry sits today.</p>
+    <div class="curve-container">
+      <div class="curve-step">
+        <div class="step-num">1</div>
+        <span class="step-title">Absorb</span>
+        <p>Make it a feature. Automate known tasks inside existing tools and workflows.</p>
+        <span class="step-tool">Most companies are here</span>
+      </div>
+      <div class="curve-step">
+        <div class="step-num">2</div>
+        <span class="step-title">Innovate</span>
+        <p>New products, bundles and revenue lines that weren&rsquo;t possible before. Takes longer.</p>
+        <span class="step-tool">Starting now</span>
+      </div>
+      <div class="curve-step">
+        <div class="step-num">3</div>
+        <span class="step-title">Disrupt</span>
+        <p>Industries restructure; cost curves and competitive moats get redrawn.</p>
+        <span class="step-tool" style="background:#fef3c7; color:#b45309;">The next few years</span>
+      </div>
+    </div>
+    <div class="footer-note"><strong>Evans&rsquo; framing:</strong> the story splits into three buckets &mdash; <strong>Capital</strong> (the build-out), <strong>Deployment</strong> (getting it into work), and <strong>Change</strong> (what it does to industries).</div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 10 — MEDIA NOW/NEXT ═══ -->
+  <div class="slide" data-slide="9">
+    <div class="section-label">Impact On Media &middot; Now &amp; Next</div>
+    <h2 class="slide-title" style="font-size:clamp(1.4rem,3vw,2.3rem);">What it does to the businesses we&rsquo;re in</h2>
+    <p class="slide-subtitle">The cost of making content trends toward near-zero. When supply explodes, the scarce thing &mdash; and the moat &mdash; moves.</p>
+    <table class="data-table">
+      <thead>
+        <tr><th></th><th>2026 &mdash; Happening Now</th><th>~2028 &mdash; Where It Heads</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Production &amp; post</td>
+          <td>AI dubbing, localization, captioning, rough cuts and VFX assists drafted at volume; humans finish.</td>
+          <td>Versioning per market and format becomes near-free; the edit and the taste are the value.</td>
+        </tr>
+        <tr>
+          <td>Streaming &amp; discovery</td>
+          <td>Sharper recommendations and catalog search; AI-assisted metadata and promos.</td>
+          <td>The home screen assembles itself per viewer; &ldquo;ask, don&rsquo;t browse&rdquo; becomes how people find content.</td>
+        </tr>
+        <tr>
+          <td>Content &amp; marketing</td>
+          <td>Recaps, social cutdowns, trailers and copy generated at volume; teams curate.</td>
+          <td>Content gets commoditized; the edge is a distinct POV, real talent, and trusted IP &mdash; not volume.</td>
+        </tr>
+        <tr>
+          <td>The moat</td>
+          <td>Library, rights and brand still scarce while tools commoditize.</td>
+          <td>Value concentrates in <strong>rights, distribution and trust</strong> &mdash; the things AI can&rsquo;t generate.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="footer-note"><strong>Our move:</strong> use AI to lower cost and personalize &mdash; while leaning into the assets it can&rsquo;t fake: IP, talent, rights and audience trust.</div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 11 — COMMODITIZATION ═══ -->
+  <div class="slide" data-slide="10">
+    <div class="section-label">Where Value Lands</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Models commoditize. Distribution wins.</h2>
+    <ul class="bullet-list">
+      <li>
+        <strong>The models are converging.</strong>
+        <span class="sub">Evans&rsquo; view: the underlying LLMs increasingly look like commodities &mdash; the gap between them keeps narrowing.</span>
+      </li>
+      <li>
+        <strong>Brand and distribution decide winners.</strong>
+        <span class="sub">ChatGPT took the brand slot the way Google did for search. The company closest to the user at the moment of choice wins &mdash; not necessarily the best engineering.</span>
+      </li>
+      <li>
+        <strong>Why that&rsquo;s good news for Paramount.</strong>
+        <span class="sub">We already own scarce, defensible things: iconic IP, live rights, talent relationships and direct audience distribution. AI makes the commodity cheaper; it makes our scarce assets more valuable.</span>
+      </li>
+    </ul>
+    <div class="footer-note">Source: Benedict Evans on model commoditization and distribution.</div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 12 — TOOLS ═══ -->
+  <div class="slide" data-slide="11">
+    <div class="section-label">Tools In Use Today</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">What the Paramount workforce is already using</h2>
+    <p class="slide-subtitle">They&rsquo;re converging, but each still has a lane. Get fluent in one and the skills carry across.</p>
+    <div class="card-row" style="flex-wrap: nowrap;">
+      <div class="card" style="border-top:3px solid #a855f7; min-width:0;">
+        <h3>Claude</h3><div class="meta">ANTHROPIC</div>
+        <div class="tagline highlight-cyan" style="color:var(--accent-cyan);">The all-rounder</div>
+        <p>Strong reasoning, long documents, drafting and analysis. The one we lean on; built this deck.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #10b981; min-width:0;">
+        <h3>ChatGPT</h3><div class="meta">OPENAI</div>
+        <div class="tagline" style="color:#10b981;">Everyday chat</div>
+        <p>The front door most people start with. Strong at images and quick everyday tasks.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #3b82f6; min-width:0;">
+        <h3>Gemini</h3><div class="meta">GOOGLE</div>
+        <div class="tagline" style="color:#3b82f6;">Research + Google</div>
+        <p>Deep research and anything Google-native. NotebookLM turns docs into audio briefings.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #6366f1; min-width:0;">
+        <h3>Copilot</h3><div class="meta">MICROSOFT</div>
+        <div class="tagline" style="color:#6366f1;">In your workflow</div>
+        <p>Rides inside Excel, Outlook and Teams &mdash; where finance already lives.</p>
+      </div>
+      <div class="card" style="border-top:3px solid #ef4444; min-width:0;">
+        <h3>Grok</h3><div class="meta">XAI</div>
+        <div class="tagline" style="color:#ef4444;">Real-time pulse</div>
+        <p>Live lookups and reading real-time sentiment via the X firehose.</p>
+      </div>
+    </div>
+    <div class="footer-note"><strong>For finance specifically:</strong> drafting memos &amp; board narratives, summarizing filings &amp; contracts, building models and reconciliations, scenario analysis &mdash; always with a human verifying the numbers.</div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 13 — WHAT IT MEANS ═══ -->
+  <div class="slide" data-slide="12">
+    <div class="section-label">The Takeaway For Paramount</div>
+    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">What this means for us</h2>
+    <div class="card-row">
+      <div class="card card-border-top-cyan">
+        <h3 class="highlight-cyan">Now &middot; 2026</h3>
+        <ul>
+          <li>Treat AI as a cost lever: localization, recaps, marketing, back-office and analysis drafted at volume.</li>
+          <li>Move teams from <em>trial</em> to <em>habit</em> &mdash; that&rsquo;s where the productivity is.</li>
+          <li>Keep humans on anything that must be <strong>right</strong>, not just <strong>better</strong>.</li>
+        </ul>
+      </div>
+      <div class="card card-border-top-orange">
+        <h3 class="highlight-orange">Next &middot; ~2028</h3>
+        <ul>
+          <li>Content gets cheap; defend and invest in the moat: <strong>IP, rights, talent, trust, distribution.</strong></li>
+          <li>Plan for cheaper compute even if the market corrects &mdash; the rails stay.</li>
+          <li>Watch the shift from &ldquo;browse&rdquo; to &ldquo;ask&rdquo; in how audiences discover us.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-note"><strong>Bottom line:</strong> AI makes the commodity cheaper and our scarce assets more valuable. Win by deploying fast where it&rsquo;s safe &mdash; and protecting what only Paramount can offer.</div>
+  </div>
+
+  <!-- ══════════════════════════════════ SLIDE 14 — CLOSING ═══ -->
+  <div class="slide title-slide" data-slide="13">
+    <h1 class="slide-title">Questions &amp; Discussion</h1>
+    <p class="slide-subtitle" style="font-style:normal;">Where should Paramount Finance lean in first?<br>Let&rsquo;s pick one workflow and point AI at it.</p>
+    <div class="author" style="margin-top:2rem;">Darren Brelesky &middot; <span style="color:var(--text-muted);">Framed around Benedict Evans, &ldquo;AI Eats the World&rdquo;</span></div>
+    <div class="side-dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+  </div>
+
+  <!-- ── Navigation bar ── -->
+  <nav class="nav-bar">
+    <button class="nav-btn" id="prevBtn" aria-label="Previous slide">&#8592;</button>
+    <div class="slide-dots" id="slideDots"></div>
+    <span class="slide-counter" id="slideCounter">1 / 14</span>
+    <button class="nav-btn" id="nextBtn" aria-label="Next slide">&#8594;</button>
+  </nav>
+
+  <div class="key-hint" id="keyHint">Use arrow keys or swipe to navigate</div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const dotsContainer = document.getElementById('slideDots');
+  const counter = document.getElementById('slideCounter');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progress = document.getElementById('progressBar');
+  const keyHint = document.getElementById('keyHint');
+
+  for (let i = 0; i < total; i++) {
+    const btn = document.createElement('button');
+    btn.setAttribute('aria-label', `Go to slide ${i + 1}`);
+    btn.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(btn);
+  }
+
+  function update() {
+    slides.forEach(s => s.classList.remove('active'));
+    const s = slides[current];
+    void s.offsetWidth;
+    s.classList.add('active');
+
+    dotsContainer.querySelectorAll('button').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+
+    counter.textContent = `${current + 1} / ${total}`;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+    progress.style.width = `${((current + 1) / total) * 100}%`;
+  }
+
+  function goTo(n) {
+    if (n < 0 || n >= total || n === current) return;
+    current = n;
+    update();
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+  });
+
+  setTimeout(() => { keyHint.style.opacity = '0'; }, 5000);
+
+  update();
+})();
+</script>
+</body>
+</html>
