@@ -4,7 +4,10 @@ Interactive presentation: **AI, and what it actually means for us** — by Darre
 
 ## Live site
 
-**https://dbrelesky.github.io/AI-Fundamentals-Roadshow/**
+| Deck | URL |
+|------|-----|
+| AI Fundamentals Roadshow | https://dbrelesky.github.io/AI-Fundamentals-Roadshow/ |
+| Paramount Finance (AI status) | https://dbrelesky.github.io/AI-Fundamentals-Roadshow/paramount-finance.html |
 
 Updates to `main` deploy automatically via GitHub Actions.
 
