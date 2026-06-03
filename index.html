@@ -138,6 +138,174 @@
   .slide.section-divider h1 em{font-style:italic;color:var(--accent);font-weight:400}
   .slide.section-divider .lede{color:rgba(246,243,236,.82);margin-top:28px}
 
+  .elephant-room-slide .section-divider-inner{position:relative;z-index:1}
+  .elephant-room-sketch{
+    position:absolute;z-index:0;pointer-events:none;
+    top:clamp(128px,15vh,180px);left:50%;transform:translateX(-50%);
+    width:min(42vw,500px);height:auto;opacity:.7;
+  }
+  @media(max-width:900px){
+    .elephant-room-sketch{
+      top:96px;left:50%;width:min(84vw,520px);opacity:.7;
+    }
+  }
+
+  .live-intro-slide .live-intro-inner{
+    align-items:center;text-align:center;justify-content:center;width:100%;
+    gap:clamp(28px,4vh,44px);
+  }
+  .live-intro-photo{
+    width:clamp(296px,36vw,464px);height:auto;max-height:min(52vh,520px);
+    object-fit:contain;display:block;border:none;border-radius:0;box-shadow:none;
+    background:transparent;mix-blend-mode:screen;
+  }
+  .live-intro-slide .live-intro-title{
+    display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
+    gap:clamp(14px,2vw,28px);
+    font-family:"Fraunces",serif;font-weight:800;
+    font-size:clamp(52px,9vw,128px);line-height:.95;letter-spacing:-.045em;
+    margin:0;color:var(--paper);max-width:none;
+  }
+  .live-intro-mic{
+    display:flex;flex-shrink:0;align-items:center;color:var(--paper);
+    width:clamp(52px,7.5vw,84px);height:clamp(80px,11vw,132px);
+  }
+  .live-intro-mic svg,.live-intro-mic img{width:100%;height:100%;display:block}
+  .live-intro-slide .live-intro-title em{font-style:italic;color:var(--accent);font-weight:400}
+
+  .poll-slide{cursor:pointer;user-select:none}
+  .poll-slide .poll-inner{
+    flex:1;display:flex;flex-direction:column;justify-content:center;
+    align-items:flex-start;max-width:100%;min-height:0;width:100%;
+  }
+  .poll-kicker{
+    font-family:"JetBrains Mono",monospace;font-size:clamp(13px,1.4vw,16px);
+    letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin:0 0 20px;
+  }
+  .poll-current{
+    font-family:"Fraunces",serif;font-weight:800;
+    font-size:clamp(52px,11vw,140px);line-height:.92;letter-spacing:-.04em;
+    margin:0;color:var(--paper);max-width:16ch;
+  }
+  .poll-current.poll-animate{animation:pollIn .45s ease both}
+  .poll-ask{
+    font-family:"Fraunces",serif;font-weight:600;font-style:italic;
+    font-size:clamp(28px,4.2vw,56px);line-height:1.15;letter-spacing:-.02em;
+    margin:clamp(20px,3vh,36px) 0 0;color:rgba(246,243,236,.88);max-width:22ch;
+  }
+  .poll-done{
+    display:flex;flex-wrap:wrap;gap:12px 28px;margin-top:clamp(28px,5vh,48px);
+  }
+  .poll-done span{
+    font-family:"JetBrains Mono",monospace;font-size:clamp(14px,1.6vw,18px);
+    letter-spacing:.14em;text-transform:uppercase;color:rgba(246,243,236,.45);
+  }
+  .poll-hint{
+    font-family:"JetBrains Mono",monospace;font-size:clamp(11px,1.2vw,13px);
+    letter-spacing:.18em;text-transform:uppercase;
+    color:rgba(246,243,236,.4);margin-top:auto;padding-top:32px;
+  }
+  .poll-rate{width:100%;max-width:min(920px,100%);margin-top:clamp(12px,2vh,28px)}
+  .poll-rate[hidden]{display:none!important}
+  .poll-rate.is-visible .poll-rate-label{animation:pollRateIn .5s ease both}
+  .poll-rate.is-visible .poll-pct{animation:pollRateIn .55s .1s ease both}
+  .poll-rate.is-visible .poll-slider-wrap{animation:pollRateIn .6s .18s ease both}
+  @keyframes pollRateIn{
+    from{opacity:0;transform:translateY(22px)}
+    to{opacity:1;transform:none}
+  }
+  .poll-rate-label{
+    font-family:"JetBrains Mono",monospace;font-size:clamp(12px,1.3vw,15px);
+    letter-spacing:.2em;text-transform:uppercase;color:rgba(246,243,236,.55);margin:0 0 12px;
+  }
+  .poll-pct{
+    font-family:"Fraunces",serif;font-weight:800;font-size:clamp(72px,14vw,168px);
+    line-height:1;letter-spacing:-.05em;color:var(--accent);margin:0 0 16px;display:block;
+  }
+  .poll-slider-wrap{position:relative;height:36px;display:flex;align-items:center}
+  .poll-slider-track{
+    position:absolute;left:0;right:0;height:16px;border-radius:4px;
+    background:rgba(246,243,236,.08);overflow:hidden;pointer-events:none;
+  }
+  .poll-slider-fill{
+    height:100%;width:0;border-radius:4px;
+    background:linear-gradient(90deg,#8b4513 0%,#d7442a 38%,#f59e0b 72%,#fbbf24 100%);
+    box-shadow:0 0 24px rgba(215,68,42,.35);
+    transition:width .15s ease-out;
+  }
+  .poll-slider-fill.is-entering{transition:width .7s cubic-bezier(.22,1,.36,1)}
+  .poll-slider{
+    -webkit-appearance:none;appearance:none;position:relative;z-index:2;
+    width:100%;height:16px;background:transparent;cursor:pointer;margin:0;
+  }
+  .poll-slider::-webkit-slider-runnable-track{
+    height:16px;background:transparent;border-radius:4px;
+  }
+  .poll-slider::-moz-range-track{
+    height:16px;background:transparent;border:none;border-radius:4px;
+  }
+  .poll-slider::-webkit-slider-thumb{
+    -webkit-appearance:none;width:34px;height:34px;border-radius:4px;
+    background:linear-gradient(145deg,#fbbf24 0%,#d7442a 55%,#b45309 100%);
+    border:3px solid #f6f3ec;box-shadow:0 4px 22px rgba(215,68,42,.45);
+    margin-top:-9px;
+  }
+  .poll-slider::-moz-range-thumb{
+    width:34px;height:34px;border-radius:4px;border:3px solid #f6f3ec;
+    background:linear-gradient(145deg,#fbbf24 0%,#d7442a 55%,#b45309 100%);
+    box-shadow:0 4px 22px rgba(215,68,42,.45);
+  }
+  .poll-slide.is-sliding{cursor:default}
+  .poll-slide.is-sliding .poll-hint{pointer-events:none}
+  .maturity-hero{
+    display:flex;align-items:center;gap:clamp(28px,5vw,56px);flex-wrap:wrap;margin:8px 0 4px;
+  }
+  .maturity-pie-wrap{
+    position:relative;width:clamp(220px,24vw,300px);height:clamp(220px,24vw,300px);flex-shrink:0;
+  }
+  .maturity-pie{width:100%;height:100%;display:block}
+  .maturity-pie-track{fill:none;stroke:rgba(246,243,236,.14);stroke-width:26}
+  .maturity-pie-fill{
+    fill:none;stroke:var(--accent);stroke-width:26;stroke-linecap:round;
+    transform:rotate(-90deg);transform-origin:110px 110px;
+    transition:stroke-dashoffset 1.35s cubic-bezier(.22,1,.36,1);
+  }
+  .maturity-pie-center{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;pointer-events:none;
+  }
+  .maturity-pie-avg{
+    font-family:"Fraunces",serif;font-weight:800;font-size:clamp(52px,7vw,80px);
+    line-height:1;letter-spacing:-.04em;color:var(--paper);
+  }
+  .maturity-pie-label{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;color:rgba(246,243,236,.5);margin-top:8px;
+  }
+  .maturity-hero h1{margin:0;max-width:18ch}
+  .maturity-summary{
+    color:rgba(246,243,236,.82);margin:clamp(20px,3vh,28px) 0 0;max-width:54ch;line-height:1.45;
+  }
+  .maturity-breakdown{
+    font-family:"JetBrains Mono",monospace;font-size:clamp(11px,1.2vw,14px);
+    letter-spacing:.14em;text-transform:uppercase;color:rgba(246,243,236,.5);
+    margin:clamp(16px,2vh,24px) 0 0;line-height:1.8;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .maturity-pie-fill{transition:none}
+  }
+  @keyframes pollIn{
+    from{opacity:0;transform:translateY(28px)}
+    to{opacity:1;transform:none}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .poll-current.poll-animate{animation:none}
+    .poll-rate.is-visible .poll-rate-label,
+    .poll-rate.is-visible .poll-pct,
+    .poll-rate.is-visible .poll-slider-wrap{animation:none}
+    .poll-slider-fill.is-entering{transition:none}
+  }
+
   .layerwrap{display:grid;grid-template-columns:1.15fr 1fr;gap:36px;margin-top:28px}
   .layer{border:1px solid var(--rule);padding:28px;background:var(--paper-2);position:relative}
   .layer.accent{border-color:var(--accent)}
@@ -169,19 +337,29 @@
   .func.blue{border-color:var(--accent-2)}
   .func.purple{border-color:var(--purple)}
   .func h5{
-    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;
-    text-transform:uppercase;margin:0 0 8px;color:var(--muted);
+    display:flex;align-items:center;gap:clamp(10px,1.2vw,14px);
+    font-family:"JetBrains Mono",monospace;font-size:20px;letter-spacing:.2em;
+    text-transform:uppercase;margin:0 0 12px;color:var(--muted);
   }
-  .func h6{font-family:"Fraunces",serif;font-size:22px;margin:0 0 6px;font-weight:700}
-  .func .tagline{font-family:"Fraunces",serif;font-size:14px;font-style:italic;color:var(--accent);margin:0 0 8px}
+  .func-label-icon{
+    display:flex;flex-shrink:0;align-items:center;justify-content:center;
+    width:clamp(28px,3vw,36px);height:clamp(28px,3vw,36px);color:var(--accent);
+  }
+  .func-label-icon svg,.func-label-icon img{width:100%;height:100%;display:block}
+  .func.teal .func-label-icon{color:var(--teal)}
+  .func.purple .func-label-icon{color:var(--purple)}
+  .tool-icon-row{display:inline-flex;align-items:center;gap:5px}
+  .tool-icon-row .func-label-icon{width:18px;height:18px}
+  .func h6{font-family:"Fraunces",serif;font-size:44px;margin:0 0 10px;font-weight:700}
+  .func .tagline{font-family:"Fraunces",serif;font-size:28px;font-style:italic;color:var(--accent);margin:0 0 12px}
   .func.teal .tagline{color:var(--teal)}
   .func.blue .tagline{color:var(--accent-2)}
   .func.purple .tagline{color:var(--purple)}
-  .func p{font-size:13px;line-height:1.55;color:#3a3e49;margin:0}
-  .func ul{margin:8px 0 0;padding-left:16px;font-size:12px;line-height:1.5;color:#3a3e49}
+  .func p{font-size:26px;line-height:1.55;color:#3a3e49;margin:0}
+  .func ul{margin:12px 0 0;padding-left:24px;font-size:24px;line-height:1.5;color:#3a3e49}
   .func .who{
-    font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.16em;
-    text-transform:uppercase;color:var(--accent);margin-top:10px;display:block;
+    font-family:"JetBrains Mono",monospace;font-size:18px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--accent);margin-top:14px;display:block;
   }
 
   .waves{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:28px}
@@ -204,10 +382,120 @@
   .wave p{font-size:13px;line-height:1.5;color:#3a3e49;margin:0}
   .wave .chip{
     font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.12em;
-    text-transform:uppercase;color:var(--muted);margin-top:8px;display:inline-block;
+    text-transform:uppercase;color:var(--muted);margin-top:8px;
+    display:inline-flex;align-items:center;gap:6px;
   }
+  .wave .chip .func-label-icon{width:16px;height:16px;color:var(--accent)}
+  .wave.w2 .chip .func-label-icon{color:var(--teal)}
+  .wave.w3 .chip .func-label-icon{color:var(--accent-2)}
+  .wave.w4 .chip .func-label-icon,.wave.w5 .chip .func-label-icon{color:var(--purple)}
+  .wave.w6 .chip .func-label-icon{color:#b91c1c}
   .maturity{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:24px}
   @media(max-width:1100px){.maturity{grid-template-columns:repeat(3,1fr)}}
+
+  .maturity-curve-slide{
+    background:linear-gradient(165deg,#3d2f6e 0%,#243b63 42%,#152238 100%);
+    color:var(--paper);padding:32px 52px 32px;
+    isolation:isolate;
+  }
+  .maturity-curve-slide::before,
+  .maturity-curve-slide::after{
+    content:"";position:absolute;inset:-12%;pointer-events:none;z-index:0;
+  }
+  .maturity-curve-slide::before{
+    background:
+      radial-gradient(ellipse 55% 45% at 18% 22%,rgba(94,234,212,.22) 0%,transparent 58%),
+      radial-gradient(ellipse 50% 42% at 88% 78%,rgba(107,70,193,.28) 0%,transparent 55%),
+      radial-gradient(ellipse 40% 35% at 62% 12%,rgba(91,184,212,.14) 0%,transparent 50%);
+    animation:mcBgDrift 22s ease-in-out infinite alternate;
+  }
+  .maturity-curve-slide::after{
+    background:linear-gradient(
+      115deg,
+      transparent 0%,
+      rgba(246,243,236,.04) 38%,
+      rgba(94,234,212,.06) 52%,
+      transparent 72%
+    );
+    animation:mcBgShimmer 28s ease-in-out infinite;
+  }
+  .maturity-curve-slide > *{position:relative;z-index:1}
+  @keyframes mcBgDrift{
+    0%{transform:translate(0,0) scale(1)}
+    50%{transform:translate(2.5%,-2%) scale(1.05)}
+    100%{transform:translate(-2%,2.5%) scale(1.02)}
+  }
+  @keyframes mcBgShimmer{
+    0%,100%{opacity:.45;transform:translateX(-8%) skewX(-2deg)}
+    50%{opacity:.75;transform:translateX(8%) skewX(2deg)}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .maturity-curve-slide::before,
+    .maturity-curve-slide::after{animation:none}
+  }
+  .maturity-curve-slide .pagenum{color:rgba(246,243,236,.45)}
+  .maturity-curve-slide > .slide-inner{display:flex;flex-direction:column;flex:1;min-height:0;gap:8px}
+  .mc-title{
+    font-family:"Fraunces",serif;font-weight:800;font-size:clamp(32px,4.2vw,52px);
+    line-height:1.05;letter-spacing:-.03em;margin:0;color:#c7d8f0;
+  }
+  .mc-chart-wrap{position:relative;flex:1;min-height:clamp(180px,34vh,290px);margin:0}
+  .mc-chart{width:100%;height:100%;display:block}
+  .mc-axis-label{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;color:rgba(246,243,236,.75);position:absolute;
+  }
+  .mc-axis-y{left:0;top:8px;writing-mode:vertical-rl;transform:rotate(180deg)}
+  .mc-axis-x{right:0;bottom:4px}
+  .mc-red-pill{
+    position:absolute;right:12%;bottom:38%;
+    font-family:"Fraunces",serif;font-style:italic;font-size:13px;color:#f87171;
+  }
+  .mc-cards{
+    display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:0;
+  }
+  .mc-card{
+    background:var(--paper);color:var(--ink);border-radius:2px;padding:12px 12px 12px 14px;
+    border-left:4px solid #5eb8d4;display:flex;flex-direction:column;min-height:0;
+  }
+  .mc-card.s3{border-color:var(--accent-2)}
+  .mc-card.s4{border-color:var(--accent-2)}
+  .mc-card.s5{border-color:var(--gold)}
+  .mc-card.s6{border:2px dashed #dc2626;border-left:4px solid #dc2626}
+  .mc-card-head{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+  .mc-card-num{
+    width:28px;height:28px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Fraunces",serif;font-weight:800;font-size:15px;color:#fff;
+    background:#5eb8d4;
+  }
+  .mc-card.s3 .mc-card-num,.mc-card.s4 .mc-card-num{background:var(--accent-2)}
+  .mc-card.s5 .mc-card-num{background:var(--gold);color:var(--ink)}
+  .mc-card.s6 .mc-card-num{background:#dc2626}
+  .mc-card h6{
+    font-family:"Fraunces",serif;font-weight:700;font-size:17px;line-height:1.1;margin:0;
+  }
+  .mc-card p{font-size:12.5px;line-height:1.45;color:#3a3e49;margin:0;flex:1}
+  .mc-card-foot{
+    font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.1em;
+    text-transform:uppercase;margin-top:9px;line-height:1.35;
+  }
+  .mc-card-foot .t-chat{color:#0e7490}
+  .mc-card-foot .t-cowork{color:var(--teal)}
+  .mc-card-foot .t-code{color:var(--accent)}
+  .mc-card-foot .t-beyond{color:#dc2626}
+  .mc-legend{
+    text-align:center;font-family:"JetBrains Mono",monospace;font-size:9px;
+    letter-spacing:.08em;color:rgba(246,243,236,.8);margin:8px 0 0;line-height:1.6;
+  }
+  .mc-legend .lg-chat{color:#5eb8d4}
+  .mc-legend .lg-cowork{color:#5eead4}
+  .mc-legend .lg-code{color:#fb923c}
+  .mc-legend .lg-beyond{color:#f87171}
+  @media(max-width:1100px){
+    .mc-cards{grid-template-columns:repeat(3,1fr)}
+    .mc-red-pill{right:8%;bottom:32%;font-size:11px}
+  }
 
   .gaptbl{width:100%;border-collapse:collapse;margin-top:24px;font-size:14px;table-layout:fixed}
   .gaptbl th,.gaptbl td{text-align:left;padding:14px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
@@ -315,6 +603,10 @@
     line-height:1.25;color:var(--ink);max-width:58ch;
   }
   .stage-foot strong{font-style:normal;color:var(--accent)}
+  .stage-foot-tools strong{display:inline-flex;align-items:center;gap:6px}
+  .stage-foot-tools .func-label-icon{width:20px;height:20px;color:var(--accent)}
+  .stage-foot-tools strong:nth-of-type(2) .func-label-icon{color:var(--teal)}
+  .stage-foot-tools strong:nth-of-type(3) .func-label-icon{color:var(--purple)}
 
   .slide.content-slide.active{flex-direction:column}
   .slide.content-slide.active .slide-inner{display:flex;flex-direction:column;flex:1;min-height:0}
@@ -395,7 +687,7 @@
       <h1>AI, and what it<br><em>actually means</em> for us.</h1>
     </div>
     <div class="cover-body">
-      <p class="cover-quote">Practical AI for modern media teams demystified, grounded, and ready to use Monday.</p>
+      <p class="cover-quote">Practical AI for modern media teams demystified, grounded, and ready to go.</p>
       <div class="cover-tenets">
         <div class="cover-tenet">
           <h6>Presenter</h6>
@@ -405,9 +697,24 @@
     </div>
   </section>
 
-  <!-- 2. ONE THING -->
-  <section class="slide section-divider" data-title="If You Remember One Thing">
+  <!-- 2. LIVE INTRODUCTION -->
+  <section class="slide section-divider live-intro-slide" data-title="Live Introduction">
     <span class="pagenum"></span>
+    <div class="section-divider-inner live-intro-inner">
+      <img src="images/portrait-pen-ink-sketch-black.png" alt="Darren Brelesky" class="live-intro-photo" width="1254" height="1254">
+      <h1 class="live-intro-title">
+        <span class="live-intro-mic" aria-hidden="true">
+          <img src="images/icon-vintage-mic-white.svg" alt="">
+        </span>
+        Live <em>Introduction</em>
+      </h1>
+    </div>
+  </section>
+
+  <!-- 3. ONE THING -->
+  <section class="slide section-divider elephant-room-slide" data-title="If You Remember One Thing">
+    <span class="pagenum"></span>
+    <img src="images/elephant-marker-white.png" alt="" class="elephant-room-sketch" width="1536" height="1024" aria-hidden="true">
     <div class="section-divider-inner">
       <span class="redline"></span>
       <h1>AI isn&rsquo;t trying to replace us.... but it will shift how we <em>work</em>.</h1>
@@ -415,7 +722,7 @@
     </div>
   </section>
 
-  <!-- 3. DEMYSTIFY -->
+  <!-- 4. DEMYSTIFY -->
   <section class="slide content-slide" data-title="Demystify">
     <span class="pagenum"></span>
     <p class="eyebrow">Demystify</p>
@@ -442,7 +749,7 @@
     </div>
   </section>
 
-  <!-- 4. EXPECTATIONS -->
+  <!-- 5. EXPECTATIONS -->
   <section class="slide content-slide" data-title="Set Expectations">
     <span class="pagenum"></span>
     <p class="eyebrow">Set Expectations</p>
@@ -469,7 +776,53 @@
     </div>
   </section>
 
-  <!-- 5. FIELD GUIDE -->
+  <!-- 5. SHOW OF HANDS (interactive) -->
+  <section class="slide section-divider poll-slide" data-title="Show of Hands">
+    <span class="pagenum"></span>
+    <div class="section-divider-inner poll-inner">
+      <span class="redline"></span>
+      <p class="poll-kicker">Interactive · show of hands</p>
+      <p class="poll-current poll-animate" aria-live="polite"></p>
+      <p class="poll-ask poll-animate"></p>
+      <div class="poll-rate" hidden>
+        <p class="poll-rate-label">Your read of the room</p>
+        <output class="poll-pct" for="pollSlider">0%</output>
+        <div class="poll-slider-wrap">
+          <div class="poll-slider-track" aria-hidden="true"><div class="poll-slider-fill"></div></div>
+          <input type="range" id="pollSlider" class="poll-slider" min="0" max="100" step="5" value="35">
+        </div>
+      </div>
+      <div class="poll-done" aria-hidden="true"></div>
+      <p class="poll-hint">Click or press Space</p>
+    </div>
+  </section>
+
+  <!-- 6. FINANCE MATURITY (after poll) -->
+  <section class="slide section-divider maturity-slide" data-title="Finance AI Maturity">
+    <span class="pagenum"></span>
+    <div class="section-divider-inner">
+      <span class="redline"></span>
+      <p class="poll-kicker">Finance team · AI maturity rating</p>
+      <div class="maturity-hero">
+        <div class="maturity-pie-wrap">
+          <svg class="maturity-pie" viewBox="0 0 220 220" role="img" aria-labelledby="maturityPieTitle">
+            <title id="maturityPieTitle">Average AI adoption in the room</title>
+            <circle class="maturity-pie-track" cx="110" cy="110" r="88"></circle>
+            <circle class="maturity-pie-fill" cx="110" cy="110" r="88"></circle>
+          </svg>
+          <div class="maturity-pie-center">
+            <span class="maturity-pie-avg" id="maturityAvg">0%</span>
+            <span class="maturity-pie-label">avg in the room</span>
+          </div>
+        </div>
+        <h1 id="maturityGrade"></h1>
+      </div>
+      <p class="lede maturity-summary" id="maturitySummary"></p>
+      <p class="maturity-breakdown" id="maturityBreakdown"></p>
+    </div>
+  </section>
+
+  <!-- 7. FIELD GUIDE -->
   <section class="slide content-slide" data-title="Frontier Models">
     <span class="pagenum"></span>
     <p class="eyebrow">A Field Guide</p>
@@ -483,7 +836,7 @@
         <h3>Claude</h3>
         <p class="vendor">Anthropic</p>
         <p class="tagline">The all-rounder</p>
-        <p>Strong across the board. Built for enterprise, SMB support, and entrepreneurs. The one we lean on.</p>
+        <p>Strong across the board. Built for enterprise, SMB support, and entrepreneurs. The one my team of builders leans on the most.</p>
       </article>
       <article class="model-card teal">
         <div class="logo-row">
@@ -536,7 +889,7 @@
         <div class="beat"><span class="num">1</span><div><h4>It finishes what it starts</h4><p>The most autonomy and accountability to see a task through: it asks you questions as it works instead of guessing.</p></div></div>
         <div class="beat teal"><span class="num">2</span><div><h4>Three tools, one workbench</h4><p>Claude chat to think and draft, Cowork to act on your files and tools, Claude Code to build. Same brain, three surfaces.</p></div></div>
         <div class="beat blue"><span class="num">3</span><div><h4>It bends to how you work</h4><p>The most adaptable across creative and developer workflows: web, desktop app, mobile, and command-line.</p></div></div>
-        <div class="beat"><span class="num">4</span><div><h4>Most capable model right now: Opus 4.7</h4><p>Top tier at both thinking and doing. (OpenAI&rsquo;s Codex is not far behind.)</p></div></div>
+        <div class="beat"><span class="num">4</span><div><h4>Most capable model right now: Opus 4.8</h4><p>Top tier at both thinking and doing. (OpenAI&rsquo;s Codex is not far behind.)</p></div></div>
       </div>
       <figure class="claude-figure">
         <img src="images/claude-symbol.svg" alt="Claude" class="claude-symbol">
@@ -551,7 +904,15 @@
     <h2 class="title">Three tools, <em style="font-style:italic;color:var(--accent)">same brain</em>.</h2>
     <div class="funcs">
       <div class="func">
-        <h5>Web &middot; Desktop &middot; Mobile</h5>
+        <h5>
+          <span class="func-label-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 12h28v22H18l-8 8V12z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+              <path d="M18 20h16M18 26h11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Web &middot; Desktop &middot; Mobile
+        </h5>
         <h6>Claude chat</h6>
         <p class="tagline">The conversational assistant</p>
         <ul>
@@ -562,7 +923,18 @@
         <span class="who">Everyone · zero-setup front door</span>
       </div>
       <div class="func teal">
-        <h5>Desktop app</h5>
+        <h5>
+          <span class="func-label-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="5" y="7" width="38" height="28" rx="3" stroke="currentColor" stroke-width="2.5"/>
+              <path d="M5 27h38" stroke="currentColor" stroke-width="2.5"/>
+              <rect x="10" y="33" width="10" height="5" rx="1" stroke="currentColor" stroke-width="2.5"/>
+              <rect x="11" y="13" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="2"/>
+              <rect x="25" y="13" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </span>
+          Desktop app
+        </h5>
         <h6>Cowork</h6>
         <p class="tagline">Chat that does the work</p>
         <ul>
@@ -573,7 +945,16 @@
         <span class="who">Non-devs · built this deck here</span>
       </div>
       <div class="func purple">
-        <h5>Command line</h5>
+        <h5>
+          <span class="func-label-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="5" y="7" width="38" height="34" rx="3" stroke="currentColor" stroke-width="2.5"/>
+              <path d="M13 22l6 4-6 4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M23 30h12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Everywhere
+        </h5>
         <h6>Claude Code</h6>
         <p class="tagline">An agent that builds software</p>
         <ul>
@@ -586,21 +967,70 @@
     </div>
   </section>
 
-  <!-- 8. MATURITY -->
-  <section class="slide content-slide" data-title="Maturity Curve">
+  <!-- 8. MATURITY CURVE -->
+  <section class="slide content-slide maturity-curve-slide" data-title="Maturity Curve">
     <span class="pagenum"></span>
-    <p class="eyebrow">Where You Are</p>
-    <h2 class="title">The AI maturity curve.</h2>
-    <p class="hint">Nobody starts at the top. The win is moving up one step.</p>
-    <div class="maturity">
-      <div class="wave"><h5>Step 1</h5><h6>Dabbler</h6><p>Fixes an email&rsquo;s grammar before send.</p><span class="chip">Claude chat</span></div>
-      <div class="wave w2"><h5>Step 2</h5><h6>Daily Driver</h6><p>15 tweet options from a press release; app store assets from brand books.</p><span class="chip">Claude chat</span></div>
-      <div class="wave w3"><h5>Step 3</h5><h6>Delegator</h6><p>On-voice briefs from packets; presentations and strategy work.</p><span class="chip">Chat + Cowork</span></div>
-      <div class="wave w4"><h5>Step 4</h5><h6>Builder</h6><p>Sites, apps, micro apps with Claude Code.</p><span class="chip">Cowork + Code</span></div>
-      <div class="wave w5"><h5>Step 5</h5><h6>Force multiplier</h6><p>Custom apps, skills, agents others reuse.</p><span class="chip">Cowork + Code</span></div>
-      <div class="wave w6"><h5>Step 6</h5><h6>Off the charts</h6><p>Always-on agent stack across businesses.</p><span class="chip">Autonomous agents</span></div>
+    <h2 class="mc-title">The AI maturity curve.</h2>
+    <div class="mc-chart-wrap">
+      <span class="mc-axis-label mc-axis-y">Leverage / output &uarr;</span>
+      <span class="mc-axis-label mc-axis-x">reps + curiosity over time &rarr;</span>
+      <span class="mc-red-pill">Red Pilled</span>
+      <svg class="mc-chart" viewBox="0 0 1000 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path fill="#1a2840" d="M0 300V235c120-55 280-30 420-20s280 25 580 10v75H0z"/>
+        <path fill="#243352" opacity=".85" d="M0 300V255c160-40 340-10 520 5s320 5 480-25v65H0z"/>
+        <path fill="#2f4268" opacity=".7" d="M0 300V270c200-25 400-5 600 8s280 0 400-35v57H0z"/>
+        <path fill="none" stroke="#5eb8d4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+          d="M72 228 L208 192 L344 156 L488 108 L632 62"/>
+        <path fill="none" stroke="#f87171" stroke-width="4" stroke-linecap="round" stroke-dasharray="10 8"
+          d="M632 62 L828 18"/>
+        <g font-family="Fraunces, serif" font-weight="800" font-size="15" text-anchor="middle">
+          <circle cx="72" cy="228" r="18" fill="#5eb8d4"/><text x="72" y="233" fill="#fff">1</text>
+          <circle cx="208" cy="192" r="18" fill="#5eb8d4"/><text x="208" y="197" fill="#fff">2</text>
+          <circle cx="344" cy="156" r="18" fill="#5eb8d4"/><text x="344" y="161" fill="#fff">3</text>
+          <circle cx="488" cy="108" r="18" fill="#5eb8d4"/><text x="488" y="113" fill="#fff">4</text>
+          <circle cx="632" cy="62" r="18" fill="#b8862b"/><text x="632" y="67" fill="#fff">5</text>
+          <circle cx="828" cy="18" r="18" fill="#dc2626"/><text x="828" y="23" fill="#fff">6</text>
+        </g>
+      </svg>
     </div>
-    <p class="stage-foot"><strong>Chat</strong> = ask &amp; draft &nbsp;·&nbsp; <strong>Cowork</strong> = act on files &nbsp;·&nbsp; <strong>Code</strong> = build software</p>
+    <div class="mc-cards">
+      <article class="mc-card s1">
+        <div class="mc-card-head"><span class="mc-card-num">1</span><h6>Dabbler</h6></div>
+        <p>Fixes an email&rsquo;s grammar before hitting send.</p>
+        <p class="mc-card-foot"><span class="t-chat">Claude chat</span></p>
+      </article>
+      <article class="mc-card s2">
+        <div class="mc-card-head"><span class="mc-card-num">2</span><h6>Daily Driver</h6></div>
+        <p>Turns a press release into 15 tweet options. Creates app store assets from brand books.</p>
+        <p class="mc-card-foot"><span class="t-chat">Claude chat</span></p>
+      </article>
+      <article class="mc-card s3">
+        <div class="mc-card-head"><span class="mc-card-num">3</span><h6>Delegator</h6></div>
+        <p>Feeds a packet + brand guide, gets an on-voice brief. Uses Claude to build presentations, do market research, strategy work.</p>
+        <p class="mc-card-foot"><span class="t-chat">Claude chat</span> + <span class="t-cowork">Cowork</span></p>
+      </article>
+      <article class="mc-card s4">
+        <div class="mc-card-head"><span class="mc-card-num">4</span><h6>Builder</h6></div>
+        <p>Builds sites, apps, micro apps with Claude Code.</p>
+        <p class="mc-card-foot"><span class="t-cowork">Cowork</span> + <span class="t-code">Claude Code</span></p>
+      </article>
+      <article class="mc-card s5">
+        <div class="mc-card-head"><span class="mc-card-num">5</span><h6>Force multiplier</h6></div>
+        <p>Replaces SaaS apps with custom apps. Creates skills, agents and workflows others reuse.</p>
+        <p class="mc-card-foot"><span class="t-cowork">Cowork</span> + <span class="t-code">Claude Code</span></p>
+      </article>
+      <article class="mc-card s6">
+        <div class="mc-card-head"><span class="mc-card-num">6</span><h6>Off the charts</h6></div>
+        <p>Runs an always-on agent stack (&ldquo;OpenClaw&rdquo;) across several businesses.</p>
+        <p class="mc-card-foot"><span class="t-beyond">Autonomous agents</span></p>
+      </article>
+    </div>
+    <p class="mc-legend">
+      <span class="lg-chat">Claude chat</span> = ask &amp; draft &nbsp;&middot;&nbsp;
+      <span class="lg-cowork">Cowork</span> = act on your files &amp; tools &nbsp;&middot;&nbsp;
+      <span class="lg-code">Claude Code</span> = build software &nbsp;&middot;&nbsp;
+      <span class="lg-beyond">Beyond</span> = autonomous agent stacks
+    </p>
   </section>
 
   <!-- 9. MINDSET -->
@@ -787,8 +1217,21 @@
     counter.textContent = `${pad(i+1)} / ${pad(slides.length)}`;
     titleEl.textContent = slides[i].dataset.title || '';
     if(slides[i].id) history.replaceState(null, '', '#' + slides[i].id);
+    if(isPollSlide(slides[i])) resetPoll(slides[i]);
+    if(slides[i].classList.contains('maturity-slide')) {
+      requestAnimationFrame(() => animateMaturityPie(slides[i], maturityAvgCached));
+    }
     requestAnimationFrame(() => fitSlide(slides[i]));
     if(typeof refreshActiveTile === 'function' && isOverviewOpen()) refreshActiveTile();
+  }
+
+  function handlePollKey(e){
+    const slide = slides[i];
+    if(!isPollSlide(slide) || !slide.classList.contains('active')) return false;
+    if(e.key !== ' ' && e.key !== 'ArrowRight' && e.key !== 'PageDown') return false;
+    e.preventDefault();
+    handlePollAdvance(slide);
+    return true;
   }
   window.addEventListener('hashchange', () => {
     const h = slideIndexFromHash();
@@ -803,9 +1246,234 @@
   const overviewClose = document.getElementById('overviewClose');
 
   function classifySection(idx){
-    if(idx >= 10) return 'industry';
-    if(idx === 9) return 'live';
+    if(idx >= 13) return 'industry';
+    if(idx === 12) return 'live';
     return 'basics';
+  }
+
+  const POLL_MODELS = ['ChatGPT', 'Claude', 'Gemini', 'Grok'];
+  let pollPhase = 'intro';
+  let pollModelIdx = 0;
+  let pollPct = [35, 35, 35, 35];
+  const pollSlideEl = document.querySelector('.poll-slide');
+  const maturitySlideEl = document.querySelector('.maturity-slide');
+  const maturitySlideIndex = () => slides.indexOf(maturitySlideEl);
+  const MATURITY_PIE_R = 88;
+  const MATURITY_PIE_C = 2 * Math.PI * MATURITY_PIE_R;
+  let maturityAvgCached = 0;
+  let maturityPieAnim = 0;
+
+  function isPollSlide(slide){
+    return slide && slide.classList.contains('poll-slide');
+  }
+
+  function animatePollLine(el){
+    if(!el) return;
+    el.classList.remove('poll-animate');
+    void el.offsetWidth;
+    el.classList.add('poll-animate');
+  }
+
+  function setSliderFill(slide, pct, animateIn){
+    const fill = slide.querySelector('.poll-slider-fill');
+    if(!fill) return;
+    if(animateIn){
+      fill.classList.add('is-entering');
+      fill.style.width = '0%';
+      void fill.offsetWidth;
+      fill.style.width = pct + '%';
+      fill.addEventListener('transitionend', () => fill.classList.remove('is-entering'), {once:true});
+    } else {
+      fill.classList.remove('is-entering');
+      fill.style.width = pct + '%';
+    }
+  }
+
+  function syncPollSlider(slide, animateIn){
+    const slider = slide.querySelector('.poll-slider');
+    const pctOut = slide.querySelector('.poll-pct');
+    if(!slider || !pctOut) return;
+    slider.value = pollPct[pollModelIdx];
+    pctOut.textContent = slider.value + '%';
+    setSliderFill(slide, slider.value, animateIn);
+  }
+
+  function renderPollDone(doneEl){
+    const chips = [];
+    for(let j = 0; j < pollModelIdx; j++){
+      chips.push(`<span>${POLL_MODELS[j]} ${pollPct[j]}%</span>`);
+    }
+    doneEl.innerHTML = chips.join('');
+    doneEl.setAttribute('aria-hidden', chips.length ? 'false' : 'true');
+  }
+
+  function renderPoll(slide){
+    const current = slide.querySelector('.poll-current');
+    const ask = slide.querySelector('.poll-ask');
+    const rate = slide.querySelector('.poll-rate');
+    const done = slide.querySelector('.poll-done');
+    const hint = slide.querySelector('.poll-hint');
+
+    slide.classList.toggle('is-sliding', pollPhase === 'slider');
+
+    if(pollPhase === 'intro'){
+      current.textContent = 'Show of hands';
+      ask.hidden = false;
+      ask.textContent = 'Who has used each of these before?';
+      rate.hidden = true;
+      rate.classList.remove('is-visible');
+      renderPollDone(done);
+      hint.textContent = 'Click or Space to begin';
+    } else if(pollPhase === 'question'){
+      current.textContent = POLL_MODELS[pollModelIdx];
+      ask.hidden = false;
+      ask.textContent = '\u270B Raise your hand if you\u2019ve used it';
+      rate.hidden = true;
+      rate.classList.remove('is-visible');
+      renderPollDone(done);
+      hint.textContent = 'Click or Space \u2192 estimate the room';
+    } else if(pollPhase === 'slider'){
+      current.textContent = POLL_MODELS[pollModelIdx];
+      ask.hidden = true;
+      rate.hidden = false;
+      rate.classList.add('is-visible');
+      renderPollDone(done);
+      syncPollSlider(slide, true);
+      hint.textContent = 'Drag the slider, then click or Space to lock in';
+    }
+
+    animatePollLine(current);
+    if(!ask.hidden) animatePollLine(ask);
+  }
+
+  function resetPoll(slide){
+    pollPhase = 'intro';
+    pollModelIdx = 0;
+    pollPct = [35, 35, 35, 35];
+    renderPoll(slide);
+  }
+
+  function animateMaturityPie(slide, avg){
+    const fill = slide.querySelector('.maturity-pie-fill');
+    const avgEl = slide.querySelector('#maturityAvg');
+    if(!fill || !avgEl) return;
+
+    if(maturityPieAnim) cancelAnimationFrame(maturityPieAnim);
+
+    const target = Math.max(0, Math.min(100, avg));
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const duration = reduced ? 0 : 1350;
+
+    fill.style.strokeDasharray = `${MATURITY_PIE_C} ${MATURITY_PIE_C}`;
+    fill.style.strokeDashoffset = String(MATURITY_PIE_C);
+
+    if(reduced || duration === 0){
+      fill.style.strokeDashoffset = String(MATURITY_PIE_C * (1 - target / 100));
+      avgEl.textContent = target + '%';
+      return;
+    }
+
+    const start = performance.now();
+    function frame(now){
+      const t = Math.min(1, (now - start) / duration);
+      const ease = 1 - Math.pow(1 - t, 3);
+      const value = Math.round(target * ease);
+      fill.style.strokeDashoffset = String(MATURITY_PIE_C * (1 - (target * ease) / 100));
+      avgEl.textContent = value + '%';
+      if(t < 1){
+        maturityPieAnim = requestAnimationFrame(frame);
+      } else {
+        maturityPieAnim = 0;
+        avgEl.textContent = target + '%';
+      }
+    }
+    requestAnimationFrame(() => {
+      void fill.offsetWidth;
+      maturityPieAnim = requestAnimationFrame(frame);
+    });
+  }
+
+  function populateMaturitySlide(){
+    if(!maturitySlideEl) return;
+    const avg = Math.round(pollPct.reduce((a, b) => a + b, 0) / pollPct.length);
+    maturityAvgCached = avg;
+
+    const tiers = [
+      { max: 12, grade: 'Tier 1: Manual Override', summary: 'The machines haven\u2019t cracked this floor yet. Excel is still the CEO. Honestly? Respect.' },
+      { max: 25, grade: 'Tier 2: Secret Tab Energy', summary: 'Someone has ChatGPT behind a Bloomberg window. We see the reflection. We won\u2019t tell Legal.' },
+      { max: 40, grade: 'Tier 3: Pilot Program Realists', summary: 'You\u2019re past curiosity. Not cyborgs yet. Solid B\u2212 on the AI journey. The 10-K isn\u2019t writing itself.' },
+      { max: 58, grade: 'Tier 4: Spreadsheet Plus', summary: 'Half the room has a favorite model. The other half is still verifying every number twice. Both are correct.' },
+      { max: 72, grade: 'Tier 5: Deal Desk Cyborgs', summary: 'Respectable adoption. You draft, you verify, you ship. Finance with guardrails is the whole game.' },
+      { max: 100, grade: 'Tier 6: Autonomous Analyst Arc', summary: 'Either this room is very advanced or everyone raised both hands. Either way, Treasury should be nervous.' }
+    ];
+    const tier = tiers.find(t => avg <= t.max) || tiers[tiers.length - 1];
+    const topIdx = pollPct.indexOf(Math.max(...pollPct));
+    const top = POLL_MODELS[topIdx];
+    const topPct = pollPct[topIdx];
+    const topLine = topPct >= 40
+      ? ` ${top} led the room at ${topPct}%.`
+      : '';
+
+    maturitySlideEl.querySelector('#maturityGrade').textContent = tier.grade;
+    maturitySlideEl.querySelector('#maturitySummary').textContent = tier.summary + topLine;
+    maturitySlideEl.querySelector('#maturityBreakdown').textContent =
+      POLL_MODELS.map((m, idx) => `${m} ${pollPct[idx]}%`).join('  ·  ');
+    maturitySlideEl.querySelector('#maturityAvg').textContent = '0%';
+    const fill = maturitySlideEl.querySelector('.maturity-pie-fill');
+    if(fill){
+      fill.style.strokeDasharray = `${MATURITY_PIE_C} ${MATURITY_PIE_C}`;
+      fill.style.strokeDashoffset = String(MATURITY_PIE_C);
+    }
+  }
+
+  function advancePoll(slide){
+    if(pollPhase === 'intro'){
+      pollPhase = 'question';
+      pollModelIdx = 0;
+      renderPoll(slide);
+      return 'stay';
+    }
+    if(pollPhase === 'question'){
+      pollPhase = 'slider';
+      renderPoll(slide);
+      return 'stay';
+    }
+    if(pollPhase === 'slider'){
+      const slider = slide.querySelector('.poll-slider');
+      pollPct[pollModelIdx] = parseInt(slider.value, 10);
+      pollModelIdx++;
+      if(pollModelIdx >= POLL_MODELS.length) return 'maturity';
+      pollPhase = 'question';
+      renderPoll(slide);
+      return 'stay';
+    }
+    return 'stay';
+  }
+
+  function handlePollAdvance(slide){
+    const result = advancePoll(slide);
+    if(result === 'maturity'){
+      populateMaturitySlide();
+      const idx = maturitySlideIndex();
+      if(idx >= 0){
+        go(idx);
+        requestAnimationFrame(() => animateMaturityPie(slides[idx], maturityAvgCached));
+      } else go(i + 1);
+    }
+  }
+
+  if(pollSlideEl){
+    const pollSlider = pollSlideEl.querySelector('.poll-slider');
+    const pollPctOut = pollSlideEl.querySelector('.poll-pct');
+    pollSlider.addEventListener('input', () => {
+      pollPctOut.textContent = pollSlider.value + '%';
+      setSliderFill(pollSlideEl, pollSlider.value, false);
+    });
+    pollSlideEl.addEventListener('click', e => {
+      if(!pollSlideEl.classList.contains('active')) return;
+      if(e.target.closest('.chrome, .overview, .poll-slider, .poll-slider-wrap, .poll-rate')) return;
+      handlePollAdvance(pollSlideEl);
+    });
   }
   function sectionLabel(name){
     return ({basics:'The Basics', industry:'Industry Outlook', live:'Live'})[name] || '';
@@ -886,6 +1554,7 @@
       return;
     }
     if(e.key==='g'||e.key==='G'){ openOverview(); return; }
+    if(handlePollKey(e)) return;
     if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); go(i+1); }
     if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(i-1); }
     if(e.key==='Home') go(0);
