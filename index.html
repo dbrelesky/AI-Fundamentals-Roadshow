@@ -138,16 +138,16 @@
   .slide.section-divider h1 em{font-style:italic;color:var(--accent);font-weight:400}
   .slide.section-divider .lede{color:rgba(246,243,236,.82);margin-top:28px}
 
-  .elephant-room-slide .section-divider-inner{position:relative;z-index:1}
+  .elephant-room-layout{
+    flex:1;display:flex;flex-direction:column;justify-content:center;
+    align-items:flex-start;min-height:0;gap:clamp(20px,3vh,36px);
+  }
   .elephant-room-sketch{
-    position:absolute;z-index:0;pointer-events:none;
-    top:clamp(128px,15vh,180px);left:50%;transform:translateX(-50%);
-    width:min(42vw,500px);height:auto;opacity:.7;
+    display:block;align-self:center;width:min(21vw,250px);height:auto;
+    opacity:.85;pointer-events:none;margin:0;
   }
   @media(max-width:900px){
-    .elephant-room-sketch{
-      top:96px;left:50%;width:min(84vw,520px);opacity:.7;
-    }
+    .elephant-room-sketch{width:min(42vw,260px)}
   }
 
   .live-intro-slide .live-intro-inner{
@@ -714,11 +714,13 @@
   <!-- 3. ONE THING -->
   <section class="slide section-divider elephant-room-slide" data-title="If You Remember One Thing">
     <span class="pagenum"></span>
-    <img src="images/elephant-marker-white.png" alt="" class="elephant-room-sketch" width="1536" height="1024" aria-hidden="true">
-    <div class="section-divider-inner">
-      <span class="redline"></span>
-      <h1>AI isn&rsquo;t trying to replace us.... but it will shift how we <em>work</em>.</h1>
-      <p class="lede" style="max-width:52ch">It changes what a small team can get done. Creates a stronger demand for high-leverage individuals. You stay the editor, the taste, the judgment. AI takes the grunt work so you spend more time on the ideas fans actually feel.</p>
+    <div class="elephant-room-layout">
+      <img src="images/elephant-marker-white.png" alt="" class="elephant-room-sketch" width="768" height="512" aria-hidden="true">
+      <div class="section-divider-inner">
+        <span class="redline"></span>
+        <h1>AI isn&rsquo;t trying to replace us.... but it will shift how we <em>work</em>.</h1>
+        <p class="lede" style="max-width:52ch">It changes what a small team can get done. Creates a stronger demand for high-leverage individuals. You stay the editor, the taste, the judgment. AI takes the grunt work so you spend more time on the ideas fans actually feel.</p>
+      </div>
     </div>
   </section>
 
