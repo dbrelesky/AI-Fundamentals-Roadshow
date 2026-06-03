@@ -528,6 +528,90 @@
   .beat h4{font-family:"Fraunces",serif;font-size:clamp(22px,2.3vw,30px);font-weight:700;margin:0;letter-spacing:-.01em;line-height:1.15}
   .beat p{font-size:clamp(16px,1.5vw,19px);line-height:1.35;color:#3a3e49;margin:6px 0 0;max-width:52ch}
 
+  .starter-pack{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:22px;margin-top:clamp(24px,3vh,36px);
+  }
+  .starter-card{
+    display:grid;grid-template-columns:auto 56px 1fr;gap:18px;align-items:center;
+    padding:24px 26px;border:1px solid var(--rule);border-left:4px solid var(--accent);
+    text-decoration:none;color:inherit;background:var(--paper);transition:border-color .2s,box-shadow .2s;
+  }
+  .starter-card:hover{border-color:var(--accent);box-shadow:0 8px 28px rgba(11,13,18,.08)}
+  .starter-card.teal{border-left-color:var(--teal)}
+  .starter-card .starter-num{
+    font-family:"Fraunces",serif;font-weight:800;font-size:clamp(28px,3vw,36px);
+    line-height:1;color:var(--accent);opacity:.85;
+  }
+  .starter-card.teal .starter-num{color:var(--teal)}
+  .starter-logo{width:56px;height:56px;display:block;object-fit:contain}
+  .starter-card h4{
+    font-family:"Fraunces",serif;font-size:clamp(20px,2.2vw,28px);font-weight:700;
+    margin:0;line-height:1.15;letter-spacing:-.01em;color:var(--ink);
+  }
+  .starter-card .starter-action{
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--muted);margin:10px 0 0;
+  }
+  .starter-card:hover .starter-action{color:var(--accent)}
+  .starter-card.teal:hover .starter-action{color:var(--teal)}
+  @media(max-width:900px){.starter-pack{grid-template-columns:1fr}}
+
+  .starter-resources{
+    margin-top:clamp(22px,3vh,30px);padding-top:22px;border-top:1px solid var(--rule);
+  }
+  .starter-resources-heading{
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 14px;
+  }
+  .starter-resource-grid{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:10px 40px;
+  }
+  .starter-resource{
+    display:flex;align-items:center;gap:14px;padding:6px 0;
+    text-decoration:none;color:inherit;background:transparent;border:none;
+  }
+  .starter-resource-icon,.starter-resource-spacer{width:36px;height:36px;flex-shrink:0}
+  .starter-resource-icon{object-fit:contain}
+  .starter-resource-title{
+    display:block;font-family:"Fraunces",serif;font-weight:700;font-size:clamp(16px,1.6vw,20px);
+    line-height:1.2;letter-spacing:-.01em;color:var(--ink);
+    transition:color .2s;
+  }
+  .starter-resource-meta{
+    display:block;font-family:"JetBrains Mono",monospace;font-size:10px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px;
+    transition:color .2s;
+  }
+  .starter-resource-meta em{
+    font-style:italic;text-transform:none;letter-spacing:0;
+    font-family:"Fraunces",serif;font-size:11px;color:var(--accent);
+  }
+  .starter-resource:hover .starter-resource-title,
+  .starter-resource:hover .starter-resource-meta{color:var(--accent-2)}
+  @media(max-width:900px){.starter-resource-grid{grid-template-columns:1fr}}
+
+  .deck-qr-slide > .slide-inner{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:clamp(20px,3vh,32px);min-height:0;text-align:center;
+  }
+  .deck-qr-head{
+    display:flex;align-items:center;gap:clamp(18px,2.5vw,28px);
+    align-self:flex-start;width:100%;max-width:min(920px,100%);text-align:left;
+  }
+  .deck-qr-head .eyebrow{margin-bottom:16px}
+  .deck-qr-head .title{margin-bottom:8px}
+  .deck-qr-link{display:block;line-height:0}
+  .qr-hero-large{
+    width:min(72vw,640px);height:auto;display:block;
+    image-rendering:pixelated;image-rendering:crisp-edges;
+  }
+  .deck-qr-url{
+    font-family:"JetBrains Mono",monospace;font-size:clamp(12px,1.2vw,14px);
+    letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0;
+  }
+  .deck-qr-url a{color:var(--accent-2);text-decoration:none}
+  .deck-qr-url a:hover{text-decoration:underline}
+
   .rails{display:grid;grid-template-columns:1fr 1fr;gap:52px;margin-top:20px}
   .rail h4{
     font-family:"JetBrains Mono",monospace;font-size:20px;letter-spacing:.2em;text-transform:uppercase;
@@ -1055,13 +1139,96 @@
     </div>
   </section>
 
-  <!-- 10. Q&A -->
-  <section class="slide close" data-title="Questions &amp; Live Examples">
+  <!-- 10. STARTER PACK -->
+  <section class="slide content-slide" data-title="Paramount AI Starter Pack">
     <span class="pagenum"></span>
-    <blockquote class="big-quote">Questions &amp; <em>live examples</em>.</blockquote>
+    <p class="eyebrow">Get access</p>
+    <h2 class="title">Paramount AI <em style="font-style:italic;color:var(--accent)">Starter Pack</em>.</h2>
+    <p class="hint">Request access through Navigator (my.paramount.com).</p>
+    <div class="starter-pack">
+      <a class="starter-card" href="https://my.paramount.com/esc?id=sc_cat_item&amp;sys_id=9875d60a97bf32141279f0fce053af8a" target="_blank" rel="noopener noreferrer">
+        <span class="starter-num">1</span>
+        <img src="images/logos/anthropic.svg" alt="" class="starter-logo" width="56" height="56">
+        <div>
+          <h4>Sign up for a Claude account on Navigator</h4>
+          <p class="starter-action">Claude AI Application &middot; Open request</p>
+        </div>
+      </a>
+      <a class="starter-card teal" href="https://my.paramount.com/esc?id=sc_cat_item&amp;sys_id=b534673d8780ba50ab2cca2e0ebb35c2" target="_blank" rel="noopener noreferrer">
+        <span class="starter-num">2</span>
+        <img src="images/logos/openai.svg" alt="" class="starter-logo" width="56" height="56">
+        <div>
+          <h4>Sign up for ChatGPT Enterprise</h4>
+          <p class="starter-action">ChatGPT Enterprise &middot; Open request</p>
+        </div>
+      </a>
+    </div>
+    <div class="starter-resources">
+      <h3 class="starter-resources-heading">Resources &amp; Training</h3>
+      <div class="starter-resource-grid">
+        <a class="starter-resource" href="https://app.slack.com/client" target="_blank" rel="noopener noreferrer">
+          <img src="images/logos/slack.svg" alt="" class="starter-resource-icon" width="40" height="40">
+          <div>
+            <span class="starter-resource-title">Claude Users Slack Channel</span>
+            <span class="starter-resource-meta">#claude-users</span>
+          </div>
+        </a>
+        <a class="starter-resource" href="https://claude.com/product/overview" target="_blank" rel="noopener noreferrer">
+          <img src="images/logos/anthropic.svg" alt="" class="starter-resource-icon" width="40" height="40">
+          <div>
+            <span class="starter-resource-title">Claude AI Training</span>
+            <span class="starter-resource-meta">claude.com/product/overview</span>
+          </div>
+        </a>
+        <a class="starter-resource" href="https://claude101.com" target="_blank" rel="noopener noreferrer">
+          <span class="starter-resource-spacer" aria-hidden="true"></span>
+          <div>
+            <span class="starter-resource-title">Claude101.com</span>
+            <span class="starter-resource-meta">claude101.com</span>
+          </div>
+        </a>
+        <a class="starter-resource" href="https://ccforeveryone.com" target="_blank" rel="noopener noreferrer">
+          <span class="starter-resource-spacer" aria-hidden="true"></span>
+          <div>
+            <span class="starter-resource-title">CCforEveryone.com</span>
+            <span class="starter-resource-meta">ccforeveryone.com</span>
+          </div>
+        </a>
+        <a class="starter-resource" href="https://claude-for-chiefs.netlify.app/" target="_blank" rel="noopener noreferrer">
+          <img src="images/claude-symbol.svg" alt="" class="starter-resource-icon" width="36" height="36">
+          <div>
+            <span class="starter-resource-title">CBS Claude Training Program</span>
+            <span class="starter-resource-meta">Home made and <em>In-Progress</em> &middot; claude-for-chiefs.netlify.app</span>
+          </div>
+        </a>
+        <a class="starter-resource" href="https://claude-for-chiefs.netlify.app/cheat-sheet" target="_blank" rel="noopener noreferrer">
+          <img src="images/claude-symbol.svg" alt="" class="starter-resource-icon" width="36" height="36">
+          <div>
+            <span class="starter-resource-title">Claude Cheat Sheet</span>
+            <span class="starter-resource-meta">Quick prompts and patterns &middot; claude-for-chiefs.netlify.app/cheat-sheet</span>
+          </div>
+        </a>
+      </div>
+    </div>
   </section>
 
-  <!-- 11. INDUSTRY -->
+  <!-- 11. DECK QR -->
+  <section class="slide content-slide deck-qr-slide" data-title="Questions & Live Demos">
+    <span class="pagenum"></span>
+    <div class="deck-qr-head">
+      <div>
+        <h2 class="title">Questions &amp; <em style="font-style:italic;color:var(--accent)">Live Demos</em></h2>
+      </div>
+    </div>
+    <a class="deck-qr-link" href="https://dbrelesky.github.io/AI-Fundamentals-Roadshow/#deck-slide-0" target="_blank" rel="noopener noreferrer">
+      <img src="images/deck-qr.png" alt="QR code for AI Fundamentals Roadshow deck" class="qr-hero-large" width="640" height="640">
+    </a>
+    <p class="deck-qr-url">
+      <a href="https://dbrelesky.github.io/AI-Fundamentals-Roadshow/#deck-slide-0" target="_blank" rel="noopener noreferrer">dbrelesky.github.io/AI-Fundamentals-Roadshow</a>
+    </p>
+  </section>
+
+  <!-- 12. INDUSTRY -->
   <section class="slide content-slide" data-title="Industry Outlook">
     <span class="pagenum"></span>
     <p class="eyebrow">Industry Outlook</p>
@@ -1250,8 +1417,8 @@
   const overviewClose = document.getElementById('overviewClose');
 
   function classifySection(idx){
-    if(idx >= 13) return 'industry';
-    if(idx === 12) return 'live';
+    if(idx >= 15) return 'industry';
+    if(idx === 14) return 'live';
     return 'basics';
   }
 
