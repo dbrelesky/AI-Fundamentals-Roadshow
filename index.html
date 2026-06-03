@@ -1,929 +1,681 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI, and what it actually means for us — Darren Brelesky</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI, and what it actually means for us · Darren Brelesky</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --bg-deep: #1a0a3e;
-    --bg-purple: #6c3ce0;
-    --bg-violet: #a855f7;
-    --bg-lavender: #c084fc;
-    --accent-orange: #f59e0b;
-    --accent-cyan: #22d3ee;
-    --accent-blue: #3b82f6;
-    --card-dark: #0f1729;
-    --card-light: #ffffff;
-    --text-white: #ffffff;
-    --text-muted: #c4b5fd;
-    --text-dark: #1e293b;
-  }
-
-  html, body {
-    height: 100%;
-    overflow: hidden;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg-deep);
-    color: var(--text-white);
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* ── Presentation container ── */
-  .presentation {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* ── Mountain background (shared across slides) ── */
-  .mountain-bg {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    overflow: hidden;
-    background: linear-gradient(180deg, #c084fc 0%, #a855f7 20%, #7c3aed 40%, #6c3ce0 55%, #2e1065 80%, #1a0a3e 100%);
-  }
-
-  .mountain-bg .mountain {
-    position: absolute;
-    bottom: 0;
-    border-radius: 50% 50% 0 0;
-  }
-
-  .mountain.m1 {
-    width: 120%;
-    height: 55%;
-    left: -10%;
-    background: linear-gradient(180deg, rgba(30,10,80,0.6) 0%, rgba(20,5,60,0.9) 100%);
-    z-index: 1;
-  }
-  .mountain.m2 {
-    width: 80%;
-    height: 45%;
-    left: 30%;
-    background: linear-gradient(180deg, rgba(50,20,100,0.5) 0%, rgba(25,10,70,0.8) 100%);
-    z-index: 2;
-  }
-  .mountain.m3 {
-    width: 60%;
-    height: 35%;
-    left: -5%;
-    background: linear-gradient(180deg, rgba(60,30,120,0.4) 0%, rgba(30,15,80,0.7) 100%);
-    z-index: 3;
-  }
-  .mountain.m4 {
-    width: 90%;
-    height: 25%;
-    left: 15%;
-    background: linear-gradient(180deg, rgba(20,8,55,0.8) 0%, rgba(15,5,45,0.95) 100%);
-    z-index: 4;
-  }
-
-  /* ── Slides ── */
-  .slide {
-    position: absolute;
-    inset: 0;
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    padding: 5vh 6vw;
-    z-index: 10;
-    opacity: 0;
-    pointer-events: none;
-    overflow-y: auto;
-  }
-
-  .slide.active {
-    display: flex;
-    opacity: 1;
-    pointer-events: auto;
-    z-index: 20;
-    animation: fadeIn 0.45s ease forwards;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateX(40px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-
-  /* ── Typography ── */
-  .section-label {
-    font-size: clamp(0.65rem, 1.2vw, 0.85rem);
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent-cyan);
-    margin-bottom: 1.2rem;
-  }
-
-  .slide-title {
-    font-size: clamp(1.8rem, 4.5vw, 3.5rem);
-    font-weight: 900;
-    line-height: 1.1;
-    margin-bottom: 1rem;
-    max-width: 80%;
-  }
-
-  .slide-subtitle {
-    font-size: clamp(0.9rem, 1.6vw, 1.15rem);
-    color: var(--text-muted);
-    font-style: italic;
-    margin-bottom: 2rem;
-    max-width: 70%;
-  }
-
-  .highlight-cyan { color: var(--accent-cyan); }
-  .highlight-orange { color: var(--accent-orange); }
-  .highlight-blue { color: var(--accent-blue); }
-
-  /* ── Cards ── */
-  .card-row {
-    display: flex;
-    gap: 1.5vw;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  .card {
-    background: var(--card-light);
-    color: var(--text-dark);
-    border-radius: 12px;
-    padding: clamp(1rem, 2vw, 1.5rem);
-    flex: 1;
-    min-width: 220px;
-    font-size: clamp(0.75rem, 1.1vw, 0.9rem);
-    line-height: 1.55;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-  }
-
-  .card.dark {
-    background: var(--card-dark);
-    color: var(--text-white);
-    border: 1px solid rgba(255,255,255,0.08);
-  }
-
-  .card h3 {
-    font-size: clamp(0.9rem, 1.4vw, 1.15rem);
-    font-weight: 800;
-    margin-bottom: 0.3rem;
-  }
-
-  .card .meta {
-    font-size: 0.7rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #94a3b8;
-    margin-bottom: 0.15rem;
-  }
-
-  .card .tagline {
-    font-size: 0.8rem;
-    font-weight: 600;
-    margin-bottom: 0.8rem;
-  }
-
-  .card ul {
-    padding-left: 1.1rem;
-    margin: 0.5rem 0;
-  }
-
-  .card li {
-    margin-bottom: 0.35rem;
-  }
-
-  .card-border-left {
-    border-left: 4px solid var(--accent-orange);
-  }
-
-  .card-border-top-orange {
-    border-top: 4px solid var(--accent-orange);
-  }
-
-  .card-border-top-cyan {
-    border-top: 4px solid var(--accent-cyan);
-  }
-
-  /* ── Two-column layout ── */
-  .two-col {
-    display: flex;
-    gap: 2vw;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  .two-col > .col {
-    flex: 1;
-    min-width: 280px;
-  }
-
-  /* ── Table styling ── */
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-    font-size: clamp(0.7rem, 1vw, 0.85rem);
-    background: rgba(255,255,255,0.05);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-  }
-
-  .data-table th {
-    text-align: left;
-    padding: 0.9rem 1.2rem;
-    font-weight: 700;
-    font-size: clamp(0.75rem, 1.1vw, 0.9rem);
-  }
-
-  .data-table th:nth-child(2) {
-    background: var(--accent-blue);
-    color: white;
-  }
-
-  .data-table th:nth-child(3) {
-    background: var(--accent-orange);
-    color: white;
-  }
-
-  .data-table td {
-    padding: 0.75rem 1.2rem;
-    border-top: 1px solid rgba(255,255,255,0.08);
-  }
-
-  .data-table tr:nth-child(even) td {
-    background: rgba(255,255,255,0.03);
-  }
-
-  .data-table td:first-child {
-    font-weight: 700;
-    color: var(--text-white);
-    white-space: nowrap;
-    width: 180px;
-  }
-
-  .data-table td:nth-child(2),
-  .data-table td:nth-child(3) {
-    background: rgba(255,255,255,0.92);
-    color: var(--text-dark);
-  }
-
-  .data-table tr:nth-child(even) td:nth-child(2),
-  .data-table tr:nth-child(even) td:nth-child(3) {
-    background: rgba(255,255,255,0.97);
-  }
-
-  /* ── Maturity curve ── */
-  .curve-container {
-    display: flex;
-    gap: 0.8vw;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  .curve-step {
-    flex: 1;
-    min-width: 130px;
-    background: var(--card-light);
-    color: var(--text-dark);
-    border-radius: 10px;
-    padding: clamp(0.6rem, 1.2vw, 1rem);
-    font-size: clamp(0.65rem, 0.95vw, 0.8rem);
-    line-height: 1.45;
-    position: relative;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-    border-top: 3px solid var(--accent-blue);
-  }
-
-  .curve-step:last-child {
-    border-top-color: #ef4444;
-  }
-
-  .curve-step .step-num {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: var(--accent-blue);
-    color: white;
-    font-weight: 800;
-    font-size: 0.75rem;
-    margin-bottom: 0.4rem;
-  }
-
-  .curve-step:last-child .step-num {
-    background: #ef4444;
-  }
-
-  .curve-step .step-title {
-    font-weight: 800;
-    font-size: clamp(0.75rem, 1.1vw, 0.9rem);
-    margin-bottom: 0.3rem;
-    display: block;
-  }
-
-  .curve-step .step-tool {
-    display: inline-block;
-    margin-top: 0.4rem;
-    font-size: 0.65rem;
-    padding: 0.15rem 0.5rem;
-    border-radius: 4px;
-    background: #e0e7ff;
-    color: #4338ca;
-    font-weight: 600;
-  }
-
-  /* ── Bullet points on slides ── */
-  .bullet-list {
-    list-style: none;
-    padding: 0;
-    margin: 1rem 0;
-  }
-
-  .bullet-list li {
-    position: relative;
-    padding-left: 2rem;
-    margin-bottom: 1.2rem;
-    font-size: clamp(0.85rem, 1.3vw, 1.05rem);
-    line-height: 1.5;
-  }
-
-  .bullet-list li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.35em;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--accent-orange);
-  }
-
-  .bullet-list li .sub {
-    display: block;
-    font-size: 0.85em;
-    color: var(--text-muted);
-    margin-top: 0.2rem;
-  }
-
-  /* ── Footer note ── */
-  .footer-note {
-    position: absolute;
-    bottom: 3vh;
-    left: 6vw;
-    right: 6vw;
-    font-size: clamp(0.7rem, 1vw, 0.85rem);
-    color: var(--text-muted);
-    font-style: italic;
-  }
-
-  .footer-note strong {
-    color: var(--text-white);
-    font-style: normal;
-  }
-
-  /* ── Title slide special ── */
-  .title-slide .slide-title {
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
-    max-width: 75%;
-  }
-
-  .title-slide .author {
-    margin-top: 1.5rem;
-    font-size: clamp(0.8rem, 1.2vw, 1rem);
-  }
-
-  .title-slide .author strong {
-    font-weight: 700;
-  }
-
-  .title-slide .author span {
-    color: var(--text-muted);
-  }
-
-  /* ── Decorative sidebar dots (title & closing slides) ── */
-  .side-dots {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 60px;
-    background: var(--card-dark);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    border-left: 3px solid var(--accent-cyan);
-  }
-
-  .side-dots .dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--accent-blue);
-  }
-
-  .side-dots .dot:first-child {
-    background: var(--accent-orange);
-    width: 20px;
-    height: 20px;
-  }
-
-  /* ── Navigation ── */
-  .nav-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    padding: 0.8rem 2rem;
-    background: rgba(15, 5, 45, 0.85);
-    backdrop-filter: blur(12px);
-    border-top: 1px solid rgba(255,255,255,0.08);
-  }
-
-  .nav-btn {
-    background: none;
-    border: 1px solid rgba(255,255,255,0.2);
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    transition: background 0.2s, border-color 0.2s;
-  }
-
-  .nav-btn:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(255,255,255,0.4);
-  }
-
-  .nav-btn:disabled {
-    opacity: 0.3;
-    cursor: default;
-  }
-
-  .slide-dots {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-  }
-
-  .slide-dots button {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255,255,255,0.25);
-    cursor: pointer;
-    transition: all 0.3s;
-    padding: 0;
-  }
-
-  .slide-dots button.active {
-    background: var(--accent-orange);
-    width: 28px;
-    border-radius: 5px;
-  }
-
-  .slide-counter {
-    font-size: 0.8rem;
-    color: rgba(255,255,255,0.5);
-    min-width: 50px;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* ── Progress bar ── */
-  .progress-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-orange));
-    z-index: 200;
-    transition: width 0.4s ease;
-  }
-
-  /* ── Keyboard hint ── */
-  .key-hint {
-    position: fixed;
-    bottom: 70px;
-    right: 20px;
-    z-index: 100;
-    font-size: 0.7rem;
-    color: rgba(255,255,255,0.3);
-    text-align: right;
-    pointer-events: none;
-    transition: opacity 3s ease;
-  }
-
-  /* ── Responsive ── */
-  @media (max-width: 768px) {
-    .slide { padding: 4vh 5vw; }
-    .slide-title { max-width: 100%; }
-    .slide-subtitle { max-width: 100%; }
-    .card-row, .two-col, .curve-container { flex-direction: column; }
-    .card { min-width: unset; }
-    .curve-step { min-width: unset; }
-    .side-dots { width: 40px; }
-    .data-table { font-size: 0.7rem; }
-    .data-table td:first-child { white-space: normal; width: auto; }
-    .nav-bar { padding: 0.6rem 1rem; gap: 0.5rem; }
-  }
-
-  /* ── Big-quote styling ── */
-  .big-quote {
-    font-size: clamp(1.6rem, 3.8vw, 3rem);
-    font-weight: 900;
-    line-height: 1.15;
-    max-width: 80%;
-    margin-bottom: 1.5rem;
-  }
-
-  .criteria-list {
-    margin-top: 1.5rem;
-    text-align: center;
-  }
-
-  .criteria-list h4 {
-    font-size: clamp(0.9rem, 1.3vw, 1.05rem);
-    font-weight: 700;
-    margin-bottom: 0.3rem;
-  }
-
-  .criteria-list .criteria-sub {
-    font-size: clamp(0.8rem, 1.1vw, 0.95rem);
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-bottom: 0.6rem;
-  }
-
-  .criteria-list ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  .criteria-list li {
-    font-size: clamp(0.85rem, 1.2vw, 1rem);
-    margin-bottom: 0.3rem;
-  }
-
-  .criteria-list li::before {
-    content: '* ';
-    color: var(--accent-cyan);
+  :root{
+    --ink:#0b0d12;
+    --paper:#f6f3ec;
+    --paper-2:#efeadf;
+    --rule:#1a1c22;
+    --muted:#5a5f6e;
+    --accent:#d7442a;
+    --accent-2:#1d4ed8;
+    --purple:#6b46c1;
+    --teal:#0f766e;
+    --gold:#b8862b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--ink);color:var(--ink);font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+  .deck{width:100vw;height:100vh;overflow:hidden;position:relative}
+  .slide{
+    position:absolute;inset:0;
+    background:var(--paper);
+    padding:56px 88px 72px;
+    display:none;
+    overflow:hidden;
+    flex-direction:column;
+  }
+  .slide.active{display:flex;animation:fade .45s ease both}
+  .slide-inner{
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    flex:1;
+    min-height:0;
+    transform-origin:top left;
+  }
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion: reduce){
+    .slide.active{animation:none}
+  }
+
+  .deck > .mark{
+    position:absolute;top:20px;left:24px;z-index:60;
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    letter-spacing:.25em;text-transform:uppercase;
+    color:#fff;mix-blend-mode:difference;pointer-events:none;
+  }
+
+  .chrome{
+    position:fixed;left:0;right:0;bottom:0;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;background:rgba(11,13,18,.92);
+    color:#f6f3ec;font-family:"JetBrains Mono",monospace;font-size:12px;
+    z-index:50;backdrop-filter:blur(6px);border-top:1px solid #2a2d36;
+  }
+  .chrome .title{opacity:.7;letter-spacing:.08em;text-transform:uppercase}
+  .chrome .counter{opacity:.9}
+  .chrome button{
+    background:transparent;border:1px solid #3a3e49;color:#f6f3ec;
+    padding:6px 12px;font:inherit;cursor:pointer;border-radius:2px;margin-left:6px;
+  }
+  .chrome button:hover{background:#1a1c22;border-color:#d7442a;color:#fff}
+  .chrome .icon-btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    gap:6px;padding:6px 10px;color:#f6f3ec;
+  }
+  .chrome .icon-btn svg{display:block}
+
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 28px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .eyebrow::before{content:"";width:40px;height:1px;background:var(--accent)}
+  h2.title{
+    font-family:"Fraunces",serif;font-weight:700;font-size:clamp(36px,4.6vw,64px);
+    line-height:1.05;letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance;
+  }
+  p.lede{font-size:clamp(18px,2vw,22px);line-height:1.4;max-width:48ch;color:#2a2d36;margin:0 0 16px}
+  p.hint{font-size:clamp(15px,1.35vw,17px);color:var(--muted);max-width:52ch;margin:0 0 12px;line-height:1.4}
+  .pagenum{
+    position:absolute;right:88px;top:64px;
+    font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);
+    letter-spacing:.18em;
+  }
+
+  .cover{background:var(--ink);color:var(--paper)}
+  .slide.cover.active{
+    flex-direction:column;justify-content:space-between;gap:32px;
+  }
+  .cover h1{
+    font-family:"Fraunces",serif;font-weight:800;
+    font-size:clamp(48px,7.6vw,116px);line-height:.9;letter-spacing:-.04em;
+    margin:0;color:var(--paper);
+  }
+  .cover h1 em{font-style:italic;color:var(--accent);font-weight:400}
+  .cover .cover-eyebrow{
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+    margin:0 0 18px;display:flex;align-items:center;gap:14px;
+  }
+  .cover .redline{display:inline-block;width:96px;height:3px;background:var(--accent);margin:0 0 18px}
+  .cover-body{
+    display:grid;grid-template-columns:1.05fr 1.4fr;gap:48px;
+    align-items:start;padding-top:36px;border-top:1px solid #2a2d36;
+  }
+  .cover-quote{
+    font-family:"Fraunces",serif;font-weight:400;font-style:italic;
+    font-size:clamp(22px,2.5vw,34px);line-height:1.2;letter-spacing:-.015em;
+    margin:0;color:var(--paper);opacity:.92;max-width:28ch;
+  }
+  .cover-tenets{display:grid;grid-template-columns:1fr;gap:18px}
+  .cover-tenet{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:baseline}
+  .cover-tenet h6{
+    font-family:"JetBrains Mono",monospace;font-size:10px;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+    margin:0;white-space:nowrap;
+  }
+  .cover-tenet p{font-size:13px;line-height:1.55;color:var(--paper);opacity:.8;margin:0;max-width:48ch}
+  @media(max-width:900px){.cover-body{grid-template-columns:1fr;gap:24px}}
+
+  .slide.section-divider{background:var(--ink);color:var(--paper);justify-content:center}
+  .slide.section-divider .pagenum{color:rgba(246,243,236,.5)}
+  .slide.section-divider .section-divider-inner{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
+  .section-divider .redline{display:inline-block;width:96px;height:3px;background:var(--accent);margin-bottom:20px}
+  .slide.section-divider h1{
+    font-family:"Fraunces",serif;font-weight:800;
+    font-size:clamp(36px,5.5vw,80px);line-height:1.05;letter-spacing:-.035em;
+    margin:0;max-width:24ch;color:var(--paper);
+  }
+  .slide.section-divider h1 em{font-style:italic;color:var(--accent);font-weight:400}
+  .slide.section-divider .lede{color:rgba(246,243,236,.82);margin-top:28px}
+
+  .layerwrap{display:grid;grid-template-columns:1.15fr 1fr;gap:36px;margin-top:28px}
+  .layer{border:1px solid var(--rule);padding:28px;background:var(--paper-2);position:relative}
+  .layer.accent{border-color:var(--accent)}
+  .layer.ink{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+  .layer.ink h4,.layer.ink p,.layer.ink li{color:var(--paper)}
+  .layer.ink .tagline{color:rgba(246,243,236,.7)}
+  .layer.ink ul{color:rgba(246,243,236,.85)}
+  .layer .tag{
+    position:absolute;top:-11px;left:18px;background:var(--paper);
+    padding:0 10px;font-family:"JetBrains Mono",monospace;font-size:10px;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+  }
+  .layer.ink .tag{background:var(--ink);color:var(--accent)}
+  .layer h4{font-family:"Fraunces",serif;font-size:30px;margin:0 0 10px;font-weight:700;letter-spacing:-.01em}
+  .layer .tagline{font-family:"Fraunces",serif;font-size:15px;font-style:italic;color:var(--muted);margin:0 0 12px}
+  .layer p{font-size:15px;line-height:1.55;color:#2a2d36;margin:0 0 12px}
+  .layer ul{margin:10px 0 0;padding-left:18px;font-size:14px;line-height:1.6;color:#3a3e49}
+  .layer ul li{margin-bottom:5px}
+  .layer.accent ul{font-size:28px;line-height:1.45;padding-left:22px}
+  .layer.accent ul li{margin-bottom:10px}
+  .layer.ink ul{font-size:28px;line-height:1.45;padding-left:22px}
+  .layer.ink ul li{margin-bottom:10px}
+  .layer.ink .tagline{font-size:30px;line-height:1.35}
+  .layer.ink .tag{font-size:12px}
+
+  .funcs{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:28px}
+  .func{border-top:3px solid var(--ink);padding:18px 0 0}
+  .func.teal{border-color:var(--teal)}
+  .func.blue{border-color:var(--accent-2)}
+  .func.purple{border-color:var(--purple)}
+  .func h5{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;margin:0 0 8px;color:var(--muted);
+  }
+  .func h6{font-family:"Fraunces",serif;font-size:22px;margin:0 0 6px;font-weight:700}
+  .func .tagline{font-family:"Fraunces",serif;font-size:14px;font-style:italic;color:var(--accent);margin:0 0 8px}
+  .func.teal .tagline{color:var(--teal)}
+  .func.blue .tagline{color:var(--accent-2)}
+  .func.purple .tagline{color:var(--purple)}
+  .func p{font-size:13px;line-height:1.55;color:#3a3e49;margin:0}
+  .func ul{margin:8px 0 0;padding-left:16px;font-size:12px;line-height:1.5;color:#3a3e49}
+  .func .who{
+    font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--accent);margin-top:10px;display:block;
+  }
+
+  .waves{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:28px}
+  .wave{border-top:3px solid var(--accent);padding:18px 0 0}
+  .wave.w2{border-color:var(--teal)}
+  .wave.w3{border-color:var(--accent-2)}
+  .wave.w4{border-color:var(--purple)}
+  .wave.w5{border-color:var(--gold)}
+  .wave.w6{border-color:#b91c1c}
+  .wave h5{
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;margin:0 0 8px;color:var(--accent);
+  }
+  .wave.w2 h5{color:var(--teal)}
+  .wave.w3 h5{color:var(--accent-2)}
+  .wave.w4 h5{color:var(--purple)}
+  .wave.w5 h5{color:var(--gold)}
+  .wave.w6 h5{color:#b91c1c}
+  .wave h6{font-family:"Fraunces",serif;font-size:20px;margin:0 0 8px;font-weight:700;line-height:1.15}
+  .wave p{font-size:13px;line-height:1.5;color:#3a3e49;margin:0}
+  .wave .chip{
+    font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);margin-top:8px;display:inline-block;
+  }
+  .maturity{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:24px}
+  @media(max-width:1100px){.maturity{grid-template-columns:repeat(3,1fr)}}
+
+  .gaptbl{width:100%;border-collapse:collapse;margin-top:24px;font-size:14px;table-layout:fixed}
+  .gaptbl th,.gaptbl td{text-align:left;padding:14px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+  .gaptbl th{
+    font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--muted);font-weight:600;border-bottom:2px solid var(--ink);
+  }
+  .gaptbl th.next{color:var(--accent)}
+  .gaptbl td.gap{font-family:"Fraunces",serif;font-size:18px;font-weight:700;width:22%;color:var(--ink)}
+  .gaptbl td.now{color:#3a3e49;width:39%}
+  .gaptbl td.next{color:#0f5132;width:39%}
+  .gaptbl tr:last-child td{border-bottom:none}
+
+  .beats{display:flex;flex-direction:column;margin-top:4px}
+  .beat{
+    display:grid;grid-template-columns:64px 1fr;gap:24px;align-items:baseline;
+    padding:20px 0;border-bottom:1px solid rgba(26,28,34,.1);
+  }
+  .beat:last-child{border-bottom:none}
+  .beat .num{
+    font-family:"Fraunces",serif;font-size:clamp(44px,4.5vw,64px);font-weight:400;font-style:italic;
+    line-height:1;color:var(--accent);letter-spacing:-.03em;
+  }
+  .beat.teal .num{color:var(--teal)}
+  .beat.blue .num{color:var(--accent-2)}
+  .beat h4{font-family:"Fraunces",serif;font-size:clamp(22px,2.3vw,30px);font-weight:700;margin:0;letter-spacing:-.01em;line-height:1.15}
+  .beat p{font-size:clamp(16px,1.5vw,19px);line-height:1.35;color:#3a3e49;margin:6px 0 0;max-width:52ch}
+
+  .rails{display:grid;grid-template-columns:1fr 1fr;gap:52px;margin-top:20px}
+  .rail h4{
+    font-family:"JetBrains Mono",monospace;font-size:20px;letter-spacing:.2em;text-transform:uppercase;
+    margin:0 0 14px;padding-bottom:10px;border-bottom:2px solid var(--accent);color:var(--accent);
+  }
+  .rail.teal h4{border-color:var(--teal);color:var(--teal)}
+  .rail.blue h4{border-color:var(--accent-2);color:var(--accent-2)}
+  .rail ul{list-style:none;margin:0;padding:0}
+  .rail li{
+    font-family:"Fraunces",serif;font-size:clamp(17px,1.8vw,24px);font-weight:600;line-height:1.25;
+    letter-spacing:-.01em;margin:0 0 12px;color:var(--ink);
+  }
+
+  .tool-line{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 28px;margin-top:28px}
+  .tool-line .tool h4{
+    font-family:"Fraunces",serif;font-size:clamp(22px,2.6vw,36px);font-weight:700;margin:0;line-height:1;letter-spacing:-.02em;
+  }
+  .tool-line .tool span{
+    font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:4px;display:block;
+  }
+  .tool-line .sep{font-size:20px;color:rgba(26,28,34,.25);padding-bottom:6px}
+
+  .model-grid{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:22px;align-items:stretch;
+  }
+  .model-card{
+    background:var(--paper-2);border:1px solid rgba(26,28,34,.1);
+    padding:16px 14px 18px;display:flex;flex-direction:column;
+    border-top:3px solid var(--accent);min-width:0;
+  }
+  .model-card.teal{border-top-color:var(--teal)}
+  .model-card.blue{border-top-color:var(--accent-2)}
+  .model-card.ink{border-top-color:var(--ink)}
+  .model-card.purple{border-top-color:var(--purple)}
+  .model-card .logo-row{
+    display:flex;align-items:center;gap:10px;min-height:32px;margin-bottom:14px;
+  }
+  .model-card .logo-row img{height:26px;width:auto;max-width:88px;display:block}
+  .model-card h3{
+    font-family:"Fraunces",serif;font-size:clamp(18px,1.5vw,22px);font-weight:700;
+    margin:0 0 4px;letter-spacing:-.02em;line-height:1.1;
+  }
+  .model-card .vendor{
+    font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 8px;
+  }
+  .model-card .tagline{
+    font-family:"Fraunces",serif;font-size:13px;font-style:italic;margin:0 0 10px;line-height:1.2;
+  }
+  .model-card.accent .tagline{color:var(--accent)}
+  .model-card.teal .tagline{color:var(--teal)}
+  .model-card.blue .tagline{color:var(--accent-2)}
+  .model-card.ink .tagline{color:var(--ink)}
+  .model-card.purple .tagline{color:var(--purple)}
+  .model-card p{font-size:22px;line-height:1.45;color:#3a3e49;margin:0;flex:1}
+  @media(max-width:1200px){.model-grid{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:800px){.model-grid{grid-template-columns:1fr 1fr}}
+
+  .slide-split{
+    display:grid;grid-template-columns:1fr minmax(300px,44%);gap:28px;
+    align-items:center;flex:1;min-height:0;margin-top:4px;
+  }
+  .slide-split .beats{margin-top:0;align-self:start}
+  .claude-figure{
+    margin:0;padding:0;background:none;border:none;
+    display:flex;align-items:center;justify-content:center;
+    min-height:0;align-self:center;
+  }
+  .claude-figure .claude-symbol{
+    width:min(480px,100%);height:auto;display:block;
+    max-height:min(78vh,720px);
+  }
+
+  .stage-foot{
+    margin-top:auto;padding-top:18px;
+    font-family:"Fraunces",serif;font-size:clamp(17px,1.8vw,22px);font-weight:600;font-style:italic;
+    line-height:1.25;color:var(--ink);max-width:58ch;
+  }
+  .stage-foot strong{font-style:normal;color:var(--accent)}
+
+  .slide.content-slide.active{flex-direction:column}
+  .slide.content-slide.active .slide-inner{display:flex;flex-direction:column;flex:1;min-height:0}
+
+  .close{background:var(--ink);color:var(--paper);justify-content:center}
+  .close .big-quote{
+    font-family:"Fraunces",serif;font-size:clamp(40px,5vw,76px);font-weight:400;
+    font-style:italic;line-height:1.05;letter-spacing:-.02em;margin:0 0 20px;max-width:22ch;
+  }
+  .close .big-quote em{color:var(--accent);font-style:italic}
+  .close .lede{color:rgba(246,243,236,.85)}
+  .close .tenets{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:48px;padding-top:32px;border-top:1px solid #2a2d36}
+  .close .tenet h6{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+  .close .tenet p{font-size:14px;line-height:1.55;opacity:.85;margin:0}
+  @media(max-width:900px){
+    .rails,.layerwrap,.funcs,.two,.slide-split{grid-template-columns:1fr}
+    .claude-figure .claude-symbol{width:min(200px,55vw);max-height:240px}
+    .close .tenets{grid-template-columns:repeat(2,1fr)}
+  }
+
+  .overview{position:fixed;inset:0;z-index:100;background:rgba(11,13,18,.97);display:none;flex-direction:column;color:var(--paper)}
+  .overview.open{display:flex}
+  .overview-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 28px;border-bottom:1px solid #2a2d36;
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  }
+  .overview-title{opacity:.7}
+  .overview .icon-btn{
+    background:transparent;border:1px solid #3a3e49;color:#f6f3ec;
+    padding:6px 12px;font:inherit;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;border-radius:2px;
+  }
+  .overview .icon-btn:hover{background:#1a1c22;border-color:var(--accent)}
+  .overview-grid{
+    flex:1;overflow:auto;padding:28px 28px 48px;display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;align-content:start;
+  }
+  .ov-tile{
+    position:relative;background:var(--ink);color:var(--paper);border-radius:4px;overflow:hidden;cursor:pointer;
+    border:2px solid transparent;transition:transform .12s ease, border-color .12s ease;
+    display:flex;flex-direction:column;padding:0 0 0 4px;text-align:left;font:inherit;
+  }
+  .ov-tile:hover{transform:translateY(-2px);border-color:rgba(215,68,42,.7)}
+  .ov-tile.active{border-color:var(--accent)}
+  .ov-tile-strip{position:absolute;left:0;top:0;bottom:0;width:4px;z-index:5;background:var(--accent)}
+  .ov-tile-thumb{position:relative;width:100%;flex:0 0 auto;overflow:hidden;background:var(--paper);border-bottom:1px solid #2a2d36;min-height:120px}
+  .ov-tile-stage{position:absolute;top:0;left:0;transform-origin:top left;pointer-events:none}
+  .ov-tile-stage > .slide{position:relative !important;inset:auto !important;display:flex !important;margin:0 !important;animation:none !important}
+  .ov-tile-foot{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:12px;padding:10px 14px 12px}
+  .ov-tile-num{font-family:"Fraunces",serif;font-weight:700;font-style:italic;font-size:22px;line-height:1;letter-spacing:-.02em;color:var(--accent)}
+  .ov-tile-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .ov-tile-title{
+    font-family:"Fraunces",serif;font-weight:600;font-size:14px;line-height:1.15;letter-spacing:-.01em;
+    color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .ov-tile-meta{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(246,243,236,.55)}
+
+  @media print{
+    html,body{height:auto;overflow:visible;background:var(--paper)}
+    .chrome{display:none !important}
+    .deck{position:static;width:100%;height:auto;min-height:0;overflow:visible}
+    .slide{position:relative !important;inset:auto !important;display:block !important;width:100%;min-height:100vh;height:auto;page-break-after:always;page-break-inside:avoid;overflow:visible}
+    .slide:last-child{page-break-after:auto}
   }
 </style>
 </head>
 <body>
-<div class="presentation">
-  <div class="progress-bar" id="progressBar"></div>
 
-  <!-- Mountain background -->
-  <div class="mountain-bg">
-    <div class="mountain m1"></div>
-    <div class="mountain m2"></div>
-    <div class="mountain m3"></div>
-    <div class="mountain m4"></div>
-  </div>
+<div class="deck" id="deck">
 
-  <!-- ══════════════════════════════════════════ SLIDE 1 ═══ -->
-  <div class="slide title-slide active" data-slide="0">
-    <div class="section-label">A Working Point of View</div>
-    <h1 class="slide-title">AI, and what it actually means for us</h1>
-    <div class="author">
-      <strong>Darren Brelesky</strong> <span>&middot; EVP, Product / Design / Engineering, CBS Sports</span>
+  <div class="mark">Paramount // CBS &bull; AI Fundamentals</div>
+
+  <!-- 1. COVER -->
+  <section class="slide cover active" data-title="Cover">
+    <div>
+      <p class="cover-eyebrow">A Working Point of View</p>
+      <span class="redline"></span>
+      <h1>AI, and what it<br><em>actually means</em> for us.</h1>
     </div>
-    <div class="side-dots">
-      <div class="dot"></div>
-      <div class="dot"></div>
-      <div class="dot"></div>
-      <div class="dot"></div>
-      <div class="dot"></div>
+    <div class="cover-body">
+      <p class="cover-quote">Practical AI for modern media teams demystified, grounded, and ready to use Monday.</p>
+      <div class="cover-tenets">
+        <div class="cover-tenet">
+          <h6>Presenter</h6>
+          <p><strong>Darren Brelesky</strong> &middot; EVP, Product + Design, CBS</p>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <!-- ══════════════════════════════════════════ SLIDE 2 ═══ -->
-  <div class="slide" data-slide="1">
-    <div class="section-label">If You Remember One Thing</div>
-    <div class="big-quote">
-      AI isn&rsquo;t trying to replace you&hellip;but it will shift how you work.<br>
-      <span class="highlight-cyan">It changes what a small team can get done.</span><br>
-      Creates a stronger demand for high leverage individuals.
+  <!-- 2. ONE THING -->
+  <section class="slide section-divider" data-title="If You Remember One Thing">
+    <span class="pagenum"></span>
+    <div class="section-divider-inner">
+      <span class="redline"></span>
+      <h1>AI isn&rsquo;t trying to replace us.... but it will shift how we <em>work</em>.</h1>
+      <p class="lede" style="max-width:52ch">It changes what a small team can get done. Creates a stronger demand for high-leverage individuals. You stay the editor, the taste, the judgment. AI takes the grunt work so you spend more time on the ideas fans actually feel.</p>
     </div>
-    <p class="slide-subtitle">You stay the editor, the taste, the judgment. AI takes the grunt work so you spend more time on the ideas fans actually feel.</p>
-  </div>
+  </section>
 
-  <!-- ══════════════════════════════════════════ SLIDE 3 ═══ -->
-  <div class="slide" data-slide="2">
-    <div class="section-label">Demystify</div>
-    <h2 class="slide-title" style="font-size:clamp(1.6rem,3.5vw,2.8rem);">Think of AI as a fast, tireless junior collaborator.</h2>
-    <div class="card-row">
-      <div class="card card-border-left" style="flex:1.4;">
+  <!-- 3. DEMYSTIFY -->
+  <section class="slide content-slide" data-title="Demystify">
+    <span class="pagenum"></span>
+    <p class="eyebrow">Demystify</p>
+    <h2 class="title">Think of AI as a crew of tireless junior collaborators who are reeeeeeeaallly smart.</h2>
+    <div class="layerwrap">
+      <div class="layer accent">
+        <span class="tag">What it is</span>
         <ul>
-          <li><strong>Reads anything</strong> in seconds: a 40-page deck, a research packet, a transcript.</li>
+          <li><strong>Reads anything</strong> in seconds: a 40-page deck, a research packet, a 5-yr LRP, a complete codebase.</li>
           <li><strong>Writes a first draft</strong> of almost anything you ask for.</li>
           <li><strong>Makes things</strong> now: images, simple sites, edits, options at volume.</li>
           <li><strong>Talks like a person.</strong> No code, no jargon. You just ask.</li>
         </ul>
       </div>
-      <div class="card dark" style="flex:1;">
-        <h3 style="letter-spacing:0.15em; font-size:0.8rem; margin-bottom:0.8rem;">IT IS NOT</h3>
+      <div class="layer ink">
+        <span class="tag">It is not</span>
         <ul>
           <li>a search engine</li>
           <li>magic, or sentient</li>
           <li>always right</li>
         </ul>
-        <p style="margin-top:1rem; font-style:italic; color: var(--accent-cyan); font-size:0.85rem;">You manage it like a sharp intern: clear direction in, you edit what comes out.</p>
+        <p class="tagline" style="margin-top:16px">💡 You manage it like a sharp intern: clear direction in, you edit what comes out.</p>
       </div>
     </div>
-    <div class="footer-note">CBS Sports &middot; AI for the Sixth Man team</div>
-  </div>
+  </section>
 
-  <!-- ══════════════════════════════════════════ SLIDE 4 ═══ -->
-  <div class="slide" data-slide="3">
-    <div class="section-label">Set Expectations</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Where it shines, and where to keep your hands on the wheel</h2>
-    <div class="card-row">
-      <div class="card card-border-top-cyan">
-        <h3>GREAT AT</h3>
+  <!-- 4. EXPECTATIONS -->
+  <section class="slide content-slide" data-title="Set Expectations">
+    <span class="pagenum"></span>
+    <p class="eyebrow">Set Expectations</p>
+    <h2 class="title">Where it shines, and where to keep your hands on the wheel.</h2>
+    <div class="rails">
+      <div class="rail teal">
+        <h4>👍 Great at</h4>
         <ul>
-          <li>First drafts and starting points</li>
-          <li>Summarizing long, messy material</li>
-          <li>Options at volume (20 headlines, 10 concepts)</li>
-          <li>Rewrites, tone shifts, tightening copy</li>
-          <li>Research head-starts and brainstorming</li>
-          <li>Turning a rough idea into something you can see</li>
+          <li>First drafts of memos, board slides, and earnings talking points</li>
+          <li>Summarizing 10-Ks, earnings calls, and long rights or contract packets</li>
+          <li>Options at volume (20 variance narratives, 10 scenario framings)</li>
+          <li>Turning a rough ask into a model, chart, or one-pager you can stress-test</li>
         </ul>
       </div>
-      <div class="card card-border-top-orange">
-        <h3>KEEP YOUR HANDS ON THE WHEEL</h3>
+      <div class="rail">
+        <h4>🪂 Keep your hands on the wheel</h4>
         <ul>
-          <li>It makes things up, confidently. <strong>Verify facts, names, stats.</strong></li>
-          <li>It has no taste. <strong>Your eye is the product.</strong></li>
-          <li>Don&rsquo;t paste anything confidential into random tools.</li>
-          <li>First answer is rarely the best, push it, redirect it.</li>
-          <li>It&rsquo;s a starting line, not a finish line.</li>
+          <li>Hallucinates numbers and citations. <strong>Verify every figure, source, and formula.</strong></li>
+          <li>No judgment on materiality or what leadership needs to hear. <strong>Your call on what ships.</strong></li>
+          <li>Don&rsquo;t paste earnings, forecasts, M&amp;A, or personnel into unapproved tools.</li>
+          <li>Starting point for the model or memo, not the sign-off.</li>
         </ul>
       </div>
     </div>
-    <div class="footer-note">CBS Sports &middot; AI for the Sixth Man team</div>
-  </div>
+  </section>
 
-  <!-- ══════════════════════════════════════════ SLIDE 5 ═══ -->
-  <div class="slide" data-slide="4">
-    <div class="section-label">A Field Guide</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">How I think about the frontier models</h2>
-    <p class="slide-subtitle">They&rsquo;re converging, but each still has a lane. My read, not gospel.</p>
-    <div class="card-row" style="flex-wrap: nowrap;">
-      <div class="card" style="border-top:3px solid #a855f7; min-width:0;">
+  <!-- 5. FIELD GUIDE -->
+  <section class="slide content-slide" data-title="Frontier Models">
+    <span class="pagenum"></span>
+    <p class="eyebrow">A Field Guide</p>
+    <h2 class="title">How I think about the frontier models.</h2>
+    <p class="hint">They&rsquo;re converging, but each still has a lane. My read, not gospel.</p>
+    <div class="model-grid">
+      <article class="model-card accent">
+        <div class="logo-row">
+          <img src="images/logos/anthropic.svg" width="26" height="26" alt="Anthropic">
+        </div>
         <h3>Claude</h3>
-        <div class="meta">ANTHROPIC</div>
-        <div class="tagline highlight-cyan" style="color: var(--accent-cyan);">The all-rounder</div>
+        <p class="vendor">Anthropic</p>
+        <p class="tagline">The all-rounder</p>
         <p>Strong across the board. Built for enterprise, SMB support, and entrepreneurs. The one we lean on.</p>
-      </div>
-      <div class="card" style="border-top:3px solid #10b981; min-width:0;">
+      </article>
+      <article class="model-card teal">
+        <div class="logo-row">
+          <img src="images/logos/openai.svg" width="26" height="26" alt="OpenAI">
+        </div>
         <h3>ChatGPT</h3>
-        <div class="meta">OPENAI</div>
-        <div class="tagline" style="color:#10b981;">Everyday chat</div>
+        <p class="vendor">OpenAI</p>
+        <p class="tagline">Everyday chat</p>
         <p>The everyday chat appliance most people start with. Especially strong at generating images.</p>
-      </div>
-      <div class="card" style="border-top:3px solid #3b82f6; min-width:0;">
+      </article>
+      <article class="model-card blue">
+        <div class="logo-row">
+          <img src="images/logos/google.svg" width="26" height="26" alt="Google">
+        </div>
         <h3>Gemini</h3>
-        <div class="meta">GOOGLE</div>
-        <div class="tagline" style="color:#3b82f6;">Research + Google</div>
+        <p class="vendor">Google</p>
+        <p class="tagline">Research + Google</p>
         <p>Deep research projects and anything Google-native. NotebookLM is remarkable at turning docs into audio and media.</p>
-      </div>
-      <div class="card" style="border-top:3px solid #ef4444; min-width:0;">
+      </article>
+      <article class="model-card ink">
+        <div class="logo-row">
+          <img src="images/logos/xai.svg" width="26" height="26" alt="xAI">
+        </div>
         <h3>Grok</h3>
-        <div class="meta">XAI</div>
-        <div class="tagline" style="color:#ef4444;">Real-time pulse</div>
+        <p class="vendor">xAI</p>
+        <p class="tagline">Real-time pulse</p>
         <p>Real-time lookups and reading live sentiment, plugged into the X firehose.</p>
-      </div>
-      <div class="card" style="border-top:3px solid #6366f1; min-width:0;">
+      </article>
+      <article class="model-card purple">
+        <div class="logo-row">
+          <img src="images/logos/microsoft.svg" width="26" height="26" alt="Microsoft">
+          <img src="images/logos/meta.svg" width="26" height="26" alt="Meta">
+        </div>
         <h3>Copilot / Llama</h3>
-        <div class="meta">MICROSOFT &middot; META</div>
-        <div class="tagline" style="color:#6366f1;">The blend</div>
+        <p class="vendor">Microsoft &middot; Meta</p>
+        <p class="tagline">The blend</p>
         <p>A general blend of the others. Copilot rides inside Microsoft tools; Llama is the open-source option.</p>
-      </div>
+      </article>
     </div>
-    <div class="footer-note"><strong>Bottom line:</strong> Get fluent in one and the skills carry to the rest.</div>
-  </div>
+    <p class="stage-foot"><strong>Bottom line:</strong> Get fluent in one and the skills carry to the rest.</p>
+  </section>
 
-  <!-- ══════════════════════════════════════════ SLIDE 6 ═══ -->
-  <div class="slide" data-slide="5">
-    <div class="section-label">My Honest Bias</div>
-    <h2 class="slide-title" style="font-size:clamp(1.6rem,3.5vw,2.8rem);">Why I lean on Claude</h2>
-    <ul class="bullet-list">
-      <li>
-        <strong>It finishes what it starts.</strong>
-        <span class="sub">The most autonomy and accountability to see a task through, and the most interactive: it asks you questions as it works instead of guessing.</span>
-      </li>
-      <li>
-        <strong>Three tools, one workbench.</strong>
-        <span class="sub">Claude chat to think and draft, Cowork to act on your files and tools, Claude Code to build. Same brain, three surfaces.</span>
-      </li>
-      <li>
-        <strong>It bends to how you work.</strong>
-        <span class="sub">The most adaptable across creative and developer workflows: web, desktop app, mobile, and command-line.</span>
-      </li>
-      <li>
-        <strong>The most capable model right now: <span class="highlight-orange">Opus 4.7</span></strong>
-        <span class="sub">Top tier at both thinking and doing. (OpenAI&rsquo;s Codex is not far behind.)</span>
-      </li>
-    </ul>
-  </div>
+  <!-- 6. CLAUDE BIAS -->
+  <section class="slide content-slide" data-title="Why Claude">
+    <span class="pagenum"></span>
+    <p class="eyebrow">My Honest Bias</p>
+    <h2 class="title">Why I lean on <em style="font-style:italic;color:var(--accent)">Claude</em>.</h2>
+    <div class="slide-split">
+      <div class="beats">
+        <div class="beat"><span class="num">1</span><div><h4>It finishes what it starts</h4><p>The most autonomy and accountability to see a task through: it asks you questions as it works instead of guessing.</p></div></div>
+        <div class="beat teal"><span class="num">2</span><div><h4>Three tools, one workbench</h4><p>Claude chat to think and draft, Cowork to act on your files and tools, Claude Code to build. Same brain, three surfaces.</p></div></div>
+        <div class="beat blue"><span class="num">3</span><div><h4>It bends to how you work</h4><p>The most adaptable across creative and developer workflows: web, desktop app, mobile, and command-line.</p></div></div>
+        <div class="beat"><span class="num">4</span><div><h4>Most capable model right now: Opus 4.7</h4><p>Top tier at both thinking and doing. (OpenAI&rsquo;s Codex is not far behind.)</p></div></div>
+      </div>
+      <figure class="claude-figure">
+        <img src="images/claude-symbol.svg" alt="Claude" class="claude-symbol">
+      </figure>
+    </div>
+  </section>
 
-  <!-- ══════════════════════════════════════════ SLIDE 7 ═══ -->
-  <div class="slide" data-slide="6">
-    <div class="section-label">The Claude Workbench</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">Three tools, same brain</h2>
-    <div class="card-row">
-      <div class="card card-border-top-cyan">
-        <h3>Claude chat</h3>
-        <div class="meta">WEB &middot; DESKTOP &middot; MOBILE APP</div>
-        <div class="tagline highlight-cyan" style="color:var(--accent-cyan);">The conversational assistant. You type, it answers.</div>
-        <h4 style="font-size:0.75rem; letter-spacing:0.1em; margin:0.8rem 0 0.4rem;">WHAT IT DOES</h4>
+  <!-- 7. WORKBENCH -->
+  <section class="slide content-slide" data-title="Claude Workbench">
+    <span class="pagenum"></span>
+    <p class="eyebrow">The Claude Workbench</p>
+    <h2 class="title">Three tools, <em style="font-style:italic;color:var(--accent)">same brain</em>.</h2>
+    <div class="funcs">
+      <div class="func">
+        <h5>Web &middot; Desktop &middot; Mobile</h5>
+        <h6>Claude chat</h6>
+        <p class="tagline">The conversational assistant</p>
         <ul>
           <li>Draft, rewrite, summarize, brainstorm</li>
           <li>Answer questions, analyze what you paste</li>
           <li>Make images and quick one-offs</li>
         </ul>
-        <h4 style="font-size:0.75rem; letter-spacing:0.1em; margin:0.8rem 0 0.4rem; color:var(--accent-cyan);">WHO IT&rsquo;S FOR</h4>
-        <p>Everyone. The zero-setup front door to AI.</p>
+        <span class="who">Everyone · zero-setup front door</span>
       </div>
-      <div class="card card-border-top-orange">
-        <h3>Cowork</h3>
-        <div class="meta">DESKTOP APP</div>
-        <div class="tagline highlight-orange" style="color:var(--accent-orange);">Chat that does the work, on your real files and tools.</div>
-        <h4 style="font-size:0.75rem; letter-spacing:0.1em; margin:0.8rem 0 0.4rem;">WHAT IT DOES</h4>
+      <div class="func teal">
+        <h5>Desktop app</h5>
+        <h6>Cowork</h6>
+        <p class="tagline">Chat that does the work</p>
         <ul>
-          <li>Works across your files, Slack, email, calendar, Drive</li>
-          <li>Builds decks, docs and sheets; automates busywork</li>
-          <li>Runs on a schedule and connects your apps</li>
+          <li>Files, Slack, email, calendar, Drive</li>
+          <li>Decks, docs, sheets; automates busywork</li>
+          <li>Runs on a schedule, connects your apps</li>
         </ul>
-        <h4 style="font-size:0.75rem; letter-spacing:0.1em; margin:0.8rem 0 0.4rem; color:var(--accent-orange);">WHO IT&rsquo;S FOR</h4>
-        <p>Non-developers: marketing, design, writers, strategy. (It&rsquo;s what I built this deck in.)</p>
+        <span class="who">Non-devs · built this deck here</span>
       </div>
-      <div class="card" style="border-top: 3px solid #a855f7;">
-        <h3>Claude Code</h3>
-        <div class="meta">COMMAND LINE / TERMINAL</div>
-        <div class="tagline" style="color:#a855f7;">An agent that builds software for you.</div>
-        <h4 style="font-size:0.75rem; letter-spacing:0.1em; margin:0.8rem 0 0.4rem;">WHAT IT DOES</h4>
+      <div class="func purple">
+        <h5>Command line</h5>
+        <h6>Claude Code</h6>
+        <p class="tagline">An agent that builds software</p>
         <ul>
-          <li>Builds apps, sites, scripts and automations</li>
-          <li>Most configurable: plan-first or full autonomy</li>
-          <li>Turns &ldquo;I wish we had a tool&rdquo; into a real tool</li>
+          <li>Apps, sites, scripts, automations</li>
+          <li>Plan-first or full autonomy</li>
+          <li>&ldquo;I wish we had a tool&rdquo; &rarr; real tool</li>
         </ul>
-        <h4 style="font-size:0.75rem; letter-spacing:0.1em; margin:0.8rem 0 0.4rem; color:#a855f7;">WHO IT&rsquo;S FOR</h4>
-        <p>Developers and the technically curious who want to build.</p>
+        <span class="who">Developers &amp; the technically curious</span>
       </div>
     </div>
-    <div class="footer-note">CBS Sports &middot; AI for the Sixth Man team</div>
-  </div>
+  </section>
 
-  <!-- ══════════════════════════════════════════ SLIDE 8 ═══ -->
-  <div class="slide" data-slide="7">
-    <div class="section-label">Where You Are, and Where You Can Go</div>
-    <h2 class="slide-title" style="font-size:clamp(1.5rem,3.2vw,2.5rem);">The AI maturity curve</h2>
-    <p class="slide-subtitle">Nobody starts at the top, and you don&rsquo;t need to. The win is moving up one step.</p>
-    <div class="curve-container">
-      <div class="curve-step">
-        <div class="step-num">1</div>
-        <span class="step-title">Dabbler</span>
-        <p>Fixes an email&rsquo;s grammar before hitting send.</p>
-        <span class="step-tool">Claude chat</span>
-      </div>
-      <div class="curve-step">
-        <div class="step-num">2</div>
-        <span class="step-title">Daily Driver</span>
-        <p>Turns a press release into 15 tweet options. Creates app store assets from brand books.</p>
-        <span class="step-tool">Claude chat</span>
-      </div>
-      <div class="curve-step">
-        <div class="step-num">3</div>
-        <span class="step-title">Delegator</span>
-        <p>Feeds a packet + brand guide, gets an on-voice brief. Uses Claude to build presentations, do market research, strategy work.</p>
-        <span class="step-tool">Claude chat + Cowork</span>
-      </div>
-      <div class="curve-step">
-        <div class="step-num">4</div>
-        <span class="step-title">Builder</span>
-        <p>Builds sites, apps, micro apps with Claude Code.</p>
-        <span class="step-tool">Cowork + Claude Code</span>
-      </div>
-      <div class="curve-step">
-        <div class="step-num">5</div>
-        <span class="step-title">Force multiplier</span>
-        <p>Replaces SaaS apps with custom apps. Creates skills, agents and workflows others reuse.</p>
-        <span class="step-tool">Cowork + Claude Code</span>
-      </div>
-      <div class="curve-step">
-        <div class="step-num">6</div>
-        <span class="step-title">Off the charts</span>
-        <p>Runs an always-on agent stack (&ldquo;OpenClaw&rdquo;) across several businesses.</p>
-        <span class="step-tool" style="background:#fee2e2; color:#dc2626;">Autonomous agents</span>
-      </div>
+  <!-- 8. MATURITY -->
+  <section class="slide content-slide" data-title="Maturity Curve">
+    <span class="pagenum"></span>
+    <p class="eyebrow">Where You Are</p>
+    <h2 class="title">The AI maturity curve.</h2>
+    <p class="hint">Nobody starts at the top. The win is moving up one step.</p>
+    <div class="maturity">
+      <div class="wave"><h5>Step 1</h5><h6>Dabbler</h6><p>Fixes an email&rsquo;s grammar before send.</p><span class="chip">Claude chat</span></div>
+      <div class="wave w2"><h5>Step 2</h5><h6>Daily Driver</h6><p>15 tweet options from a press release; app store assets from brand books.</p><span class="chip">Claude chat</span></div>
+      <div class="wave w3"><h5>Step 3</h5><h6>Delegator</h6><p>On-voice briefs from packets; presentations and strategy work.</p><span class="chip">Chat + Cowork</span></div>
+      <div class="wave w4"><h5>Step 4</h5><h6>Builder</h6><p>Sites, apps, micro apps with Claude Code.</p><span class="chip">Cowork + Code</span></div>
+      <div class="wave w5"><h5>Step 5</h5><h6>Force multiplier</h6><p>Custom apps, skills, agents others reuse.</p><span class="chip">Cowork + Code</span></div>
+      <div class="wave w6"><h5>Step 6</h5><h6>Off the charts</h6><p>Always-on agent stack across businesses.</p><span class="chip">Autonomous agents</span></div>
     </div>
-    <div class="footer-note"><strong>Claude chat</strong> = ask &amp; draft &nbsp; <strong>Cowork</strong> = act on your files &amp; tools &nbsp; <strong>Claude Code</strong> = build software &nbsp; <strong>beyond</strong> = autonomous agent stacks</div>
-  </div>
+    <p class="stage-foot"><strong>Chat</strong> = ask &amp; draft &nbsp;·&nbsp; <strong>Cowork</strong> = act on files &nbsp;·&nbsp; <strong>Code</strong> = build software</p>
+  </section>
 
-  <!-- ══════════════════════════════════════════ SLIDE 9 ═══ -->
-  <div class="slide" data-slide="8">
-    <div class="section-label">The Mindset</div>
-    <div class="big-quote">
-      The people who win with this aren&rsquo;t the most technical.<br>
-      <span class="highlight-cyan">They&rsquo;re the most curious.</span>
+  <!-- 9. MINDSET -->
+  <section class="slide section-divider" data-title="The Mindset">
+    <span class="pagenum"></span>
+    <div class="section-divider-inner">
+      <span class="redline"></span>
+      <h1>The people who win aren&rsquo;t the most technical.<br>They&rsquo;re the most <em>curious</em>.</h1>
+      <div class="close tenets" style="margin-top:40px;padding-top:28px;border-top:1px solid #2a2d36;grid-template-columns:repeat(4,1fr)">
+        <div class="tenet"><h6>Judgement</h6></div>
+        <div class="tenet"><h6>Technical Aptitude</h6></div>
+        <div class="tenet"><h6>Curiosity</h6></div>
+        <div class="tenet"><h6>High Agency</h6></div>
+      </div>
+      <p class="lede" style="margin-top:24px;font-size:14px;opacity:.7">Digital Product &middot; Hiring &amp; Performance Criteria</p>
     </div>
-    <div class="criteria-list">
-      <h4>Digital Product</h4>
-      <div class="criteria-sub">Hiring &amp; Performance Criteria:</div>
-      <ul>
-        <li>Judgement</li>
-        <li>Technical Aptitude</li>
-        <li>Curiosity</li>
-        <li>High Agency</li>
-      </ul>
-    </div>
-  </div>
+  </section>
 
-  <!-- ══════════════════════════════════════════ SLIDE 10 ═══ -->
-  <div class="slide title-slide" data-slide="9">
-    <h1 class="slide-title">Questions &amp; Live Examples</h1>
-    <p class="slide-subtitle" style="font-style:normal;">Or better: tell me the most annoying part of your week.<br>Let&rsquo;s point AI at it right now.</p>
-    <div class="author" style="margin-top:2rem;">Darren Brelesky</div>
-    <div class="side-dots">
-      <div class="dot"></div>
-      <div class="dot"></div>
-      <div class="dot"></div>
-      <div class="dot"></div>
-      <div class="dot"></div>
-    </div>
-  </div>
+  <!-- 10. Q&A -->
+  <section class="slide close" data-title="Questions &amp; Live Examples">
+    <span class="pagenum"></span>
+    <blockquote class="big-quote">Questions &amp; <em>live examples</em>.</blockquote>
+    <p class="lede" style="margin-top:24px">Or better: tell me the most annoying part of your week. Let&rsquo;s point AI at it right now.</p>
+    <p class="lede" style="margin-top:12px;opacity:.75">Darren Brelesky</p>
+  </section>
 
-  <!-- ══════════════════════════════════════════ SLIDE 11 ═══ -->
-  <div class="slide" data-slide="10">
-    <div class="section-label">Industry Outlook</div>
-    <h2 class="slide-title" style="font-size:clamp(1.4rem,3vw,2.3rem);">What AI does to the categories we compete in</h2>
-    <p class="slide-subtitle">Two shifts: making content gets near-free, and the fan experience gets personalized. The moat moves from volume to rights, trust, and taste.</p>
-    <table class="data-table">
+  <!-- 11. INDUSTRY -->
+  <section class="slide content-slide" data-title="Industry Outlook">
+    <span class="pagenum"></span>
+    <p class="eyebrow">Industry Outlook</p>
+    <h2 class="title">What AI does to the categories we compete in.</h2>
+    <p class="hint">Making content gets near-free; the fan experience gets personalized. The moat moves from volume to rights, trust, and taste.</p>
+    <table class="gaptbl">
       <thead>
         <tr>
-          <th></th>
-          <th>2026 &mdash; Happening Now</th>
-          <th>~2028 &mdash; Where It Heads</th>
+          <th scope="col"></th>
+          <th scope="col">2026 · Happening Now</th>
+          <th scope="col" class="next">~2028 · Where It Heads</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Live sports &amp; production</td>
-          <td>Near-real-time highlights and clips; auto-captions and fast localization.</td>
-          <td>Personalized feeds and camera angles; instant clips in every format, per fan.</td>
+          <td class="gap">Live sports &amp; production</td>
+          <td class="now">Near-real-time highlights and clips; auto-captions and fast localization.</td>
+          <td class="next">Personalized feeds and camera angles; instant clips in every format, per fan.</td>
         </tr>
         <tr>
-          <td>Streaming &amp; on-demand</td>
-          <td>Sharper recommendations; AI dubbing and search across the catalog.</td>
-          <td>The home screen assembles itself around each viewer.</td>
+          <td class="gap">Streaming &amp; on-demand</td>
+          <td class="now">Sharper recommendations; AI dubbing and search across the catalog.</td>
+          <td class="next">The home screen assembles itself around each viewer.</td>
         </tr>
         <tr>
-          <td>Content, recaps &amp; social</td>
-          <td>Recaps, social cutdowns and research drafted at volume; humans edit.</td>
-          <td>Content gets near-free; the edge is a distinct POV and trust, not volume.</td>
+          <td class="gap">Content, recaps &amp; social</td>
+          <td class="now">Recaps, social cutdowns and research drafted at volume; humans edit.</td>
+          <td class="next">Content gets near-free; the edge is a distinct POV and trust, not volume.</td>
         </tr>
         <tr>
-          <td>Fantasy, betting &amp; games</td>
-          <td>Conversational stats and start/sit help; smarter personalized advice.</td>
-          <td>An always-on companion that knows your teams, bets and history.</td>
+          <td class="gap">Fantasy, betting &amp; games</td>
+          <td class="now">Conversational stats and start/sit help; smarter personalized advice.</td>
+          <td class="next">An always-on companion that knows your teams, bets and history.</td>
         </tr>
       </tbody>
     </table>
-    <div class="footer-note"><strong>Our move:</strong> use AI to deepen fan trust and personalization, not to flood feeds with cheap content.</div>
-  </div>
+    <p class="stage-foot"><strong>Our move:</strong> use AI to deepen fan trust and personalization, not to flood feeds with cheap content.</p>
+  </section>
 
-  <!-- ══════════════════════════════════════════ SLIDE 12 ═══ -->
-  <div class="slide" data-slide="11">
-    <div class="section-label">The Demand Side</div>
-    <h2 class="slide-title" style="font-size:clamp(1.4rem,3vw,2.3rem);">How AI changes what fans expect</h2>
-    <p class="slide-subtitle">Behaviors we&rsquo;re already seeing, and where they head.</p>
-    <div class="card-row">
-      <div class="card card-border-top-cyan">
-        <h3>What We&rsquo;re Seeing Now &middot; 2026</h3>
+  <!-- 12. DEMAND SIDE -->
+  <section class="slide content-slide" data-title="Fan Expectations">
+    <span class="pagenum"></span>
+    <p class="eyebrow">The Demand Side</p>
+    <h2 class="title">How AI changes what fans <em style="font-style:italic;color:var(--accent)">expect</em>.</h2>
+    <p class="hint">Behaviors we&rsquo;re already seeing, and where they head.</p>
+    <div class="rails">
+      <div class="rail teal">
+        <h4>What we&rsquo;re seeing now &middot; 2026</h4>
         <ul>
           <li>Fans ask AI instead of searching, fewer clicks to publishers</li>
           <li>Summary-first: &ldquo;just tell me who won and why&rdquo;</li>
@@ -931,8 +683,8 @@
           <li>Rising &ldquo;is this even real?&rdquo; doubt as AI content floods feeds</li>
         </ul>
       </div>
-      <div class="card card-border-top-orange">
-        <h3>What May Come &middot; ~2028</h3>
+      <div class="rail">
+        <h4>What may come &middot; ~2028</h4>
         <ul>
           <li>A personal AI companion that knows your teams, fantasy and bets</li>
           <li>Content comes to you, auto-shaped to your format and length</li>
@@ -941,91 +693,207 @@
         </ul>
       </div>
     </div>
-    <div class="footer-note"><strong>What it means:</strong> fans will expect answers, personalization, and proof. Our edge is real access, real talent, and trust no generic bot can fake.</div>
-  </div>
+    <p class="stage-foot"><strong>What it means:</strong> fans will expect answers, personalization, and proof. Our edge is real access, real talent, and trust no generic bot can fake.</p>
+  </section>
 
-  <!-- ── Navigation bar ── -->
-  <nav class="nav-bar">
-    <button class="nav-btn" id="prevBtn" aria-label="Previous slide">&#8592;</button>
-    <div class="slide-dots" id="slideDots"></div>
-    <span class="slide-counter" id="slideCounter">1 / 12</span>
-    <button class="nav-btn" id="nextBtn" aria-label="Next slide">&#8594;</button>
-  </nav>
-
-  <div class="key-hint" id="keyHint">Use arrow keys or swipe to navigate</div>
 </div>
 
+<nav class="chrome">
+  <span class="title" id="slideTitle">Cover</span>
+  <span class="counter" id="counter">01 / 12</span>
+  <span>
+    <button id="overviewBtn" class="icon-btn" title="Overview (G)" aria-label="Show all slides">
+      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+        <rect x="1" y="1" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <rect x="9" y="1" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <rect x="1" y="9" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <rect x="9" y="9" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      </svg>
+    </button>
+    <button id="prev">← Prev</button>
+    <button id="next">Next →</button>
+  </span>
+</nav>
+
+<aside id="overview" class="overview" aria-hidden="true" role="dialog" aria-label="All slides">
+  <header class="overview-bar">
+    <span class="overview-title">All slides</span>
+    <button id="overviewClose" class="icon-btn" aria-label="Close overview">Close ✕</button>
+  </header>
+  <div id="overviewGrid" class="overview-grid"></div>
+</aside>
+
 <script>
-(function() {
-  const slides = document.querySelectorAll('.slide');
-  const total = slides.length;
-  let current = 0;
+  const slides = [...document.querySelectorAll('.slide')];
+  const pad = n => String(n).padStart(2,'0');
+  slides.forEach((s, idx) => {
+    s.id = 'deck-slide-' + idx;
+    const pn = s.querySelector('.pagenum');
+    if(pn) pn.textContent = `${pad(idx+1)} / ${pad(slides.length)}`;
+  });
 
-  const dotsContainer = document.getElementById('slideDots');
-  const counter = document.getElementById('slideCounter');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const progress = document.getElementById('progressBar');
-  const keyHint = document.getElementById('keyHint');
-
-  // Build dot indicators
-  for (let i = 0; i < total; i++) {
-    const btn = document.createElement('button');
-    btn.setAttribute('aria-label', `Go to slide ${i + 1}`);
-    btn.addEventListener('click', () => goTo(i));
-    dotsContainer.appendChild(btn);
-  }
-
-  function update() {
-    slides.forEach(s => s.classList.remove('active'));
-    const s = slides[current];
-    void s.offsetWidth;
-    s.classList.add('active');
-
-    // Dots
-    dotsContainer.querySelectorAll('button').forEach((d, i) => {
-      d.classList.toggle('active', i === current);
+  slides.forEach(s => {
+    if(s.classList.contains('cover')) return;
+    if(s.classList.contains('section-divider')) return;
+    if(s.classList.contains('close')) return;
+    if(s.querySelector(':scope > .slide-inner')) return;
+    const pagenum = s.querySelector(':scope > .pagenum');
+    const inner = document.createElement('div');
+    inner.className = 'slide-inner';
+    Array.from(s.children).forEach(child => {
+      if(child === pagenum) return;
+      inner.appendChild(child);
     });
-
-    counter.textContent = `${current + 1} / ${total}`;
-    prevBtn.disabled = current === 0;
-    nextBtn.disabled = current === total - 1;
-    progress.style.width = `${((current + 1) / total) * 100}%`;
-  }
-
-  function goTo(n) {
-    if (n < 0 || n >= total || n === current) return;
-    current = n;
-    update();
-  }
-
-  function next() { goTo(current + 1); }
-  function prev() { goTo(current - 1); }
-
-  prevBtn.addEventListener('click', prev);
-  nextBtn.addEventListener('click', next);
-
-  // Keyboard nav
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
-    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
-    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
-    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+    s.appendChild(inner);
   });
 
-  // Touch / swipe
-  let touchStartX = 0;
-  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
-  document.addEventListener('touchend', (e) => {
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+  function fitSlide(s){
+    if(!s) return;
+    const inner = s.querySelector(':scope > .slide-inner');
+    if(!inner) return;
+    inner.style.transform = '';
+    inner.style.width = '';
+    void inner.offsetHeight;
+    const cs = getComputedStyle(s);
+    const availH = s.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const innerH = inner.scrollHeight;
+    if(availH > 0 && innerH > availH){
+      const scale = Math.max(0.55, availH / innerH);
+      inner.style.transform = `scale(${scale})`;
+      inner.style.width = (100 / scale) + '%';
+    }
+  }
+
+  document.querySelectorAll('.slide img').forEach(img => {
+    if(img.complete) return;
+    img.addEventListener('load', () => {
+      const slide = img.closest('.slide');
+      if(slide) fitSlide(slide);
+    }, {once:true});
   });
 
-  // Hide hint after a few seconds
-  setTimeout(() => { keyHint.style.opacity = '0'; }, 5000);
+  let i = 0;
+  const counter = document.getElementById('counter');
+  const titleEl = document.getElementById('slideTitle');
+  function slideIndexFromHash(){
+    const m = /^#deck-slide-(\d+)$/.exec(location.hash);
+    if(!m) return null;
+    const idx = parseInt(m[1], 10);
+    return (idx >= 0 && idx < slides.length) ? idx : null;
+  }
+  function go(n){
+    i = (n + slides.length) % slides.length;
+    slides.forEach((s,idx)=>s.classList.toggle('active', idx===i));
+    counter.textContent = `${pad(i+1)} / ${pad(slides.length)}`;
+    titleEl.textContent = slides[i].dataset.title || '';
+    if(slides[i].id) history.replaceState(null, '', '#' + slides[i].id);
+    requestAnimationFrame(() => fitSlide(slides[i]));
+    if(typeof refreshActiveTile === 'function' && isOverviewOpen()) refreshActiveTile();
+  }
+  window.addEventListener('hashchange', () => {
+    const h = slideIndexFromHash();
+    if(h !== null && h !== i) go(h);
+  });
+  document.getElementById('prev').onclick = ()=>go(i-1);
+  document.getElementById('next').onclick = ()=>go(i+1);
 
-  update();
-})();
+  const overview = document.getElementById('overview');
+  const overviewGrid = document.getElementById('overviewGrid');
+  const overviewBtn = document.getElementById('overviewBtn');
+  const overviewClose = document.getElementById('overviewClose');
+
+  function classifySection(idx){
+    if(idx >= 10) return 'industry';
+    if(idx === 9) return 'live';
+    return 'basics';
+  }
+  function sectionLabel(name){
+    return ({basics:'The Basics', industry:'Industry Outlook', live:'Live'})[name] || '';
+  }
+  function buildOverview(){
+    overviewGrid.innerHTML = '';
+    slides.forEach((s, idx) => {
+      const tile = document.createElement('button');
+      tile.className = 'ov-tile';
+      tile.type = 'button';
+      tile.dataset.idx = idx;
+      tile.dataset.section = classifySection(idx);
+      const title = s.dataset.title || `Slide ${idx+1}`;
+      tile.innerHTML = `
+        <span class="ov-tile-strip"></span>
+        <div class="ov-tile-thumb"><div class="ov-tile-stage"></div></div>
+        <div class="ov-tile-foot">
+          <span class="ov-tile-num">${pad(idx+1)}</span>
+          <div class="ov-tile-text">
+            <span class="ov-tile-title">${title}</span>
+            <span class="ov-tile-meta">${sectionLabel(classifySection(idx))}</span>
+          </div>
+        </div>
+      `;
+      const stage = tile.querySelector('.ov-tile-stage');
+      const clone = s.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.classList.remove('active');
+      clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+      clone.querySelectorAll('a, button').forEach(el => { el.tabIndex = -1; });
+      clone.querySelectorAll('.slide-inner').forEach(el => { el.style.transform = ''; el.style.width = ''; });
+      stage.appendChild(clone);
+      tile.addEventListener('click', () => { go(idx); closeOverview(); });
+      overviewGrid.appendChild(tile);
+    });
+  }
+  function setStageSizes(){
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    overviewGrid.querySelectorAll('.ov-tile-thumb').forEach(thumb => {
+      const tileW = thumb.clientWidth || thumb.getBoundingClientRect().width;
+      if(!tileW) return;
+      thumb.style.height = (tileW * h / w) + 'px';
+      const stage = thumb.querySelector('.ov-tile-stage');
+      if(!stage) return;
+      stage.style.width = w + 'px';
+      stage.style.height = h + 'px';
+      stage.style.transform = `scale(${tileW / w})`;
+    });
+  }
+  function refreshActiveTile(){
+    overviewGrid.querySelectorAll('.ov-tile').forEach(t => {
+      t.classList.toggle('active', parseInt(t.dataset.idx,10) === i);
+    });
+  }
+  function openOverview(){
+    if(!overviewGrid.children.length) buildOverview();
+    overview.classList.add('open');
+    overview.setAttribute('aria-hidden','false');
+    requestAnimationFrame(() => { setStageSizes(); refreshActiveTile(); });
+  }
+  function closeOverview(){
+    overview.classList.remove('open');
+    overview.setAttribute('aria-hidden','true');
+  }
+  function isOverviewOpen(){ return overview.classList.contains('open'); }
+  overviewBtn.onclick = () => isOverviewOpen() ? closeOverview() : openOverview();
+  overviewClose.onclick = closeOverview;
+  overview.addEventListener('click', e => { if(e.target === overview) closeOverview(); });
+  window.addEventListener('resize', () => {
+    fitSlide(slides[i]);
+    if(isOverviewOpen()) setStageSizes();
+  });
+
+  document.addEventListener('keydown', e=>{
+    if(isOverviewOpen()){
+      if(e.key==='Escape' || e.key==='g' || e.key==='G') closeOverview();
+      return;
+    }
+    if(e.key==='g'||e.key==='G'){ openOverview(); return; }
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); go(i+1); }
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(i-1); }
+    if(e.key==='Home') go(0);
+    if(e.key==='End') go(slides.length-1);
+  });
+
+  const first = slideIndexFromHash();
+  go(first !== null ? first : 0);
 </script>
 </body>
 </html>
